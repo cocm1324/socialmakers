@@ -1,0 +1,112 @@
+$screen-sm-min: 576px;
+$screen-md-min: 768px;
+$screen-lg-min: 992px;
+$screen-xl-min: 1200px;
+
+$color-blue: rgb(68, 144, 196);
+$color-gray: #dddddd;
+$color-bisque: bisque;
+
+@mixin sm {
+    @media (min-width: #{$screen-sm-min}) {
+        @content;
+    }
+}
+@mixin md {
+    @media (min-width: #{$screen-md-min}) {
+        @content;
+    }
+}
+@mixin lg {
+    @media (min-width: #{$screen-lg-min}) {
+        @content;
+    }
+}
+@mixin xl {
+    @media (min-width: #{$screen-xl-min}) {
+        @content;
+    }
+}
+
+.p-container-narrow {
+    width: 92vw;
+
+    display: flex;
+    flex-wrap: wrap;
+
+    @include sm {
+        width: 88.5vw;
+    }
+
+    @include md {
+        max-width: 680px;
+    }
+}
+
+.p-container {
+    width: 100vw;
+
+    display: flex;
+    flex-wrap: wrap;
+
+    @include sm {
+        width: 540px;
+    }
+
+    @include md {
+        width: 720px;
+    }
+
+    @include lg {
+        width: 960px;
+    }
+
+    @include xl {
+        width: 1140px;
+    }
+}
+
+.p-relative {
+    position: relative;
+}
+
+.p-absolute {
+    position: absolute;
+}
+
+.p-fixed {
+    position: fixed;
+}
+
+.p-pointer {
+    cursor: pointer;
+}
+
+.p-justify-center {
+    justify-content: center;
+}
+
+.p-justify-start {
+    justify-content: flex-start;
+}
+
+.p-justify-end {
+    justify-content: flex-end;
+}
+
+.p-align-center {
+    align-items: center;
+}
+
+.p-cursor-pointer {
+    cursor: pointer !important;
+}
+
+.p-cursor-grab {
+    cursor: -webkit-grab; 
+    cursor: grab;
+}
+
+.p-cursor-grabbing {
+    cursor: grabbing !important;
+}

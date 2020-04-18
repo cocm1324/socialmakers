@@ -2,6 +2,14 @@
   "compileOnSave": false,
   "compilerOptions": {
     "baseUrl": "./",
+    "paths": {
+      "@assets/*": ["src/assets/*"],
+      "@services/*": ["src/app/services/*"],
+      "@interfaces/*": ["src/app/interfaces/*"],
+      "@components/*": ["src/app/components/*"],
+      "@enums/*": ["src/app/enums/*"],
+      "@app/*": ["src/app/*"]
+    },
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
