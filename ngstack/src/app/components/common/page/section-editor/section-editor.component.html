@@ -1,0 +1,84 @@
+<form [formGroup]="sectionForm">
+<div class="w-100">
+    <div class="p-relative p-nogutter"
+        [class.p-grid]="isWide()"
+        [class.p-grid-medium]="isMedium()"
+        [class.p-grid-narrow]="isNarrow()"
+    >
+        <div *ngIf="!isWide()" (click)="spread()" class="p-absolute p-d-flex p-align-center h-100" style="width: 1.2em; left: -1.2em;">
+            <i class="pi pi-chevron-left"></i>
+        </div>
+        <div *ngIf="!isNarrow()" (click)="shrink()" class="p-absolute p-d-flex p-align-center h-100" style="width: 1.2em; left: 0;">
+            <i class="pi pi-chevron-right"></i>
+        </div>
+        <div *ngIf="!isNarrow()" (click)="shrink()" class="p-absolute p-d-flex p-align-center h-100" style="width: 1.2em; right: 0;">
+            <i class="pi pi-chevron-left"></i>
+        </div>
+        <div *ngIf="!isWide()" (click)="spread()" class="p-absolute p-d-flex p-align-center h-100" style="width: 1.2em; right: -1.2em;">
+            <i class="pi pi-chevron-right"></i>
+        </div>
+
+        <div *ngIf="isTypeNull()" class="p-grid p-nogutter w-100">
+            <div class="p-col p-mr-2">
+                <p-card 
+                    class="w-100 p-cursor-pointer" 
+                    header="이미지" 
+                    subheader="섹션 전체를 이미지로 처리합니다" 
+                    styleClass="ui-card-shadow"
+                    (click)="openImage()"
+                >
+                    <div style="height: 4em;">웹 상의 이미지 URL을 가져오거나, 가지고 있는 이미지를 업로드하여 사용할 수 있습니다. 이미 등록한 이미지 또한 사용할 수 있습니다.</div>
+                </p-card>
+            </div>
+            <div class="p-col">
+                <p-card 
+                    class="w-100 p-cursor-pointer" 
+                    header="포스트" 
+                    subheader="포스트 에디터로 글을 작성합니다" 
+                    styleClass="ui-card-shadow"
+                    (click)="openPost()"
+                >
+                    <div style="height: 4em;">에디터를 통해서 원하는 스타일의 글을 작성할 수 있습니다.</div>
+                </p-card>
+            </div>
+        </div>
+
+        <div *ngIf="isImage()" class="w-100">
+            <p-card styleClass="ui-card-shadow">
+                <div class="ui-g ui-fluid">
+                    <div class="ui-g-12 p-pl-0 p-pr-0">
+                        <div class="ui-inputgroup w-100">
+                            <input type="text" formControlName="content" pInputText placeholder="웹에서 URL등록하기">         
+                            <button pButton type="button" icon="pi pi-cloud-download" label="가져오기" class="ui-button-secondary" style="width: 11em;"></button>
+                            <button pButton type="button" icon="pi pi-folder" label="추가하기" class="ui-button-secondary" style="width: 11em;"></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="preview">
+                    <img class="image-container" [src]="content" onerror="this.src='./assets/img/notfound.jpg';">
+                </div>
+                <p-footer class="p-d-flex p-justify-end">
+                    <button (click)="save()" [disabled]="isFormInvalid()" pButton type="button" label="Save" icon="pi pi-check" class="ui-button-primary p-mr-2"></button>
+                    <button (click)="cancel()" pButton type="button" label="Cancel" icon="pi pi-times" class="ui-button-secondary"></button>
+                </p-footer>
+            </p-card>
+        </div>
+
+        <div *ngIf="isPost()" class="w-100">
+            <p-card styleClass="ui-card-shadow">
+                <p-editor formControlName="content" [style]="{'height':'20em'}"></p-editor>
+                <div class="preview p-post-style">
+                    <div [innerHTML]="content"></div>
+                </div>
+                <p-footer class="p-d-flex p-justify-end">
+                    <button (click)="save()" [disabled]="isFormInvalid()" pButton type="button" label="Save" icon="pi pi-check" class="ui-button-primary p-mr-2"></button>
+                    <button (click)="cancel()" pButton type="button" label="Cancel" icon="pi pi-times" class="ui-button-secondary"></button>
+                </p-footer>
+            </p-card>
+        </div>
+    </div>
+</div>
+<pre>
+    {{sectionForm.getRawValue() | json}}
+</pre>
+</form>

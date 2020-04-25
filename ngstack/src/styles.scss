@@ -1,1 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
+@import "./assets/scss/variable";
+
+body, html {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}

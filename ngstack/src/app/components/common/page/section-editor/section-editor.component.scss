@@ -1,0 +1,29 @@
+.absolute-alight-center {
+    top: 50%;
+    margin-top: -0.5em;
+    z-index: 10000;
+}
+
+.image-container {
+    width: 100%;
+    object-fit: cover;
+}
+
+.preview {
+    padding: 0.5em 0;
+    border-bottom: 1px solid #dddddd;
+    border-top: 1px solid #dddddd;
+}
+
+::ng-deep p-editor{
+    .ui-editor-container {
+        border-radius: 0 !important;
+        margin: -1em -1em 0 -1em;
+        .ui-editor-toolbar {
+            border: 0 !important;
+        }
+        .ui-editor-content {
+            border: 0 !important;
+        }
+    }
+}
