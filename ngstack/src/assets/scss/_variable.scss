@@ -23,11 +23,14 @@ $color-bisque: bisque;
     line-height: 1.58;
     font-weight: 400;
 
-    h1 {
-
+    h1, h2, h3, h4, h5, h6 {
+        margin-top: 0;
+        margin-bottom: 0.75em;
     }
-    h2 {
-        
+
+    p {
+        margin-top: 0;
+        margin-bottom: 0;
     }
 }
 
@@ -217,6 +220,10 @@ $color-bisque: bisque;
     padding-bottom: 20px !important;
 }
 
+.p-pb-5 {
+    padding-bottom: 25px !important;
+}
+
 .p-pb-10 {
     padding-bottom: 50px !important;
 }
@@ -346,6 +353,11 @@ $color-bisque: bisque;
 .p-my-2 {
     margin-top: 10px !important;
     margin-bottom: 10px !important;
+}
+
+.p-my-3 {
+    margin-top: 15px !important;
+    margin-bottom: 15px !important;
 }
 
 /* display */

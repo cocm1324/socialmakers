@@ -1,5 +1,5 @@
 <form [formGroup]="sectionForm">
-<div class="w-100">
+<div class="w-100 p-my-3">
     <div class="p-relative p-nogutter"
         [class.p-grid]="isWide()"
         [class.p-grid-medium]="isMedium()"
@@ -78,7 +78,4 @@
         </div>
     </div>
 </div>
-<pre>
-    {{sectionForm.getRawValue() | json}}
-</pre>
 </form>

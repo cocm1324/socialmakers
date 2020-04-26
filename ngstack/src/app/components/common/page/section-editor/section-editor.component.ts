@@ -30,13 +30,13 @@ export class SectionEditorComponent implements OnInit {
 			content: ["", Validators.required],
 		});
 
-		// if (this.section) {
-		// 	this.sectionForm.patchValue({
-		// 		width: this.section.width,
-		// 		type: this.section.type,
-		// 		content: this.section.content
-		// 	});
-		// }
+		if (this.section) {
+			this.sectionForm.patchValue({
+				width: this.section.width,
+				type: this.section.type,
+				content: this.section.content
+			});
+		}
 
 		this.sectionForm.patchValue({
 			width: this.typeWidth.NARROW

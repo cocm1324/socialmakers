@@ -1,2 +1,13 @@
-<p>editor works!</p>
-<app-section-editor [section]="pageData[2]" (onFinished)="closeEdit($event)"></app-section-editor>
+<div *ngFor="let pageDatum of pageData; let i = index">
+    <div *ngIf="i == curEdit">
+        <app-section-editor [section]="pageDatum" (onFinished)="closeEdit($event)"></app-section-editor>
+    </div>
+    <div *ngIf="i != curEdit">
+        <app-section-viewer [section]="pageDatum"></app-section-viewer>
+    </div>
+</div>
+<div class="p-grid-narrow" *ngIf="curEdit == -1">
+    <p-card (click)="newSection()" class="w-100 p-pb-5 p-text-center p-cursor-pointer">
+        <h2>Add New Section</h2>
+    </p-card>
+</div>

@@ -1,1 +1,17 @@
-<p>section-viewer works!</p>
+<div class="w-100 p-my-3">
+    <div class="p-relative p-nogutter"
+        [class.p-grid]="isWide()"
+        [class.p-grid-medium]="isMedium()"
+        [class.p-grid-narrow]="isNarrow()"
+    >
+        <div *ngIf="isImage()" class="w-100">
+            <img class="image-container" [src]="content" onerror="this.src='./assets/img/notfound.jpg';">
+        </div>
+
+        <div *ngIf="isPost()" class="w-100">
+            <div class="p-post-style">
+                <div [innerHTML]="content"></div>
+            </div>
+        </div>
+    </div>
+</div>
