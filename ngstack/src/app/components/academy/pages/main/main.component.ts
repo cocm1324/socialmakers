@@ -1,0 +1,111 @@
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+
+const carousel = [
+	{
+		id: 427,
+		title: "웹프로그래밍 기초부터 실전까지!",
+		description: "걸음마부터 시작해 내 손으로 직접 제작하는 웹페이지 디자인 과정 START!"
+	},
+	{
+		id: 227,
+		title: "Test2",
+		description: "qjwgeijqweippjwqjpiwqgjipg ewiqjofwjei oijiojpfeqioj wfe"
+	},
+	{
+		id: 127,
+		title: "Test3",
+		description: "jgiewqiopjgiqwepgj egijfqgopi qiwoj wejqgpijgqiweg piqwipjp qwjepgiqw ejgpi jqweijpg"
+	}
+]
+
+const courses = [
+	{
+		id: 1,
+		title: "웹디자인 기초과정 (HTML & CSS)",
+		description: "It is a long established fact that a reader will be distracted by the readabl",
+		category: 0,
+		created: "2020-04-16T19:20:30.45+09:00",
+		updated: "2020-04-16T19:20:30.45+09:00"
+	},
+	{
+		id: 2,
+		title: "웹디자인 기본과정 (JavaScript)",
+		description: "It is a long established fact that a reader will be distracted by the readabl",
+		category: 0,
+		created: "2020-04-16T20:20:30.45+09:00",
+		updated: "2020-04-16T20:20:30.45+09:00"
+	},
+	{
+		id: 3,
+		title: "웹디자인 응용과정 (Real Project)",
+		description: "It is a long established fact that a reader will be distracted by the readabl",
+		category: 0,
+		created: "2020-04-16T21:20:30.45+09:00",
+		updated: "2020-04-16T21:20:30.45+09:00"
+	},
+	{
+		id: 4,
+		title: "영어와 코딩을 함께 공부하는 1:1 수업",
+		description: "It is a long established fact that a reader will be distracted by the readabl",
+		category: 1,
+		created: "2020-04-16T20:20:30.45+09:00",
+		updated: "2020-04-16T20:20:30.45+09:00"
+	},
+	{
+		id: 5,
+		title: "2020 AP Computer Science 시험대비 실전완성반",
+		description: "It is a long established fact that a reader will be distracted by the readabl",
+		category: 2,
+		created: "2020-04-17T20:20:30.45+09:00",
+		updated: "2020-04-17T20:20:30.45+09:00"
+	}
+]
+
+const courseCategory = [
+	{
+		id: 0,
+		title: "웹디자인 과정",
+		description: "창의적이고 실력있는 코딩 메이커가 되기 위한 웹 디자인 패키지"
+	},
+	{
+		id: 1,
+		title: "1:1 영어와 코딩을 함께하는 CLASS",
+		description: "영어가 자신 없는 수강생들을 위한 코딩과 영어공부를 함께하는 1:1 CLASS"
+	},
+	{
+		id: 2,
+		title: "AP Computer Science",
+		description: "프로그램 디자인, 쓰기, 분석 및 문서화 할 수 있는 능력을 테스트하는 AP Computer Science 시험 대비반"
+	}
+]
+
+@Component({
+	selector: 'app-main',
+	templateUrl: './main.component.html',
+	styleUrls: ['./main.component.scss']
+})
+export class MainComponent implements OnInit {
+
+	carousel;
+	courseCategory;
+	courses;
+
+	constructor(
+		private router: Router
+	) { }
+
+	ngOnInit() {
+		this.carousel = carousel;
+		this.courseCategory = courseCategory;
+		this.courses = courses;
+	}
+
+	courseByCategory(id) {
+		return this.courses.filter(elem => elem.category == id);
+	}
+
+	goToCourse(id) {
+		this.router.navigate([`academy/courses/${id}`]);
+	}
+}

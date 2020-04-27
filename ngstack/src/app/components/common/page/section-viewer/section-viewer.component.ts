@@ -1,4 +1,4 @@
-import {Component, OnInit, Input} from '@angular/core';
+import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 import {ISection, TypeSectionWidth, TypeContent} from '../common';
 
 @Component({
@@ -9,6 +9,10 @@ import {ISection, TypeSectionWidth, TypeContent} from '../common';
 export class SectionViewerComponent implements OnInit {
 
 	@Input() section: ISection;
+	@Input() editable: boolean = false;
+	@Input() index: number;
+	@Output() onEdit: EventEmitter<number> = new EventEmitter();
+	@Output() onDelete: EventEmitter<number> = new EventEmitter();
 	typeWidth = TypeSectionWidth;
 	typeContent = TypeContent;
 	
@@ -16,10 +20,9 @@ export class SectionViewerComponent implements OnInit {
 	get type() {return this.section.type}
 	get content() {return this.section.content}
 
-	constructor() { }
+	constructor() {}
 
-	ngOnInit() {
-	}
+	ngOnInit() {}
 
 	isImage() {return this.type == this.typeContent.IMAGE}
 	isPost() {return this.type == this.typeContent.POST}
@@ -27,4 +30,16 @@ export class SectionViewerComponent implements OnInit {
 	isWide() {return this.width == this.typeWidth.WIDE}
 	isMedium() {return this.width == this.typeWidth.MEDIUM}
 	isNarrow() {return this.width == this.typeWidth.NARROW}
+
+	edit() {
+		if (this.index >= 0) {
+			this.onEdit.emit(this.index);
+		} 
+	}
+
+	delete() {
+		if (confirm("섹션을 삭제하시겠습니까?")) {
+			this.onDelete.emit(this.index);
+		}
+	}
 }

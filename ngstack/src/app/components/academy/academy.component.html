@@ -1,17 +1,24 @@
-<div class="p-grid p-nogutter menubar">
-    <div class="p-grid-medium p-nogutter p-justify-between">
-        <div class="title p-p-3">Social Maker Academy</div>
-        <div class="menus p-d-flex p-justify-end">
-            <div class="p-p-3 item">About Us</div>
-            <div class="p-p-3 item">Courses</div>
-            <div class="p-p-3 item">Review</div>
-            <div class="p-p-3 item">Notice</div>
+<div class="content">
+    <div class="p-grid p-nogutter menubar">
+        <div class="p-grid-medium p-nogutter p-justify-between">
+            <div (click)="goToMain()" class="title p-p-3">Social Maker Academy</div>
+            <div class="menus p-d-flex p-justify-end">
+                <div (click)="goToAboutUs()" class="p-p-3 item p-cursor-pointer">About Us</div>
+                <div class="p-p-3 item p-cursor-pointer8">Courses</div>
+                <div (click)="goToReview()" class="p-p-3 item p-cursor-pointer">Review</div>
+                <div (click)="goToNotice()" class="p-p-3 item p-cursor-pointer">Notice</div>
+            </div>
         </div>
     </div>
+    <router-outlet></router-outlet>
 </div>
 
-<ple-editor></ple-editor>
-
-<div class="p-grid p-nogutter footer p-p-3">
-    footer here
+<div class="footer w-100 p-p-3">
+    <div class="p-grid-medium p-nogutter p-justify-between">
+        <div>footer</div>
+        <div>
+            <span>content</span>
+            <span>content</span>
+        </div>
+    </div>
 </div>

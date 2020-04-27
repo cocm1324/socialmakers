@@ -180,6 +180,10 @@ $color-bisque: bisque;
     padding:20px;
 }
 
+.p-p-5{
+    padding:25px;
+}
+
 .p-pt-0 {
     padding-top:0;
 }
@@ -257,9 +261,24 @@ $color-bisque: bisque;
     padding-right: 0;
 }
 
-.p-py {
+.p-py-0 {
     padding-top: 0;
     padding-bottom: 0;
+}
+
+.p-py-1 {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.p-py-2 {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.p-py-3 {
+    padding-top: 15px;
+    padding-bottom: 15px;
 }
 
 

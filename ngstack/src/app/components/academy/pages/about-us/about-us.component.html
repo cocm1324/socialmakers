@@ -1,0 +1,16 @@
+<div class="w-100">
+    <div class="p-grid p-nogutter p-relative">
+        <img class="image-container" src="https://i.picsum.photos/id/327/1920/500.jpg">
+        <div class="p-absolute p-d-flex p-justify-center p-align-center w-100 h-100">
+            <div class="hero-content p-p-5">
+                <h1>About Us</h1>
+            </div>
+        </div>
+        <div class="p-absolute p-d-flex p-justify-end w-100 p-p-1">
+            <button *ngIf="!isEdit" (click)="toggleEdit()" pButton class="ui-button-secondary" icon="pi pi-pencil" label="edit"></button>
+        </div>
+    </div>
+    <div class="margin-drop"></div>
+    <ple-viewer *ngIf="!isEdit" [pageData]="page"></ple-viewer>
+    <ple-editor *ngIf="isEdit" [pageData]="page" (onFinished)="editFinished($event)"></ple-editor>
+</div>

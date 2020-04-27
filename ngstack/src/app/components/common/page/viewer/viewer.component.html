@@ -1,1 +1,3 @@
-<p>viewer works!</p>
+<div *ngFor="let pageDatum of pageData; let i = index">
+    <app-section-viewer [section]="pageDatum"></app-section-viewer>
+</div>

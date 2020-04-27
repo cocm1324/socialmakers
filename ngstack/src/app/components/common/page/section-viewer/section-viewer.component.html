@@ -1,9 +1,15 @@
 <div class="w-100 p-my-3">
-    <div class="p-relative p-nogutter"
+    <div class="p-relative p-nogutter item"
         [class.p-grid]="isWide()"
         [class.p-grid-medium]="isMedium()"
         [class.p-grid-narrow]="isNarrow()"
     >
+        <div *ngIf="editable" class="p-absolute overlay p-d-flex p-justify-center p-align-center w-100 h-100">
+            <div>
+                <button (click)="edit()" pButton type="button" label="수정하기" icon="pi pi-check" class="ui-button-primary p-mr-2"></button>
+                <button (click)="delete()" pButton type="button" label="삭제하기" icon="pi pi-times" class="ui-button-secondary"></button>
+            </div>
+        </div>
         <div *ngIf="isImage()" class="w-100">
             <img class="image-container" [src]="content" onerror="this.src='./assets/img/notfound.jpg';">
         </div>

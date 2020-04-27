@@ -1,13 +1,29 @@
-<div *ngFor="let pageDatum of pageData; let i = index">
-    <div *ngIf="i == curEdit">
-        <app-section-editor [section]="pageDatum" (onFinished)="closeEdit($event)"></app-section-editor>
+<div #page>
+    <div *ngFor="let pageDatum of pageData; let i = index">
+        <div *ngIf="i == curEdit">
+            <app-section-editor [section]="pageDatum" (onFinished)="closeEdit($event)"></app-section-editor>
+        </div>
+        <div *ngIf="i != curEdit">
+            <app-section-viewer 
+                [section]="pageDatum" 
+                [editable]="!isEditing()" 
+                [index]="i" 
+                (onEdit)="viewerEdit($event)"
+                (onDelete)="viewerDelete($event)"
+            ></app-section-viewer>
+        </div>
     </div>
-    <div *ngIf="i != curEdit">
-        <app-section-viewer [section]="pageDatum"></app-section-viewer>
-    </div>
-</div>
-<div class="p-grid-narrow" *ngIf="curEdit == -1">
-    <p-card (click)="newSection()" class="w-100 p-pb-5 p-text-center p-cursor-pointer">
-        <h2>Add New Section</h2>
-    </p-card>
+    <div class="spacing"></div>
+    
+    <div class="editor-footer">
+        <div class="p-grid-medium p-justify-between">
+            <div class="p-py-3">
+                <button (click)="newSection()" [disabled]="isEditing()" pButton type="button" label="Add New Section" icon="pi pi-check" class="ui-button-primary"></button>
+            </div>
+            <div class="p-py-3">
+                <button (click)="save()" pButton [disabled]="isEditing()" type="button" label="Save" icon="pi pi-check" class="ui-button-primary p-mr-2"></button>
+                <button (click)="cancel()" pButton type="button" label="Cancel" icon="pi pi-times" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </div>    
 </div>

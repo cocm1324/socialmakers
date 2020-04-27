@@ -37,10 +37,6 @@ export class SectionEditorComponent implements OnInit {
 				content: this.section.content
 			});
 		}
-
-		this.sectionForm.patchValue({
-			width: this.typeWidth.NARROW
-		});
 	}
 
 	isTypeNull() {return this.type == null}
@@ -106,7 +102,7 @@ export class SectionEditorComponent implements OnInit {
 		if (this.isFormModified) {
 			// TODO: ask if is it okay to lose changes
 		}
-		this.backToSelect();
+		this.onFinished.emit(false);
 	}
 
 	save() {
