@@ -45,6 +45,30 @@ const courses = [
 		updated: "2020-04-16T21:20:30.45+09:00"
 	},
 	{
+		id: 6,
+		title: "웹디자인 기초과정 (HTML & CSS)",
+		description: "It is a long established fact that a reader will be distracted by the readabl",
+		category: 0,
+		created: "2020-04-16T19:20:30.45+09:00",
+		updated: "2020-04-16T19:20:30.45+09:00"
+	},
+	{
+		id: 7,
+		title: "웹디자인 기본과정 (JavaScript)",
+		description: "It is a long established fact that a reader will be distracted by the readabl",
+		category: 0,
+		created: "2020-04-16T20:20:30.45+09:00",
+		updated: "2020-04-16T20:20:30.45+09:00"
+	},
+	{
+		id: 8,
+		title: "웹디자인 응용과정 (Real Project)",
+		description: "It is a long established fact that a reader will be distracted by the readabl",
+		category: 0,
+		created: "2020-04-16T21:20:30.45+09:00",
+		updated: "2020-04-16T21:20:30.45+09:00"
+	},
+	{
 		id: 4,
 		title: "영어와 코딩을 함께 공부하는 1:1 수업",
 		description: "It is a long established fact that a reader will be distracted by the readabl",
@@ -77,6 +101,11 @@ const courseCategory = [
 		id: 2,
 		title: "AP Computer Science",
 		description: "프로그램 디자인, 쓰기, 분석 및 문서화 할 수 있는 능력을 테스트하는 AP Computer Science 시험 대비반"
+	},
+	{
+		id: 3,
+		title: "Test",
+		description: "ewigjoiqwjoigqijoewpijopeqwgjoipegqwjoipegwqjoi"
 	}
 ]
 
