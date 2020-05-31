@@ -48,9 +48,9 @@
                 <div class="ui-g ui-fluid">
                     <div class="ui-g-12 p-pl-0 p-pr-0">
                         <div class="ui-inputgroup w-100">
-                            <input type="text" formControlName="content" pInputText placeholder="웹에서 URL등록하기">         
-                            <button pButton type="button" icon="pi pi-cloud-download" label="가져오기" class="ui-button-secondary" style="width: 11em;"></button>
-                            <button pButton type="button" icon="pi pi-folder" label="추가하기" class="ui-button-secondary" style="width: 11em;"></button>
+                            <input type="text" formControlName="content" pInputText>
+                            <app-image-url [initialValue]="content" label="URL등록하기" (onSubmit)="imageUrlSubmitted($event)"></app-image-url>
+                            <app-image-upload label="추가하기"></app-image-upload>
                         </div>
                     </div>
                 </div>

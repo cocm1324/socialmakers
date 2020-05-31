@@ -1,0 +1,31 @@
+CREATE TABLE `dbibridge`.`page` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(50) NOT NULL,
+  `page_type` VARCHAR(10) NOT NULL COMMENT 'COURSES, ABOUTUS, NOTICE',
+  `image_id` INT UNSIGNED NULL,
+  PRIMARY KEY (`id`));
+
+
+CREATE TABLE `dbibridge`.`page_contents` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `page_id` INT UNSIGNED NOT NULL,
+  `seq` INT UNSIGNED NOT NULL,
+  `width` VARCHAR(10) NOT NULL COMMENT 'NARROW, MEDIUM, WIDE',
+  `type` VARCHAR(10) NOT NULL COMMENT 'IMAGE, POST',
+  `content` VARCHAR(1000) NULL,
+  `image_id` INT UNSIGNED NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE);
+
+/* image table */
+CREATE TABLE `dbibridge`.`image` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `url` VARCHAR(200) NOT NULL,
+  PRIMARY KEY (`id`));
+
+/* image_connections table */
+CREATE TABLE `dbibridge`.`image_connections` (
+  `image_id` INT UNSIGNED NOT NULL,
+  `connection_obj_id` INT UNSIGNED NOT NULL,
+  `connection_type` VARCHAR(10) NULL COMMENT 'PAGE, CONTENTS',
+  PRIMARY KEY (`image_id`, `connection_obj_id`));

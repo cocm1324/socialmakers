@@ -98,6 +98,12 @@ export class SectionEditorComponent implements OnInit {
 		return this.section.width != this.width || this.section.type != this.type || this.section.content != this.content;
 	}
 
+	imageUrlSubmitted(url) {
+		this.sectionForm.patchValue({
+			content: url
+		});
+	}
+
 	cancel() {
 		if (this.isFormModified) {
 			// TODO: ask if is it okay to lose changes

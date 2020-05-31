@@ -1,0 +1,11 @@
+<p-dialog header="URL등록하기" [(visible)]="display" [style]="{width: '50vw'}" [baseZIndex]="10000">
+    
+    <input type="text" pInputText [(ngModel)]="url" class="w-100" placeholder="Image URL"/>
+
+    <p-footer>
+        <button type="button" pButton icon="pi pi-check" (click)="confirm()" label="Yes"></button>
+        <button type="button" pButton icon="pi pi-times" (click)="cancel()" label="No" class="ui-button-secondary"></button>
+    </p-footer>
+</p-dialog>
+
+<button type="button" (click)="showDialog()" pButton icon="pi pi-external-link" [label]="label" style="width: 12em;"></button>

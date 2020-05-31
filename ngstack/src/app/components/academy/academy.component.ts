@@ -108,4 +108,8 @@ export class AcademyComponent implements OnInit {
 	goToNotice() {
 		this.router.navigate(['academy/notice']);
 	}
+
+	event(e) {
+		console.log(e);
+	}
 }

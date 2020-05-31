@@ -9,6 +9,7 @@ import { ReviewComponent } from './pages/review/review.component';
 import { NoticeComponent } from './pages/notice/notice.component';
 import { AnnounceComponent } from './pages/announce/announce.component';
 import { AppCommonModule } from '@app/app-common.module';
+import { ImageModule } from '@components/common/image/image.module';
 
 @NgModule({
     declarations: [
@@ -23,7 +24,8 @@ import { AppCommonModule } from '@app/app-common.module';
     imports: [
         AcademyRoutingModule,
         AppCommonModule,
-        PageModule
+        PageModule,
+        ImageModule
     ]
 })
 export class AcademyModule { }
