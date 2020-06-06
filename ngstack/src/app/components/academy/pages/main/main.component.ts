@@ -23,6 +23,7 @@ const courses = [
 	{
 		id: 1,
 		title: "웹디자인 기초과정 (HTML & CSS)",
+		thumbnail: "./assets/img/3.gif",
 		description: "It is a long established fact that a reader will be distracted by the readabl",
 		category: 0,
 		created: "2020-04-16T19:20:30.45+09:00",
@@ -31,6 +32,7 @@ const courses = [
 	{
 		id: 2,
 		title: "웹디자인 기본과정 (JavaScript)",
+		thumbnail: "./assets/img/2.gif",
 		description: "It is a long established fact that a reader will be distracted by the readabl",
 		category: 0,
 		created: "2020-04-16T20:20:30.45+09:00",
@@ -39,30 +41,7 @@ const courses = [
 	{
 		id: 3,
 		title: "웹디자인 응용과정 (Real Project)",
-		description: "It is a long established fact that a reader will be distracted by the readabl",
-		category: 0,
-		created: "2020-04-16T21:20:30.45+09:00",
-		updated: "2020-04-16T21:20:30.45+09:00"
-	},
-	{
-		id: 6,
-		title: "웹디자인 기초과정 (HTML & CSS)",
-		description: "It is a long established fact that a reader will be distracted by the readabl",
-		category: 0,
-		created: "2020-04-16T19:20:30.45+09:00",
-		updated: "2020-04-16T19:20:30.45+09:00"
-	},
-	{
-		id: 7,
-		title: "웹디자인 기본과정 (JavaScript)",
-		description: "It is a long established fact that a reader will be distracted by the readabl",
-		category: 0,
-		created: "2020-04-16T20:20:30.45+09:00",
-		updated: "2020-04-16T20:20:30.45+09:00"
-	},
-	{
-		id: 8,
-		title: "웹디자인 응용과정 (Real Project)",
+		thumbnail: "./assets/img/4.gif",
 		description: "It is a long established fact that a reader will be distracted by the readabl",
 		category: 0,
 		created: "2020-04-16T21:20:30.45+09:00",
@@ -70,19 +49,30 @@ const courses = [
 	},
 	{
 		id: 4,
-		title: "영어와 코딩을 함께 공부하는 1:1 수업",
+		title: "3D 모델링 (Real Project)",
+		thumbnail: "./assets/img/1.gif",
 		description: "It is a long established fact that a reader will be distracted by the readabl",
-		category: 1,
+		category: 0,
+		created: "2020-04-16T19:20:30.45+09:00",
+		updated: "2020-04-16T19:20:30.45+09:00"
+	},
+	{
+		id: 5,
+		title: "아두이노 (Real Project)",
+		thumbnail: "./assets/img/5.gif",
+		description: "It is a long established fact that a reader will be distracted by the readabl",
+		category: 0,
 		created: "2020-04-16T20:20:30.45+09:00",
 		updated: "2020-04-16T20:20:30.45+09:00"
 	},
 	{
-		id: 5,
-		title: "2020 AP Computer Science 시험대비 실전완성반",
+		id: 6,
+		title: "영어와 코딩을 함께 공부하는 1:1 수업",
+		thumbnail: "./assets/img/6.gif",
 		description: "It is a long established fact that a reader will be distracted by the readabl",
-		category: 2,
-		created: "2020-04-17T20:20:30.45+09:00",
-		updated: "2020-04-17T20:20:30.45+09:00"
+		category: 0,
+		created: "2020-04-16T20:20:30.45+09:00",
+		updated: "2020-04-16T20:20:30.45+09:00"
 	}
 ]
 
