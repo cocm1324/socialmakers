@@ -1,0 +1,7 @@
+{
+    "/socialmaker": {
+        "target": "http://socialmakers.co.kr",
+        "secure": false,
+        "changeOrigin": true
+    }
+}
