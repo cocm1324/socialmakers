@@ -6,22 +6,24 @@ CREATE TABLE `dbibridge`.`page` (
   PRIMARY KEY (`id`));
 
 
-CREATE TABLE `dbibridge`.`page_contents` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+CREATE TABLE `dbibridge`.`page_content` (
+  `content_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `page_id` INT UNSIGNED NOT NULL,
   `seq` INT UNSIGNED NOT NULL,
   `width` VARCHAR(10) NOT NULL COMMENT 'NARROW, MEDIUM, WIDE',
   `type` VARCHAR(10) NOT NULL COMMENT 'IMAGE, POST',
   `content` VARCHAR(1000) NULL,
   `image_id` INT UNSIGNED NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE);
+  PRIMARY KEY (`content_id`),
+  UNIQUE INDEX `id_UNIQUE` (`content_id` ASC) VISIBLE);
 
 /* image table */
 CREATE TABLE `dbibridge`.`image` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `url` VARCHAR(200) NOT NULL,
-  PRIMARY KEY (`id`));
+  `image_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `message_digest` VARCHAR(100) NOT NULL,
+  `file_name` VARCHAR(200) NOT NULL,
+  `extention` VARCHAR(10) NOT NULL,
+  PRIMARY KEY (`image_id`));
 
 /* image_connections table */
 CREATE TABLE `dbibridge`.`image_connections` (
