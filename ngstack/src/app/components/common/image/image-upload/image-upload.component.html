@@ -1,6 +1,8 @@
 <p-dialog header="이미지 추가하기" [(visible)]="display" [style]="{width: '50vw'}" [baseZIndex]="10000">
     
-    <p-fileUpload mode="basic" url="./upload.php" (onUpload)="onUpload($event)" [auto]="true" [maxFileSize]="maxSize"></p-fileUpload>
+    <form [formGroup]="imageForm">
+        <input type="file" (change)="onFileChange($event)" />
+    </form>
 
     <p-footer>
         <button type="button" pButton icon="pi pi-check" (click)="confirm()" label="Yes"></button>

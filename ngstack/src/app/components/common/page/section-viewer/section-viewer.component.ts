@@ -24,7 +24,7 @@ export class SectionViewerComponent implements OnInit {
 
 	ngOnInit() {}
 
-	isImage() {return this.type == this.typeContent.IMAGE}
+	isImage() {return this.type == this.typeContent.IMAGE || this.type == this.typeContent.IMAGE_URL}
 	isPost() {return this.type == this.typeContent.POST}
 	
 	isWide() {return this.width == this.typeWidth.WIDE}

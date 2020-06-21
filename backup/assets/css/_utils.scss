@@ -1,0 +1,341 @@
+/* utils */
+.w-100 {
+    width: 100%;
+}
+
+.h-100 {
+    height: 100%;
+}
+
+.nobr {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    white-space: nowrap;
+    display: inline-block !important;
+}
+
+
+
+/* position */
+.p-relative {
+    position: relative;
+}
+
+.p-absolute {
+    position: absolute;
+}
+
+.p-fixed {
+    position: fixed;
+}
+
+.p-text-center {
+    text-align: center;
+}
+
+.p-text-left {
+    text-align: left;
+}
+
+.p-text-right {
+    text-align: right;
+}
+
+.p-vertical-center {
+    vertical-align: middle;
+}
+
+.p-float-left {
+    float: left !important;
+}
+
+.p-float-right {
+    float: right !important;
+}
+
+.p-float-none {
+    float: none !important;
+}
+
+/* Usage
+<div class="clearfix">
+  <button type="button" class="btn btn-secondary float-left">Example Button floated left</button>
+  <button type="button" class="btn btn-secondary float-right">Example Button floated right</button>
+</div>
+*/
+.p-clearfix {
+    &::after {
+/*        display: block;
+        content: "";*/
+        clear: both;
+    }
+}
+
+
+/* spacing */
+
+.p-p-0{
+    padding:0;
+}
+
+.p-p-1{
+    padding:5px;
+}
+
+.p-p-2{
+    padding:10px;
+}
+
+.p-p-3{
+    padding:15px;
+}
+
+.p-p-4{
+    padding:20px;
+}
+
+.p-pt-0 {
+    padding-top:0;
+}
+
+.p-pt-1 {
+    padding-top:5px !important;
+}
+
+.p-pt-2 {
+    padding-top:10px !important;
+}
+
+.p-pt-3 {
+    padding-top:15px !important;
+}
+
+.p-pt-4 {
+    padding-top:20px !important;
+}
+
+.p-pb-0 {
+    padding-bottom:0;
+}
+
+.p-pb-1 {
+    padding-bottom: 5px !important;
+}
+
+.p-pb-2 {
+    padding-bottom: 10px !important;
+}
+
+.p-pb-3 {
+    padding-bottom: 15px !important;
+}
+
+.p-pb-4 {
+    padding-bottom: 20px !important;
+}
+
+.p-pl-0 {
+    padding-left: 0;
+}
+
+.p-pl-1 {
+    padding-left: 5px !important;
+}
+
+.p-pr-0 {
+    padding-right: 0;
+}
+
+.p-pr-1 {
+    padding-right: 5px !important;
+}
+
+.p-pr-2 {
+    padding-right: 10px !important;
+}
+
+.p-px {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.p-py {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+
+.p-m-0 {
+    margin: 0;
+}
+
+.p-mt-0 {
+    margin-top: 0;
+}
+
+.p-mt-1 {
+    margin-top: 5px !important;
+}
+
+.p-mt-2 {
+    margin-top: 10px !important;
+}
+
+.p-mb-0 {
+    margin-bottom:0;
+}
+
+.p-mb-1 {
+    margin-bottom: 5px !important;
+}
+
+.p-mb-2 {
+    margin-bottom: 10px !important;
+}
+
+.p-mb-10 {
+    margin-bottom: 50px !important;
+}
+
+.p-ml-0 {
+    margin-left: 0;
+}
+
+.p-ml-1 {
+    margin-left: 5px !important;
+}
+
+.p-ml-2 {
+    margin-left: 10px !important;
+}
+
+.p-mr-0 {
+    margin-right: 0;
+}
+
+.p-mr-1 {
+    margin-right: 5px !important;
+}
+
+.p-mx {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.p-my {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.p-my-1 {
+    margin-top: 5px !important;
+    margin-bottom: 5px !important;
+}
+
+.p-my-2 {
+    margin-top: 10px !important;
+    margin-bottom: 10px !important;
+}
+
+/* display */
+
+.p-d-inline {
+    display: inline;
+}
+
+.p-d-block {
+    display: block;
+}
+
+.p-d-inline-block {
+    display: inline-block;
+}
+
+.p-d-none {
+    display: none;
+}
+
+
+.p-d-visible {
+    visibility: visible !important;
+}
+
+.p-d-hidden {
+    visibility: hidden !important;
+}
+
+.p-d-invisible {
+    position: absolute !important;
+    top: -9999px !important;
+    left: -9999px !important;
+}
+
+.p-d-show {
+    opacity: 1 !important;
+}
+
+.p-d-hide {
+    opacity: 0 !important;
+}
+
+
+.p-bold {
+    font-weight: bold;
+}
+
+.p-text-danger {
+    color: #ff0000 !important;
+}
+
+.p-min-width {
+    min-width: 80px;
+}
+
+.ui-button-outline-primary {
+    color: #007ad9 !important;
+    border: 1px solid #007ad9 !important;
+    background: white !important;
+}
+
+.ui-button-outline-primary:enabled:hover,
+.ui-button-outline-primary:enabled:focus,
+.ui-button-outline-primary:enabled:active
+{
+    color: white !important;;
+    background: #007ad9 !important;
+}
+
+.ui-button-outline-primary:disabled {
+    opacity: 0.5 !important;
+}
+
+
+.p-user-select-none {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.p-block-ui {
+    pointer-events: none;
+    cursor: default;
+    opacity: 0.5;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.p-cursor-pointer {
+    cursor: pointer;
+}
+
+.p-cursor-default {
+    cursor: default;
+}
+
+.p-button-size {
+    min-width: 80px;
+}

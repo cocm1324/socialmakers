@@ -1,0 +1,14 @@
+{
+    "/academy": {
+        "target": "http://localhost:5000",
+        "secure": false,
+        "pathRewrite": {
+            "^/academy": ""
+        }
+    },
+    "/api/*": {
+        "target": "http://socialmakers.co.kr",
+        "secure": false,
+        "changeOrigin": true
+    }
+}

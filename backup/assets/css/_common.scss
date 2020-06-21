@@ -1,0 +1,51 @@
+$eco-yellow: #ffc000;
+$eco-panel-grey: #f4f4f4;
+$eco-panel-grey-text:#708090;
+
+$xl-breakpoint: 1200px;
+$lg-breakpoint: 992px;
+$md-breakpoint: 768px;
+$sm-breakpoint: 576px;
+
+@mixin sm {
+    @media (min-width: #{$sm-breakpoint}) {
+        @content;
+    }
+}
+@mixin md {
+    @media (min-width: #{$md-breakpoint}) {
+        @content;
+    }
+}
+@mixin lg {
+    @media (min-width: #{$lg-breakpoint}) {
+        @content;
+    }
+}
+@mixin xl {
+    @media (min-width: #{$xl-breakpoint}) {
+        @content;
+    }
+}
+
+.c-container {
+    width: 100%;
+
+    @include sm {
+        padding: 0 20px;
+    }
+
+    @include md {
+        padding: 0 40px;
+    }
+
+    @include lg {
+        padding: 0 60px;
+    }
+
+    @include xl {
+        margin-right: auto;
+        margin-left: auto;
+        max-width: 1080px;
+    }
+}

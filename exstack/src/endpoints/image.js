@@ -92,7 +92,7 @@ router.get('/', (req, res) => {
     }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', (req, res) => {
     try {
         if(!req.files) {
             res.send({

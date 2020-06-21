@@ -1,4 +1,7 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { DataService } from '@services/data/data.service';
+import { take } from 'rxjs/operators';
 
 const MAX_SIZE = 1024 * 1024 * 20;
 
@@ -12,27 +15,63 @@ export class ImageUploadComponent implements OnInit {
 	@Input() label: string = "Image Upload"
 	@Output() onSubmit = new EventEmitter()
 
+	requestUrl: string = '/api/image';
+
+	imageForm: FormGroup;
+	error: string;
+	uploadResponse = {
+		status: '',
+		message: '',
+		filePath: ''
+	};
+
 	display: boolean = false;
 	url: string = "";
 
 	maxSize = MAX_SIZE;
 
-	constructor() { }
+	constructor(private fb: FormBuilder, private dataService: DataService) { }
 
 	ngOnInit() {
+		this.imageForm = this.fb.group({
+			upload: ['']
+		});
+		this.uploadResponse = {
+			status: '',
+			message: '',
+			filePath: ''
+		};
 	}
 
 	showDialog() {
 		this.display = true;
 	}
 
-	onUpload(event) {
-		
+	onFileChange(event) {
+		if (event.target.files.length > 0) {
+			const file = event.target.files[0];
+			this.imageForm.get('upload').setValue(file);
+		}
 	}
 
 	confirm() {
-		this.display = false;
-		this.onSubmit.emit(this.url);
+		const formData = new FormData();
+		formData.append('upload', this.imageForm.get('upload').value);
+
+		this.dataService.createImage(formData).toPromise().then(resolve => {
+			if (resolve.status) {
+				const response = {
+					url: resolve.data.url,
+					imageId: resolve.data.result.insertId
+				};
+				this.display = false;
+				this.onSubmit.emit(response);
+			} else {
+				console.log(resolve.message);
+			}
+		}, reject => {
+			console.log(reject);
+		})
 	}
 
 	cancel() {

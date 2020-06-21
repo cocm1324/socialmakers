@@ -4,4 +4,5 @@ export interface ISection {
     width: TypeSectionWidth;
     type: TypeContent;
     content: string;
+    contentId?: number;
 }

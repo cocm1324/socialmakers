@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const app = express();
 
 const image = require('./src/endpoints/image');
-const post = require('./src/endpoints/page');
+const post = require('./src/endpoints/post');
 const user = require('./src/endpoints/user');
 
 // enable files uploads

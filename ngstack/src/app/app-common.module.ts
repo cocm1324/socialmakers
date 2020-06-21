@@ -9,12 +9,12 @@ import { FormsModule } from '@angular/forms';
 import {FileUploadModule} from 'primeng/fileupload';
 import {FieldsetModule} from 'primeng/fieldset';
 import { HttpClientModule } from '@angular/common/http';
-
+import {PanelModule} from 'primeng/panel';
+import {AccordionModule} from 'primeng/accordion';
 
 @NgModule({
     imports: [
         FormsModule,
-        HttpClientModule,
 
         ButtonModule,
         ProgressSpinnerModule,
@@ -24,11 +24,12 @@ import { HttpClientModule } from '@angular/common/http';
         InputTextModule,
         FileUploadModule,
         FieldsetModule,
+        PanelModule,
+        AccordionModule
 
     ],
     exports: [
         FormsModule,
-        HttpClientModule,
         
         ButtonModule,
         ProgressSpinnerModule,
@@ -37,7 +38,9 @@ import { HttpClientModule } from '@angular/common/http';
         DialogModule,
         InputTextModule,
         FileUploadModule,
-        FieldsetModule
+        FieldsetModule,
+        PanelModule,
+        AccordionModule
     ]
 })
 export class AppCommonModule {}

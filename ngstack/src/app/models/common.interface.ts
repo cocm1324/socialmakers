@@ -1,3 +1,5 @@
+import { Binary } from '@angular/compiler';
+
 export interface ICommonRes {
     status: boolean;
 }
@@ -19,4 +21,8 @@ export interface IRunVerifyLoginRes extends ICommonRes {
         token: string;
         login: string;
     };
+}
+
+export interface ICreateImageReq {
+    upload: Binary;
 }

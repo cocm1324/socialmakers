@@ -19,8 +19,8 @@ import { AppAdminGuard } from '@app/app-admin.guard';
                 {path: 'review', component: ReviewComponent},
                 {path: 'notice', component: NoticeComponent},
                 {path: 'notice/:id', component: AnnounceComponent},
-                {path: 'admin', loadChildren: () => import(`./pages/academy-admin/academy-admin.module`).then(module => module.AcademyAdminModule), canActivate: [AppAdminGuard] }
-            ]}
+            ]},
+            {path: 'admin', loadChildren: () => import(`./academy-admin/academy-admin.module`).then(module => module.AcademyAdminModule), canActivate: [AppAdminGuard] }
         ])
     ],
     exports: [

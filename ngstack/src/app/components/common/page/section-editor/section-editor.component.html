@@ -49,8 +49,8 @@
                     <div class="ui-g-12 p-pl-0 p-pr-0">
                         <div class="ui-inputgroup w-100">
                             <input type="text" formControlName="content" pInputText>
-                            <app-image-url [initialValue]="content" label="URL등록하기" (onSubmit)="imageUrlSubmitted($event)"></app-image-url>
-                            <app-image-upload label="추가하기"></app-image-upload>
+                            <app-image-url label="URL등록하기" [initialValue]="content" (onSubmit)="imageUrlSubmitted($event)"></app-image-url>
+                            <app-image-upload label="추가하기" (onSubmit)="imageUploaded($event)"></app-image-upload>
                         </div>
                     </div>
                 </div>

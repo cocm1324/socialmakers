@@ -28,6 +28,7 @@ export class SectionEditorComponent implements OnInit {
 			width: [this.typeWidth.MEDIUM],
 			type: [null, Validators.required],
 			content: ["", Validators.required],
+			contentId: [""]
 		});
 
 		if (this.section) {
@@ -40,7 +41,7 @@ export class SectionEditorComponent implements OnInit {
 	}
 
 	isTypeNull() {return this.type == null}
-	isImage() {return this.type == this.typeContent.IMAGE}
+	isImage() {return this.type == this.typeContent.IMAGE || this.type == this.typeContent.IMAGE_URL}
 	isPost() {return this.type == this.typeContent.POST}
 	
 	isWide() {return this.width == this.typeWidth.WIDE}
@@ -100,7 +101,17 @@ export class SectionEditorComponent implements OnInit {
 
 	imageUrlSubmitted(url) {
 		this.sectionForm.patchValue({
+			type: this.typeContent.IMAGE_URL,
 			content: url
+		});
+	}
+
+	imageUploaded(e) {
+		const {url, imageId} = e;
+		this.sectionForm.patchValue({
+			type: this.typeContent.IMAGE,
+			content: url,
+			contentId: imageId
 		});
 	}
 

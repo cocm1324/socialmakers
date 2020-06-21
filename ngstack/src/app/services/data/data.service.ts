@@ -1,13 +1,17 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {IRunLoginReq, IRunLoginRes, IRunVerifyLoginRes} from '../../models';
+import {IRunLoginReq, IRunLoginRes, IRunVerifyLoginRes, ICreateImageReq} from '../../models';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   	providedIn: 'root'
 })
 export class DataService {
-	private userUrl = "http://socialmakers.co.kr/api/user";
+	// private userUrl = "http://socialmakers.co.kr/api/user";
+	private userUrl = "/api/user";
+	// private imageUrl = "http://socialmakers.co.kr/api/image";
+	private imageUrl = "/api/image";
 
 	constructor(private http: HttpClient) { }
 
@@ -17,5 +21,23 @@ export class DataService {
 
 	runVerifyLogin(): Observable<IRunVerifyLoginRes> {
 		return this.http.get<IRunVerifyLoginRes>(`${this.userUrl}/login`);
+	}
+
+	createImage(request) {
+		return this.http.post<any>(this.imageUrl, request, {
+			reportProgress: true,
+			observe: 'events'
+		}).pipe(map((event) => {
+				switch (event.type) {
+					case HttpEventType.UploadProgress: 
+						const progress = Math.round(100 * event.loaded / event.total);
+						return { status: 'progress', message: progress };
+					case HttpEventType.Response:
+						return event.body;
+					default:
+						return `Unhandled event: ${event.type}`;
+				}
+			})
+		);
 	}
 }

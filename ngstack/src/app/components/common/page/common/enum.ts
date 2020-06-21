@@ -5,6 +5,7 @@ export enum TypeSectionWidth {
 }
 
 export enum TypeContent {
+    IMAGE_URL,
     IMAGE,
     POST
 }

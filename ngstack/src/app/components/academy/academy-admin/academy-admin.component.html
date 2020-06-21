@@ -1,0 +1,11 @@
+<div class="w-100" style="border-bottom: 1px solid #dddddd;">
+    <div class="p-grid-medium p-justify-between">
+        <div>
+            <h3 class="p-pointer" (click)="goToAdmin($event)">Academy Admin</h3>
+        </div>
+        <div>
+            <button pButton (click)="logout($event)" type="button" label="Admin Logout" icon="pi pi-times" class="ui-button-secondary p-mt-3"></button>
+        </div>
+    </div>    
+</div>
+<router-outlet></router-outlet>
