@@ -3,6 +3,8 @@ import { ISection } from '@components/common/page/common';
 import { ActivatedRoute } from '@angular/router';
 import { take, map } from 'rxjs/operators';
 import { PAGE_URL_TYPE, WIDTH_TYPE, CONTENT_TYPE } from '@app/models';
+import { DataService } from '@services/data/data.service';
+import { resolve } from 'url';
 
 const page = [
 	{
@@ -34,12 +36,18 @@ export class PageEditorComponent implements OnInit {
 	contents: ISection[];
 	isEdit: boolean = true;
 
-	constructor(private route: ActivatedRoute) { }
+	constructor(private route: ActivatedRoute, private dataService: DataService) { }
 
 	ngOnInit() {
 		this.route.params.subscribe(params => {
 			this.pageType = params.pageType;
-			if (this.pageType !== PAGE_URL_TYPE.ABOUT_US) {
+			if (this.pageType === PAGE_URL_TYPE.ABOUT_US) {
+				this.dataService.getAboutUs().toPromise().then(resolve => {
+					
+				}, reject => {
+
+				});
+			} else {
 				this.id = params.id;
 			}
 		});

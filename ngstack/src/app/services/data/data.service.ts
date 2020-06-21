@@ -1,17 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {IRunLoginReq, IRunLoginRes, IRunVerifyLoginRes, ICreateImageReq} from '../../models';
+import {IRunLoginReq, IRunLoginRes, IRunVerifyLoginRes, ICreateImageReq, IGetPostAboutUs} from '../../models';
 import { map } from 'rxjs/operators';
 
 @Injectable({
   	providedIn: 'root'
 })
 export class DataService {
-	// private userUrl = "http://socialmakers.co.kr/api/user";
 	private userUrl = "/api/user";
-	// private imageUrl = "http://socialmakers.co.kr/api/image";
 	private imageUrl = "/api/image";
+	private postUrl = "/api/post";
 
 	constructor(private http: HttpClient) { }
 
@@ -39,5 +38,9 @@ export class DataService {
 				}
 			})
 		);
+	}
+
+	getAboutUs() {
+		return this.http.get<IGetPostAboutUs>(`${this.postUrl}/aboutUs`);
 	}
 }

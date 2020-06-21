@@ -35,6 +35,30 @@ const query = {
     },
     selectUser: (login) => {
         return `select * from dbibridge.user where login='${login}';`;
+    },
+
+    selectPageAboutUs: () => {
+        return `select * from dbibridge.page where page_type='ABOUTUS' limit 1;`;
+    },
+    selectPageContent: (pageId) => {
+        return `
+            select 
+                a.page_id, 
+                a.content_id, 
+                b.seq, 
+                b.width, 
+                b.type, 
+                b.content, 
+                c.image_id, 
+                d.message_digest, 
+                d.extension
+            from 
+                (select * from dbibridge.page_content where page_id=1) a 
+                inner join dbibridge.content b on a.content_id=b.content_id 
+                left join dbibridge.image_content c on b.content_id=c.content_id
+                left join dbibridge.image d on c.image_id=d.image_id
+            ;
+        `;
     }
 }
 
