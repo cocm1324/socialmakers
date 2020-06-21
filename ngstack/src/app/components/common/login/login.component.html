@@ -7,19 +7,19 @@
                 </p-header> -->
                 <div class="d-block w-100">
                     <span class="ui-float-label">
-                        <input formControlName="id" class="w-100" pInputText> 
+                        <input formControlName="login" class="w-100" pInputText> 
                         <label for="float-input">ID</label>
                     </span>
                 </div>
                 <div class="d-block w-100 p-mt-5">
                     <span class="ui-float-label">
-                        <input formControlName="password" class="w-100" pInputText>
+                        <input formControlName="password" type="password" class="w-100" pInputText>
                         <label for="float-input">Password</label>
                     </span>
                 </div>
                 <p-footer>
                     <div class="p-grid p-justify-end p-nogutter">
-                        <button label="로그인" [disabled]="loginFormGroup.invalid" pButton></button>
+                        <button label="로그인" (click)="loginButtonClicked($event)" [disabled]="loginFormGroup.invalid" pButton></button>
                     </div>
                 </p-footer>
             </p-card>

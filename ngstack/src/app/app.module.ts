@@ -7,7 +7,11 @@ import { AppComponent } from './app.component';
 import { AppCommonModule } from './app-common.module';
 import { BlockUiComponent } from '@components/common/block-ui/block-ui.component';
 import { LoginComponent } from '@components/common/login/login.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, COMPOSITION_BUFFER_MODE } from '@angular/forms';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { DataInterceptorService } from '@services/data/data-interceptor.service';
+import { DataService } from '@services/data/data.service';
+import { AppAdminGuard } from './app-admin.guard';
 
 @NgModule({
 	declarations: [
@@ -20,9 +24,22 @@ import { ReactiveFormsModule } from '@angular/forms';
 		BrowserAnimationsModule,
 		AppRoutingModule,
 		AppCommonModule,
-		ReactiveFormsModule
+		ReactiveFormsModule,
+		HttpClientModule
 	],
-	providers: [],
+	providers: [
+		AppAdminGuard,
+		DataService,
+		{
+			provide: COMPOSITION_BUFFER_MODE,
+			useValue: false
+		},
+		{
+			provide: HTTP_INTERCEPTORS,
+			useClass: DataInterceptorService,
+			multi: true
+		},
+	],
   	bootstrap: [AppComponent]
 })
 export class AppModule { }

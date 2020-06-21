@@ -7,6 +7,7 @@ import { CourseComponent } from './pages/course/course.component';
 import { ReviewComponent } from './pages/review/review.component';
 import { NoticeComponent } from './pages/notice/notice.component';
 import { AnnounceComponent } from './pages/announce/announce.component';
+import { AppAdminGuard } from '@app/app-admin.guard';
 
 @NgModule({
     imports: [
@@ -18,7 +19,7 @@ import { AnnounceComponent } from './pages/announce/announce.component';
                 {path: 'review', component: ReviewComponent},
                 {path: 'notice', component: NoticeComponent},
                 {path: 'notice/:id', component: AnnounceComponent},
-                {path: 'admin', loadChildren: () => import(`./pages/academy-admin/academy-admin.module`).then(module => module.AcademyAdminModule) }
+                {path: 'admin', loadChildren: () => import(`./pages/academy-admin/academy-admin.module`).then(module => module.AcademyAdminModule), canActivate: [AppAdminGuard] }
             ]}
         ])
     ],
