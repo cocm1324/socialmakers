@@ -7,6 +7,7 @@ import {DialogModule} from 'primeng/dialog';
 import {InputTextModule} from 'primeng/inputtext';
 import { FormsModule } from '@angular/forms';
 import {FileUploadModule} from 'primeng/fileupload';
+import {FieldsetModule} from 'primeng/fieldset';
 import { HttpClientModule } from '@angular/common/http';
 
 
@@ -21,7 +22,9 @@ import { HttpClientModule } from '@angular/common/http';
         CardModule,
         DialogModule,
         InputTextModule,
-        FileUploadModule
+        FileUploadModule,
+        FieldsetModule,
+
     ],
     exports: [
         FormsModule,
@@ -33,7 +36,8 @@ import { HttpClientModule } from '@angular/common/http';
         CardModule,
         DialogModule,
         InputTextModule,
-        FileUploadModule
+        FileUploadModule,
+        FieldsetModule
     ]
 })
 export class AppCommonModule {}

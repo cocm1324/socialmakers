@@ -2,20 +2,28 @@ CREATE TABLE `dbibridge`.`page` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(50) NOT NULL,
   `page_type` VARCHAR(10) NOT NULL COMMENT 'COURSES, ABOUTUS, NOTICE',
-  `image_id` INT UNSIGNED NULL,
   PRIMARY KEY (`id`));
 
-
 CREATE TABLE `dbibridge`.`page_content` (
+  `page_id` INT NOT NULL,
+  `content_id` INT NOT NULL,
+  PRIMARY KEY (`page_id`, `content_id`));
+
+CREATE TABLE `dbibridge`.`page_thumb` (
+  `page_id` INT NOT NULL,
+  `image_id` INT NOT NULL,
+  PRIMARY KEY (`image_id`, `page_id`));
+
+CREATE TABLE `dbibridge`.`content` (
   `content_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `page_id` INT UNSIGNED NOT NULL,
   `seq` INT UNSIGNED NOT NULL,
   `width` VARCHAR(10) NOT NULL COMMENT 'NARROW, MEDIUM, WIDE',
-  `type` VARCHAR(10) NOT NULL COMMENT 'IMAGE, POST',
+  `type` VARCHAR(10) NOT NULL COMMENT 'IMAGEURL, IMAGE, POST',
   `content` VARCHAR(1000) NULL,
   `image_id` INT UNSIGNED NULL,
   PRIMARY KEY (`content_id`),
   UNIQUE INDEX `id_UNIQUE` (`content_id` ASC) VISIBLE);
+
 
 /* image table */
 CREATE TABLE `dbibridge`.`image` (
@@ -29,5 +37,16 @@ CREATE TABLE `dbibridge`.`image` (
 CREATE TABLE `dbibridge`.`image_connections` (
   `image_id` INT UNSIGNED NOT NULL,
   `connection_obj_id` INT UNSIGNED NOT NULL,
-  `connection_type` VARCHAR(10) NULL COMMENT 'PAGE, CONTENTS',
+  `connection_type` VARCHAR(10) NULL COMMENT 'PAGE, CONTENTS, ',
   PRIMARY KEY (`image_id`, `connection_obj_id`));
+
+
+/* user table */
+CREATE TABLE `dbibridge`.`user` (
+  `user_id` INT NOT NULL AUTO_INCREMENT,
+  `login` VARCHAR(200) NULL,
+  `password` VARCHAR(100) NULL,
+  `role` VARCHAR(10) NULL COMMENT 'ADMIN, USER',
+  PRIMARY KEY (`user_id`),
+  UNIQUE INDEX `user_id_UNIQUE` (`user_id` ASC) VISIBLE,
+  UNIQUE INDEX `login_UNIQUE` (`login` ASC) VISIBLE);

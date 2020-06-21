@@ -22,8 +22,20 @@ const query = {
     },
     deleteSingleImage: (imageId) => {
         return `delete from dbibridge.image where image_id=${imageId};`;
-    }
+    },
 
+    createUser: (login, password, role) => {
+        return `
+            insert into dbibridge.user
+                (login, password, role)
+            values
+                ('${login}', '${password}', '${role}')
+            ;
+        `;
+    },
+    selectUser: (login) => {
+        return `select * from dbibridge.user where login='${login}';`;
+    }
 }
 
 module.exports = query;

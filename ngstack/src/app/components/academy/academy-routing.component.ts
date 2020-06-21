@@ -18,6 +18,7 @@ import { AnnounceComponent } from './pages/announce/announce.component';
                 {path: 'review', component: ReviewComponent},
                 {path: 'notice', component: NoticeComponent},
                 {path: 'notice/:id', component: AnnounceComponent},
+                {path: 'admin', loadChildren: () => import(`./pages/academy-admin/academy-admin.module`).then(module => module.AcademyAdminModule) }
             ]}
         ])
     ],

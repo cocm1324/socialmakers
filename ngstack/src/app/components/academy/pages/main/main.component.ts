@@ -125,6 +125,6 @@ export class MainComponent implements OnInit {
 	}
 
 	goToCourse(id) {
-		this.router.navigate([`academy/courses/${id}`]);
+		this.router.navigate([`courses/${id}`]);
 	}
 }

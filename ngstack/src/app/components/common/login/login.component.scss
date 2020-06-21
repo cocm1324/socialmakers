@@ -1,0 +1,20 @@
+::ng-deep p-card {
+    .ui-card {
+        width: 400px;
+    }
+
+    .ui-card-title {
+        margin-bottom: 20px !important;
+    }
+}
+
+input {
+    border-radius: 0;
+    border-left: 0;
+    border-top: 0;
+    border-right: 0;
+
+    &:focus {
+        box-shadow: none !important;
+    }
+}

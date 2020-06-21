@@ -13,3 +13,9 @@
     color: white;
     font-weight: bold;
 }
+
+::ng-deep p-card {
+    .ui-card-title {
+        height: 60px;
+    }
+}

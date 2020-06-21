@@ -6,17 +6,21 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AppCommonModule } from './app-common.module';
 import { BlockUiComponent } from '@components/common/block-ui/block-ui.component';
+import { LoginComponent } from '@components/common/login/login.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
 	declarations: [
 		AppComponent,
-		BlockUiComponent
+		BlockUiComponent,
+		LoginComponent
 	],
 	imports: [
 		BrowserModule,
 		BrowserAnimationsModule,
 		AppRoutingModule,
 		AppCommonModule,
+		ReactiveFormsModule
 	],
 	providers: [],
   	bootstrap: [AppComponent]

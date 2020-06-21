@@ -19,7 +19,7 @@ import { ImageModule } from '@components/common/image/image.module';
         CourseComponent,
         ReviewComponent,
         NoticeComponent,
-        AnnounceComponent
+        AnnounceComponent,
     ],
     imports: [
         AcademyRoutingModule,
