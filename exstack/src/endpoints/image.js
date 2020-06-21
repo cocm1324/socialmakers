@@ -16,9 +16,17 @@ router.get('/', (req, res) => {
             pageCount = 10;
         }
         mysqlPool.getConnection((err, connection) => {
-            connection.query(queryStatement.selectPageImage(pageCount, pageNo), (err, rows) => {
+            if (err) {
+                res.status(500).send({
+                    status: false,
+                    message: 'Internal Server Error'
+                });
+                return;
+            }
+
+            connection.query(queryStatement.selectPageImage(pageCount, pageNo), (err1, rows) => {
                 connection.release();
-                if (err) {
+                if (err1) {
                     res.status(500).send({
                         status: false,
                         message: 'Internal Server Error'
@@ -45,10 +53,19 @@ router.get('/', (req, res) => {
             });    
         });
     } else {
-        mysqlPool.getConnection((err, connection) => {
-            connection.query(queryStatement.selectAllImage(), (err, rows) => {
+        mysqlPool.getConnection((err2, connection) => {
+
+            if (err2) {
+                res.status(500).send({
+                    status: false,
+                    message: 'Internal Server Error'
+                });
+                return;
+            }
+
+            connection.query(queryStatement.selectAllImage(), (err3, rows) => {
                 connection.release();
-                if (err) {
+                if (err3) {
                     res.status(500).send({
                         status: false,
                         message: 'Internal Server Error'
@@ -100,6 +117,14 @@ router.post('/', async (req, res) => {
                     fit: sharp.fit.cover
                 }).toFile(`./assets/image/thumb/${fileName}`).then(info => {
                     mysqlPool.getConnection((err, connection) => {
+                        if (err) {
+                            res.status(500).send({
+                                status: false,
+                                message: 'Internal Server Error'
+                            });
+                            return;
+                        }
+
                         connection.query(queryStatement.createSingleImage(fileUid, fileNameSplit[0], fileNameSplit[1]), (err, rows) => {
                             connection.release();
 
@@ -148,8 +173,16 @@ router.delete('/:id', (req, res) => {
     
     if (id) {
         mysqlPool.getConnection((err, connection) => {
-            connection.query(queryStatement.selectSingleImage(id), (err, rows) => {
-                if (err) {
+            if (err) {
+                res.status(500).send({
+                    status: false,
+                    message: 'Internal Server Error'
+                });
+                return;
+            }
+
+            connection.query(queryStatement.selectSingleImage(id), (err1, rows) => {
+                if (err1) {
                     connection.release();
                     res.status(500).send({
                         status: false,
@@ -168,9 +201,9 @@ router.delete('/:id', (req, res) => {
                     const imageDir = `./assets/image/${message_digest}.${extension}`;
                     const imageThumbDir = `./assets/image/thumb/${message_digest}.${extension}`;
 
-                    connection.query(queryStatement.deleteSingleImage(id), (err, rows) => {
+                    connection.query(queryStatement.deleteSingleImage(id), (err2, rows) => {
                         connection.release();
-                        if (err) {
+                        if (err2) {
                             res.status(500).send({
                                 status: false,
                                 message: 'Internal Server Error'

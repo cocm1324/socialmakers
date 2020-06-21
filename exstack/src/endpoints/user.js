@@ -15,12 +15,10 @@ router.get('/', (req, res) => {
 });
 
 router.post('/register', (req, res) => {
-    const {login, password} = req.body
+    const {login, password} = req.body;
 
     mysqlPool.getConnection((err, connection) => {
         if (err) {
-            connection.release();
-
             console.log(err);
             res.status(500).send({
                 status: false,
