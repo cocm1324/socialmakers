@@ -70,6 +70,7 @@ router.get('/aboutUs', (req, res) => {
                             };
                             if (rowMap.type === 'IMAGE') {
                                 rowMap['content'] = `/api/static/image/${row.message_digest}.${row.extension}`;
+                                rowMap['imageId'] = row.image_id;
                             } else {
                                 rowMap['content'] = row.content;
                             }
@@ -81,6 +82,6 @@ router.get('/aboutUs', (req, res) => {
             });
         });
     });
-})
+});
 
 module.exports = router;

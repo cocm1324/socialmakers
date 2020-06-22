@@ -59,7 +59,8 @@ const query = {
                 left join dbibridge.image d on c.image_id=d.image_id
             ;
         `;
-    }
+    },
+
 }
 
 module.exports = query;

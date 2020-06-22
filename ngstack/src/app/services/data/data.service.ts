@@ -43,4 +43,8 @@ export class DataService {
 	getAboutUs() {
 		return this.http.get<IGetPostAboutUs>(`${this.postUrl}/aboutUs`);
 	}
+
+	updatePage(request) {
+		return this.http.put(`http://localhost:3000/post/${request.pageId}`, request);
+	}
 }

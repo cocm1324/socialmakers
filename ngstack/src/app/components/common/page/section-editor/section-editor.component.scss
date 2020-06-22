@@ -21,6 +21,10 @@
         margin: -1em -1em 0 -1em;
         .ui-editor-toolbar {
             border: 0 !important;
+
+            .ql-image {
+                display: none;
+            }
         }
         .ui-editor-content {
             border: 0 !important;

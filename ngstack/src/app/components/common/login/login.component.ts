@@ -43,7 +43,6 @@ export class LoginComponent implements OnInit {
 		};
 
 		this.data.runLogin(request).toPromise().then(resolve => {
-			console.log(resolve);
 			if (!resolve.status) {
 				console.log("error");
 				return;
