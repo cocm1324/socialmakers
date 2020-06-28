@@ -5,4 +5,5 @@ export interface ISection {
     type: TypeContent;
     content: string;
     imageId?: number;
+    seq: number;
 }

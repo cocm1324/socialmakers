@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const app = express();
 
 const image = require('./src/endpoints/image');
-const post = require('./src/endpoints/post');
+const page = require('./src/endpoints/page');
 const user = require('./src/endpoints/user');
 
 // enable files uploads
@@ -20,7 +20,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.use('/image', image);
-app.use('/post', post);
+app.use('/page', page);
 app.use('/user', user);
 app.use('/static/image', express.static('assets/image'));
 

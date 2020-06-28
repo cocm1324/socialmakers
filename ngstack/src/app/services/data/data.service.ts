@@ -10,7 +10,7 @@ import { map } from 'rxjs/operators';
 export class DataService {
 	private userUrl = "/api/user";
 	private imageUrl = "/api/image";
-	private postUrl = "/api/post";
+	private postUrl = "/api/page";
 
 	constructor(private http: HttpClient) { }
 

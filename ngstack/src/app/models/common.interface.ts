@@ -43,3 +43,18 @@ export interface IGetPostAboutUs extends ICommonRes {
         }>;
     }
 }
+
+export interface IEditSectionReq {
+    content: string;
+    pageId: number;
+    seq: number;
+    type: CONTENT_TYPE;
+    width: WIDTH_TYPE;
+}
+
+export interface ICreateSectionReq {
+    content: string;
+    pageId: number;
+    type: CONTENT_TYPE;
+    width: WIDTH_TYPE;
+}

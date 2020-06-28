@@ -1,3 +1,8 @@
 <div class="w-100">
-    <ple-editor [pageData]="contents" (onFinished)="editFinished($event)"></ple-editor>
+    <ple-editor 
+        [pageData]="contents" 
+        (onFinished)="onFinished($event)" 
+        (onSectionFinished)="onSectionFinished($event)" 
+        (onSectionDelete)="onSectionDelete($event)"
+    ></ple-editor>
 </div>

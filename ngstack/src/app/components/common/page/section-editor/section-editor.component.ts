@@ -1,5 +1,5 @@
 import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup, Validators, AbstractControl} from '@angular/forms';
 import {ISection, TypeSectionWidth, TypeContent} from '../common';
 
 @Component({
@@ -28,15 +28,20 @@ export class SectionEditorComponent implements OnInit {
 			width: [this.typeWidth.MEDIUM],
 			type: [null, Validators.required],
 			content: ["", Validators.required],
-			contentId: [""]
+			seq: [0, Validators.required]
 		});
 
 		if (this.section) {
 			this.sectionForm.patchValue({
 				width: this.section.width,
 				type: this.section.type,
-				content: this.section.content
+				content: this.section.content,
+				seq: this.section.seq
 			});
+
+			if (this.section.imageId != undefined) {
+				this.sectionForm.addControl("imageId", this.fb.control(this.section.imageId));
+			}
 		}
 	}
 
@@ -111,7 +116,7 @@ export class SectionEditorComponent implements OnInit {
 		this.sectionForm.patchValue({
 			type: this.typeContent.IMAGE,
 			content: url,
-			contentId: imageId
+			imageId: imageId
 		});
 	}
 

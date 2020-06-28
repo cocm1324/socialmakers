@@ -84,4 +84,16 @@ router.get('/aboutUs', (req, res) => {
     });
 });
 
+router.post('/:pageId', (req, res) => {
+
+});
+
+router.put('/:pageId/:seq', (req, res) => {
+
+}); 
+
+router.delete('/:pageId/:seq', (req, res) => {
+    
+});
+
 module.exports = router;

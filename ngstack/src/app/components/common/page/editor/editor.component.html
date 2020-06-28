@@ -13,16 +13,19 @@
             ></app-section-viewer>
         </div>
     </div>
+    <div *ngIf="newSection">
+        <app-section-editor [section]="newSection" (onFinished)="closeEdit($event)"></app-section-editor>
+    </div>
     <div class="spacing"></div>
     
     <div class="editor-footer">
         <div class="p-grid-medium p-justify-between">
             <div class="p-py-3">
-                <button (click)="newSection()" [disabled]="isEditing()" pButton type="button" label="Add New Section" icon="pi pi-check" class="ui-button-primary"></button>
+                <button (click)="createNewSection()" [disabled]="isEditing()" pButton type="button" label="Add New Section" icon="pi pi-check" class="ui-button-primary"></button>
             </div>
             <div class="p-py-3">
-                <button (click)="save()" pButton [disabled]="isEditing()" type="button" label="Save" icon="pi pi-check" class="ui-button-primary p-mr-2"></button>
-                <button (click)="cancel()" pButton type="button" label="Cancel" icon="pi pi-times" class="ui-button-secondary"></button>
+                <button (click)="finish()" pButton [disabled]="isEditing()" type="button" label="Finish" icon="pi pi-check" class="ui-button-primary p-mr-2"></button>
+                <!-- <button (click)="cancel()" pButton type="button" label="Cancel" icon="pi pi-times" class="ui-button-secondary"></button> -->
             </div>
         </div>
     </div>    

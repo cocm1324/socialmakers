@@ -1,8 +1,8 @@
 const query = {
     createSingleImage: (messageDigest, fileName, extension) => {
         return `
-            insert into dbibridge.image 
-                (message_digest, file_name, extension) 
+            insert into 
+                dbibridge.image (message_digest, file_name, extension) 
             values 
                 ('${messageDigest}', '${fileName}', '${extension}')
             ;
@@ -60,7 +60,38 @@ const query = {
             ;
         `;
     },
-
+    createPageContent: (pageId) => {
+        return `
+            BEGIN;
+            INSERT INTO dbibridge.content (seq, width, type, content)
+            VALUES (4, 'NARROW', 'POST', '<p>qioqwehgoiqhwneoiuobrngjiq oiuwehgnqirwn hqewoguqoiwrn qwihrgoi</p>');
+            INSERT INTO dbibridge.page_content (page_id, content_id) 
+            VALUES (${pageId}, LAST_INSERT_ID());
+            COMMIT;
+        `
+    },
+    updatePageContent: (pageId, seq) => {
+        return `
+            update
+                dbibridge.page_content a
+                inner join dbibridge.content b on a.content_id=b.content_id
+            set 
+                b.width='NARROW', b.type='POST', b.content='<p><b>fuqhowe</b> ojqiewg oihqwoie hgioqhweoi</p>'
+            where
+                a.page_id=${pageId} and b.seq=${seq};
+        `
+    },
+    deletePageContent: (pageId, seq) => {
+        return `
+            delete
+                a, b
+            from 
+                dbibridge.page_content a
+                inner join dbibridge.content b on a.content_id=b.content_id 
+            where 
+                a.page_id=${pageId} and b.seq=${seq};
+        `;
+    }
 }
 
 module.exports = query;

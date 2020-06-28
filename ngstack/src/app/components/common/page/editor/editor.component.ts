@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, Input, EventEmitter, Output } from '@angular/core';
 import { ISection, TypeContent, TypeSectionWidth } from '../common';
+import * as _ from 'lodash';
 
 @Component({
 	selector: 'ple-editor',
@@ -10,37 +11,27 @@ export class EditorComponent implements OnInit {
 
 	@Input() pageData: ISection[];
 	@Output() onFinished: EventEmitter<any> = new EventEmitter();
+	@Output() onSectionFinished: EventEmitter<any> = new EventEmitter();
+	@Output() onSectionDelete: EventEmitter<any> = new EventEmitter();
+
+	curEditSectionData = null;
 	curEdit: number = -1;
-	isNew: boolean = false;
+	newSection: ISection = null;
 
 	constructor() { }
 
 	ngOnInit() {
 	}
 
-	closeEdit($event) {
-		if ($event) {
-			this.pageData[this.curEdit] = $event;
-			this.curEdit = -1;
-			this.isNew = false;
-		} else {
-			if (this.isNew) {
-				this.pageData.pop();
-				this.isNew = false;
-			}
-			this.curEdit = -1;
-		}
-	}
-
-	newSection() {
-		const section: ISection = {
+	createNewSection() {
+		this.newSection = {
 			type: null,
 			content: "",
-			width: TypeSectionWidth.NARROW
+			width: TypeSectionWidth.NARROW,
+			seq: this.pageData[this.pageData.length - 1].seq + 1
 		};
-		this.pageData.push(section);
-		this.curEdit = this.pageData.length - 1;
-		this.isNew = true;
+		this.curEditSectionData = _.cloneDeep(this.newSection);
+		this.curEdit = this.pageData[this.pageData.length - 1].seq + 1;
 	}
 
 	isEditing() {
@@ -52,15 +43,35 @@ export class EditorComponent implements OnInit {
 	}
 
 	viewerEdit($event) {
+		this.curEditSectionData = _.cloneDeep(this.pageData[$event]);
 		this.curEdit = $event;
 	}
 
-	viewerDelete($event) {
-		this.pageData.splice($event, 1);
+	closeEdit(e) {
+		const changed = e ? !_.isEqual(e, this.curEditSectionData): false;
+
+		if (changed) {
+			const sectionChange = {
+				seq: this.curEdit,
+				...e
+			}
+			this.onSectionFinished.emit(sectionChange);
+		}
+
+		if (this.newSection) {
+			this.newSection = null;
+		}
+
+		this.curEditSectionData = null;
+		this.curEdit = -1;
 	}
 
-	save() {
-		this.onFinished.emit(this.pageData);
+	viewerDelete(e) {
+		this.onSectionDelete.emit(e);
+	}
+
+	finish() {
+		this.onFinished.emit(true);
 	}
 
 	cancel() {
