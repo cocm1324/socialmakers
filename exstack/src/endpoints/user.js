@@ -19,7 +19,6 @@ router.post('/register', (req, res) => {
 
     mysqlPool.getConnection((err, connection) => {
         if (err) {
-            console.log(err);
             res.status(500).send({
                 status: false,
                 message: 'Internal Server Error'
@@ -30,8 +29,6 @@ router.post('/register', (req, res) => {
         connection.query(queryStatement.selectUser(login), (err1, rows) => {
             if (err1) {
                 connection.release();
-
-                console.log(err1);
                 res.status(500).send({
                     status: false,
                     message: 'Internal Server Error'
@@ -41,7 +38,6 @@ router.post('/register', (req, res) => {
 
             if (rows.length > 0) {
                 connection.release();
-
                 res.status(402).send({
                     status: false,
                     message: 'User Already Exists'
@@ -53,9 +49,7 @@ router.post('/register', (req, res) => {
             
             connection.query(queryStatement.createUser(login, passwordHash, 'ADMIN'), (err2, rows) => {
                 connection.release();
-
                 if (err2) {
-                    console.log(err2);
                     res.status(500).send({
                         status: false,
                         message: 'Internal Server Error'

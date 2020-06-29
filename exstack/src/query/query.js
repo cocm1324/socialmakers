@@ -1,3 +1,30 @@
+const sqlStringEscape = (str) => {
+    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, (char) => {
+        switch (char) {
+            case "\0":
+                return "\\0";
+            case "\x08":
+                return "\\b";
+            case "\x09":
+                return "\\t";
+            case "\x1a":
+                return "\\z";
+            case "\n":
+                return "\\n";
+            case "\r":
+                return "\\r";
+            case "\"":
+            case "'":
+            case "\\":
+            case "%":
+                return "\\"+char; // prepends a backslash to backslash, percent,
+                                  // and double/single quotes
+            default:
+                return char;
+        }
+    });
+}
+
 const query = {
     createSingleImage: (messageDigest, fileName, extension) => {
         return `
@@ -60,34 +87,34 @@ const query = {
             ;
         `;
     },
-    createPageContent: (pageId) => {
-        return `
-            BEGIN;
-            INSERT INTO dbibridge.content (seq, width, type, content)
-            VALUES (4, 'NARROW', 'POST', '<p>qioqwehgoiqhwneoiuobrngjiq oiuwehgnqirwn hqewoguqoiwrn qwihrgoi</p>');
-            INSERT INTO dbibridge.page_content (page_id, content_id) 
-            VALUES (${pageId}, LAST_INSERT_ID());
-            COMMIT;
-        `
+    createPageContentTransactionCreateContent: (seq, width, type, content) => {
+        return `insert into dbibridge.content (seq, width, type, content) values (${seq}, '${width}', '${type}', '${sqlStringEscape(content)}');`;
     },
-    updatePageContent: (pageId, seq) => {
-        return `
-            update
-                dbibridge.page_content a
-                inner join dbibridge.content b on a.content_id=b.content_id
-            set 
-                b.width='NARROW', b.type='POST', b.content='<p><b>fuqhowe</b> ojqiewg oihqwoie hgioqhweoi</p>'
-            where
-                a.page_id=${pageId} and b.seq=${seq};
-        `
+    createPageContentTransactionCreatePageContent: (pageId, contentId) => {
+        return `insert into dbibridge.page_content (page_id, content_id) values (${pageId}, ${contentId});`;
+    },
+    createPageContentTransactionCreateImageContent: (imageId, contentId) => {
+        return `insert into dbibridge.image_content (image_id, content_id) values (${imageId}, ${contentId});`;
+    },
+    updatePageContent: (pageId, seq, type, width, content, imageId) => {        
+        let str = `update dbibridge.page_content a inner join dbibridge.content b on a.content_id=b.content_id `;
+
+        if (type === 'IMAGE' && imageId) {
+            str += `left join dbibridge.image_content c on b.content_id=c.content_id set b.width='${width}', b.type='${type}', b.content='${content}', c.image_id=${imageId} where a.page_id=${pageId} and b.seq=${seq};`;
+        } else {
+            str += `set b.width='${width}', b.type='${type}', b.content='${sqlStringEscape(content)}' where a.page_id=${pageId} and b.seq=${seq};`
+        }
+
+        return str;
     },
     deletePageContent: (pageId, seq) => {
         return `
             delete
-                a, b
+                a, b, c
             from 
                 dbibridge.page_content a
                 inner join dbibridge.content b on a.content_id=b.content_id 
+                left join dbibridge.image_content c on b.content_id=c.content_id
             where 
                 a.page_id=${pageId} and b.seq=${seq};
         `;

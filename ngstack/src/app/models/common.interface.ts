@@ -44,7 +44,7 @@ export interface IGetPostAboutUs extends ICommonRes {
     }
 }
 
-export interface IEditSectionReq {
+export interface IUpdateSectionReq {
     content: string;
     pageId: number;
     seq: number;
@@ -55,6 +55,12 @@ export interface IEditSectionReq {
 export interface ICreateSectionReq {
     content: string;
     pageId: number;
+    seq: number;
     type: CONTENT_TYPE;
     width: WIDTH_TYPE;
+}
+
+export interface IDeleteSectionReq {
+    pageId: number;
+    seq: number;
 }

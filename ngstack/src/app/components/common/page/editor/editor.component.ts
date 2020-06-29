@@ -28,10 +28,10 @@ export class EditorComponent implements OnInit {
 			type: null,
 			content: "",
 			width: TypeSectionWidth.NARROW,
-			seq: this.pageData[this.pageData.length - 1].seq + 1
+			seq: this.pageData && this.pageData.length > 0 ? this.pageData[this.pageData.length - 1].seq + 1 : 0
 		};
 		this.curEditSectionData = _.cloneDeep(this.newSection);
-		this.curEdit = this.pageData[this.pageData.length - 1].seq + 1;
+		this.curEdit = this.pageData && this.pageData.length > 0 ? this.pageData[this.pageData.length - 1].seq + 1 : 0;
 	}
 
 	isEditing() {
@@ -67,7 +67,7 @@ export class EditorComponent implements OnInit {
 	}
 
 	viewerDelete(e) {
-		this.onSectionDelete.emit(e);
+		this.onSectionDelete.emit(this.pageData[e].seq);
 	}
 
 	finish() {

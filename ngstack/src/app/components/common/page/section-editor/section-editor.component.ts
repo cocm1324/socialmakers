@@ -113,11 +113,13 @@ export class SectionEditorComponent implements OnInit {
 
 	imageUploaded(e) {
 		const {url, imageId} = e;
+
 		this.sectionForm.patchValue({
 			type: this.typeContent.IMAGE,
 			content: url,
-			imageId: imageId
 		});
+
+		this.sectionForm.addControl('imageId', this.fb.control(imageId));
 	}
 
 	cancel() {

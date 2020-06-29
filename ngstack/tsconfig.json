@@ -5,9 +5,8 @@
     "paths": {
       "@assets/*": ["src/assets/*"],
       "@services/*": ["src/app/services/*"],
-      "@interfaces/*": ["src/app/interfaces/*"],
+      "@models/*": ["src/app/models/*"],
       "@components/*": ["src/app/components/*"],
-      "@enums/*": ["src/app/enums/*"],
       "@app/*": ["src/app/*"]
     },
     "outDir": "./dist/out-tsc",

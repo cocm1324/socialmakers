@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {IRunLoginReq, IRunLoginRes, IRunVerifyLoginRes, ICreateImageReq, IGetPostAboutUs} from '../../models';
+import {IRunLoginReq, IRunLoginRes, IRunVerifyLoginRes, ICreateImageReq, IGetPostAboutUs, ICreateSectionReq, IUpdateSectionReq, IDeleteSectionReq, ICommonRes} from '../../models';
 import { map } from 'rxjs/operators';
 
 @Injectable({
@@ -44,7 +44,18 @@ export class DataService {
 		return this.http.get<IGetPostAboutUs>(`${this.postUrl}/aboutUs`);
 	}
 
-	updatePage(request) {
-		return this.http.put(`http://localhost:3000/post/${request.pageId}`, request);
+	createSection(request: ICreateSectionReq): Observable<ICommonRes> {
+		const {pageId, seq} = request;
+		return this.http.post<ICommonRes>(`${this.postUrl}/${pageId}/${seq}`, request);
+	}
+
+	updateSection(request: IUpdateSectionReq): Observable<ICommonRes> {
+		const {pageId, seq} = request;
+		return this.http.put<ICommonRes>(`${this.postUrl}/${pageId}/${seq}`, request);
+	}
+
+	deleteSection(request: IDeleteSectionReq): Observable<ICommonRes> {
+		const {pageId, seq} = request;
+		return this.http.delete<ICommonRes>(`${this.postUrl}/${pageId}/${seq}`);
 	}
 }

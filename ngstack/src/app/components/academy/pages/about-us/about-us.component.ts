@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ISection, TypeSectionWidth, TypeContent } from '@components/common/page/common';
 import { DataService } from '@services/data/data.service';
 import { WIDTH_TYPE, CONTENT_TYPE } from '@app/models';
+import { sequence } from '@angular/animations';
 
 @Component({
 	selector: 'app-about-us',
@@ -31,7 +32,8 @@ export class AboutUsComponent implements OnInit {
 					const contentMap = {
 						width: content.width===WIDTH_TYPE.NARROW ? TypeSectionWidth.NARROW : content.width===WIDTH_TYPE.MEDIUM ? TypeSectionWidth.MEDIUM : TypeSectionWidth.WIDE,
 						type: content.type===CONTENT_TYPE.POST ? TypeContent.POST : TypeContent.IMAGE,
-						content: content.content
+						content: content.content,
+						seq: content.seq
 					};
 					if (content.imageId) {
 						contentMap['imageId'] = content.imageId;

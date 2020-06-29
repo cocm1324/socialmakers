@@ -3,6 +3,7 @@ import { ISection, TypeSectionWidth, TypeContent } from '@components/common/page
 import { ActivatedRoute, Router } from '@angular/router';
 import { PAGE_URL_TYPE, WIDTH_TYPE, CONTENT_TYPE } from '@app/models';
 import { DataService } from '@services/data/data.service';
+import { IUpdateSectionReq } from '@app/models';
 
 @Component({
   selector: 'app-page-editor',
@@ -79,12 +80,20 @@ export class PageEditorComponent implements OnInit {
 		const request = {
 			pageId: this.id,
 			...e
-		}
+		};
+
+		console.log(request);
 
 		if (this.contents.some(section => {return section.seq == request.seq})) {
-			console.log("edit", request)
+			this.dataService.updateSection(request).toPromise().then((response) => {
+				console.log(response);
+				this.loadPage();
+			});
 		} else {
-			console.log("new", request);
+			this.dataService.createSection(request).toPromise().then((response) => {
+				console.log(response);
+				this.loadPage();
+			});
 		}
 	}
 
@@ -93,6 +102,11 @@ export class PageEditorComponent implements OnInit {
 			pageId: this.id,
 			seq: e
 		}
-		console.log(request);
+
+		this.dataService.deleteSection(request).toPromise().then((response) => {
+			if(response.status) {
+				this.loadPage();
+			}
+		});
 	}
 }
