@@ -8,9 +8,9 @@ import {InputTextModule} from 'primeng/inputtext';
 import { FormsModule } from '@angular/forms';
 import {FileUploadModule} from 'primeng/fileupload';
 import {FieldsetModule} from 'primeng/fieldset';
-import { HttpClientModule } from '@angular/common/http';
 import {PanelModule} from 'primeng/panel';
 import {AccordionModule} from 'primeng/accordion';
+import {ColorPickerModule} from 'primeng/colorpicker';
 
 @NgModule({
     imports: [
@@ -25,8 +25,8 @@ import {AccordionModule} from 'primeng/accordion';
         FileUploadModule,
         FieldsetModule,
         PanelModule,
-        AccordionModule
-
+        AccordionModule,
+        ColorPickerModule
     ],
     exports: [
         FormsModule,
@@ -40,7 +40,8 @@ import {AccordionModule} from 'primeng/accordion';
         FileUploadModule,
         FieldsetModule,
         PanelModule,
-        AccordionModule
+        AccordionModule,
+        ColorPickerModule
     ]
 })
 export class AppCommonModule {}

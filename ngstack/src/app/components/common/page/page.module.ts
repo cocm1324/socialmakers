@@ -5,13 +5,11 @@ import {ViewerComponent} from './viewer/viewer.component';
 import { SectionEditorComponent } from './section-editor/section-editor.component';
 import { SectionViewerComponent } from './section-viewer/section-viewer.component';
 
-import { CommonModule } from '@angular/common'; 
+import {CommonModule} from '@angular/common'; 
 import {EditorModule} from 'primeng/editor';
 import {ReactiveFormsModule} from '@angular/forms';
-import {CardModule} from 'primeng/card';
-import {ButtonModule} from 'primeng/button';
-import {InputTextModule} from 'primeng/inputtext';
-import { ImageModule } from '../image/image.module';
+import {ImageModule} from '../image/image.module';
+import { AppCommonModule } from '@app/app-common.module';
 
 @NgModule({
     declarations: [
@@ -22,13 +20,11 @@ import { ImageModule } from '../image/image.module';
         SectionViewerComponent
     ],
     imports: [
+        AppCommonModule,
         CommonModule,
         EditorModule,
-        CardModule,
-        ButtonModule,
-        InputTextModule,
         ReactiveFormsModule,
-        ImageModule
+        ImageModule,
     ],
     exports: [
         EditorComponent,

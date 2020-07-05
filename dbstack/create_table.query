@@ -1,7 +1,7 @@
 CREATE TABLE `dbibridge`.`page` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(50) NOT NULL,
-  `page_type` INT UNSIGNED NOT NULL COMMENT 'COURSES0, ABOUTUS1, NOTICE2',
+  `page_type` VARCHAR(10) NOT NULL COMMENT 'COURSES, ABOUTUS, NOTICE',
   PRIMARY KEY (`id`));
 
 CREATE TABLE `dbibridge`.`page_content` (
@@ -12,11 +12,15 @@ CREATE TABLE `dbibridge`.`page_image` (
   `page_id` INT NOT NULL,
   `image_id` INT NOT NULL);
 
+CREATE TABLE `dbibridge`.`course_image` (
+  `page_id` INT NOT NULL,
+  `image_id` INT NOT NULL);
+
 CREATE TABLE `dbibridge`.`content` (
   `content_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `seq` INT UNSIGNED NOT NULL,
-  `width` INT UNSIGNED NOT NULL COMMENT 'NARROW0, MEDIUM1, WIDE2',
-  `type` INT UNSIGNED NOT NULL COMMENT 'IMAGEURL0, IMAGE1, POST2',
+  `width` VARCHAR(10) NOT NULL COMMENT 'NARROW, MEDIUM, WIDE',
+  `type` VARCHAR(10) NOT NULL COMMENT 'IMAGEURL, IMAGE, POST',
   `content` VARCHAR(1000) NULL,
   PRIMARY KEY (`content_id`),
   UNIQUE INDEX `id_UNIQUE` (`content_id` ASC) VISIBLE);
@@ -45,3 +49,21 @@ CREATE TABLE `dbibridge`.`user` (
   PRIMARY KEY (`user_id`),
   UNIQUE INDEX `user_id_UNIQUE` (`user_id` ASC) VISIBLE,
   UNIQUE INDEX `login_UNIQUE` (`login` ASC) VISIBLE);
+
+CREATE TABLE `dbibridge`.`course` (
+  `page_id` INT NOT NULL,
+  `description1` VARCHAR(200) NULL,
+  `description2` VARCHAR(200) NULL,
+  `field_title1` VARCHAR(50) NULL,
+  `field_title2` VARCHAR(50) NULL,
+  `field_title3` VARCHAR(50) NULL,
+  `field_title4` VARCHAR(50) NULL,
+  `field_title5` VARCHAR(50) NULL,
+  `field_title6` VARCHAR(50) NULL,
+  `field1` VARCHAR(200) NULL,
+  `field2` VARCHAR(200) NULL,
+  `field3` VARCHAR(200) NULL,
+  `field4` VARCHAR(200) NULL,
+  `field5` VARCHAR(200) NULL,
+  `field6` VARCHAR(200) NULL,
+  PRIMARY KEY (`page_id`));

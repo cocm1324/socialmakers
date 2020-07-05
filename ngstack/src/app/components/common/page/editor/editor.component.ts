@@ -28,7 +28,8 @@ export class EditorComponent implements OnInit {
 			type: null,
 			content: "",
 			width: TypeSectionWidth.NARROW,
-			seq: this.pageData && this.pageData.length > 0 ? this.pageData[this.pageData.length - 1].seq + 1 : 0
+			seq: this.pageData && this.pageData.length > 0 ? this.pageData[this.pageData.length - 1].seq + 1 : 0,
+			background: "#FFFFFF"
 		};
 		this.curEditSectionData = _.cloneDeep(this.newSection);
 		this.curEdit = this.pageData && this.pageData.length > 0 ? this.pageData[this.pageData.length - 1].seq + 1 : 0;

@@ -75,7 +75,8 @@ const query = {
                 b.seq, 
                 b.width, 
                 b.type, 
-                b.content, 
+                b.content,
+                b.background, 
                 c.image_id, 
                 d.message_digest, 
                 d.extension
@@ -87,8 +88,8 @@ const query = {
             ;
         `;
     },
-    createPageContentTransactionCreateContent: (seq, width, type, content) => {
-        return `insert into dbibridge.content (seq, width, type, content) values (${seq}, '${width}', '${type}', '${sqlStringEscape(content)}');`;
+    createPageContentTransactionCreateContent: (seq, width, type, content, background) => {
+        return `insert into dbibridge.content (seq, width, type, content, background) values (${seq}, '${width}', '${type}', '${sqlStringEscape(content)}', '${background}');`;
     },
     createPageContentTransactionCreatePageContent: (pageId, contentId) => {
         return `insert into dbibridge.page_content (page_id, content_id) values (${pageId}, ${contentId});`;
@@ -96,13 +97,13 @@ const query = {
     createPageContentTransactionCreateImageContent: (imageId, contentId) => {
         return `insert into dbibridge.image_content (image_id, content_id) values (${imageId}, ${contentId});`;
     },
-    updatePageContent: (pageId, seq, type, width, content, imageId) => {        
+    updatePageContent: (pageId, seq, type, width, content, imageId, background) => {        
         let str = `update dbibridge.page_content a inner join dbibridge.content b on a.content_id=b.content_id `;
 
         if (type === 'IMAGE' && imageId) {
-            str += `left join dbibridge.image_content c on b.content_id=c.content_id set b.width='${width}', b.type='${type}', b.content='${content}', c.image_id=${imageId} where a.page_id=${pageId} and b.seq=${seq};`;
+            str += `left join dbibridge.image_content c on b.content_id=c.content_id set b.width='${width}', b.type='${type}', b.content='${content}', b.background='${background}', c.image_id=${imageId} where a.page_id=${pageId} and b.seq=${seq};`;
         } else {
-            str += `set b.width='${width}', b.type='${type}', b.content='${sqlStringEscape(content)}' where a.page_id=${pageId} and b.seq=${seq};`
+            str += `set b.width='${width}', b.type='${type}', b.content='${sqlStringEscape(content)}', b.background='${background}' where a.page_id=${pageId} and b.seq=${seq};`
         }
 
         return str;

@@ -14,6 +14,7 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
+
 });
 
 router.get('/aboutUs', (req, res) => {
@@ -71,28 +72,33 @@ router.get('/aboutUs', (req, res) => {
                     return;
                 }
 
+                const contents = rows2.map(row => {
+                    const rowMap = {
+                        contentId: row.content_id,
+                        seq: row.seq,
+                        width: row.width === widthEnum[0] ? 0 : row.width === widthEnum[1] ? 1 : 2,
+                        type: row.type === typeEnum[0] ? 0 : row.type === typeEnum[1] ? 1 : 2,
+                    };
+                    if (row.background) {
+                        rowMap.background = row.background;
+                    }
+                    if (rowMap.type === 'IMAGE') {
+                        rowMap.content = `/api/static/image/${row.message_digest}.${row.extension}`;
+                        rowMap.imageId = row.image_id;
+                    } else {
+                        rowMap.content = row.content;
+                    }
+
+                    return rowMap;
+                });
+
                 res.status(200).send({
                     status: true,
                     data: {
                         pageId: pageId,
                         pageName: pageName,
                         pageType: pageType,
-                        contents: rows2.map(row => {
-                            const rowMap = {
-                                contentId: row.content_id,
-                                seq: row.seq,
-                                width: row.width === widthEnum[0] ? 0 : row.width === widthEnum[1] ? 1 : 2,
-                                type: row.type === typeEnum[0] ? 0 : row.type === typeEnum[1] ? 1 : 2,
-                            };
-                            if (rowMap.type === 'IMAGE') {
-                                rowMap['content'] = `/api/static/image/${row.message_digest}.${row.extension}`;
-                                rowMap['imageId'] = row.image_id;
-                            } else {
-                                rowMap['content'] = row.content;
-                            }
-
-                            return rowMap;
-                        })
+                        contents: contents
                     }
                 });
             });
@@ -118,7 +124,7 @@ router.delete('/:pageId', (req, res) => {
 
 router.post('/:pageId/:seq', (req, res) => {
     const {pageId, seq} = req.params;
-    const {type, width, content, imageId} = req.body;
+    const {type, width, content, imageId, background} = req.body;
 
     const typeStr = typeEnum[type];
     const widthStr = widthEnum[width];
@@ -158,7 +164,7 @@ router.post('/:pageId/:seq', (req, res) => {
                 });
                 return;
             }
-            connection.query(queryStatement.createPageContentTransactionCreateContent(seq, widthStr, typeStr, content), (err2, result1) => {
+            connection.query(queryStatement.createPageContentTransactionCreateContent(seq, widthStr, typeStr, content, background), (err2, result1) => {
                 if (err2) { 
                     connection.rollback(() => {
                         connection.release();
@@ -270,7 +276,7 @@ router.post('/:pageId/:seq', (req, res) => {
 
 router.put('/:pageId/:seq', (req, res) => {
     const {pageId, seq} = req.params;
-    const {type, width, content, imageId} = req.body;
+    const {type, width, content, imageId, background} = req.body;
 
     const typeStr = typeEnum[type];
     const widthStr = widthEnum[width];
@@ -298,7 +304,7 @@ router.put('/:pageId/:seq', (req, res) => {
             return;
         }
 
-        connection.query(queryStatement.updatePageContent(pageId, seq, typeStr, widthStr, content, imageId), (err1, rows1) => {
+        connection.query(queryStatement.updatePageContent(pageId, seq, typeStr, widthStr, content, imageId, background), (err1, rows1) => {
             if (err1) {
                 connection.release();
                 res.send({

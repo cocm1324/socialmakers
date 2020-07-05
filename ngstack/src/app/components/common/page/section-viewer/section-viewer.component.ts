@@ -19,6 +19,7 @@ export class SectionViewerComponent implements OnInit {
 	get width() {return this.section.width}
 	get type() {return this.section.type}
 	get content() {return this.section.content}
+	get background() {return this.section.background}
 
 	constructor() {}
 

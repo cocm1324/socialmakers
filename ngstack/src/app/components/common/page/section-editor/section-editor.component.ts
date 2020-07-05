@@ -18,6 +18,7 @@ export class SectionEditorComponent implements OnInit {
 	get width() {return this.sectionForm.get('width').value}
 	get type() {return this.sectionForm.get('type').value}
 	get content() {return this.sectionForm.get('content').value}
+	get background() {return this.sectionForm.get('background').value}
 
 	constructor(
 		private fb: FormBuilder
@@ -28,7 +29,8 @@ export class SectionEditorComponent implements OnInit {
 			width: [this.typeWidth.MEDIUM],
 			type: [null, Validators.required],
 			content: ["", Validators.required],
-			seq: [0, Validators.required]
+			seq: [0, Validators.required],
+			background: ["#FFFFFF", Validators.required]
 		});
 
 		if (this.section) {
@@ -36,7 +38,8 @@ export class SectionEditorComponent implements OnInit {
 				width: this.section.width,
 				type: this.section.type,
 				content: this.section.content,
-				seq: this.section.seq
+				seq: this.section.seq,
+				background: this.section.background
 			});
 
 			if (this.section.imageId != undefined) {

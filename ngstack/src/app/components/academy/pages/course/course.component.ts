@@ -35,7 +35,8 @@ const courseData = {
 				width: 0,
 				type: 1,
 				content: "/api/static/image/QUY4ODE3NzE3QzA1ODFBNEI3NjBEOUJDMkQxREExNjU=.jpg",
-				imageId: 1
+				imageId: 1,
+				background: "#FFFFFF"
 			},
 			{
 				contentId: 7,
@@ -43,7 +44,8 @@ const courseData = {
 				width: 0,
 				type: 1,
 				content: "/api/static/image/RDUyOTY3RjQ3REREMDA4MzhDM0YxNzU5MUZCN0NCNUE=.jpg",
-				imageId: 2
+				imageId: 2,
+				background: "#FFFFFF"
 			},
 			{
 				contentId: 8,
@@ -51,7 +53,8 @@ const courseData = {
 				width: 0,
 				type: 1,
 				content: "/api/static/image/RjcwNzdGMTY5RkZGMjJBNUFFNTEzOTdCMzFFOUY1N0Q=.png",
-				imageId: 3
+				imageId: 3,
+				background: "#FFFFFF"
 			}
 		]
 	}

@@ -32,7 +32,8 @@ export class AboutUsComponent implements OnInit {
 						width: content.width,
 						type: content.type,
 						content: content.content,
-						seq: content.seq
+						seq: content.seq,
+						background: content.background
 					};
 					if (content.imageId) {
 						contentMap['imageId'] = content.imageId;

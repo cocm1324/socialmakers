@@ -7,6 +7,7 @@ export interface ISection {
     content: string;
     imageId?: number;
     seq: number;
+    background: string;
 }
 
 export interface ICommonRes {
@@ -45,14 +46,7 @@ export interface IGetPostAboutUs extends ICommonRes {
         pageId: number;
         pageName: string;
         pageType: PAGE_TYPE;
-        contents: Array<{
-            contentId: number;
-            seq: number;
-            width: number;
-            type: number;
-            content: string;
-            imageId: number;
-        }>;
+        contents: Array<ISection>;
     }
 }
 
@@ -63,6 +57,7 @@ export interface IUpdateSectionReq {
     type: TypeContent;
     width: TypeSectionWidth;
     imageId?: number;
+    background: string;
 }
 
 export interface ICreateSectionReq {
@@ -72,6 +67,7 @@ export interface ICreateSectionReq {
     type: TypeContent;
     width: TypeSectionWidth;
     imageId?: number;
+    background: string;
 }
 
 export interface IDeleteSectionReq {
