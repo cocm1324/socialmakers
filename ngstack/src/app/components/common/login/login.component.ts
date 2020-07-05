@@ -42,12 +42,12 @@ export class LoginComponent implements OnInit {
 			password: this.password
 		};
 
-		this.data.runLogin(request).toPromise().then(resolve => {
-			if (!resolve.status) {
-				console.log("error");
+		this.data.runLogin(request).toPromise().then(response => {
+			if (!response.status) {
+				window.alert(response.error ? response.error.message: "unknown error");
 				return;
 			}
-			const {login, token} = resolve.data;
+			const {login, token} = response.data;
 			localStorage.setItem(LOCAL_STORAGE_TYPE.TOKEN, token);
 			localStorage.setItem(LOCAL_STORAGE_TYPE.LOGIN, login);
 			if (localStorage.getItem(LOCAL_STORAGE_TYPE.CALLBACK)) {
@@ -57,8 +57,8 @@ export class LoginComponent implements OnInit {
 			} else {
 				this.router.navigate(['']);
 			}
-		}, reject => {
-			console.log(reject);
+		}).catch(error => {
+			console.log(error);
 			return;
 		});
 	}	

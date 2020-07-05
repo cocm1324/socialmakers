@@ -1,5 +1,5 @@
 import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
-import {ISection, TypeSectionWidth, TypeContent} from '../common';
+import {ISection, TypeSectionWidth, TypeContent} from '@app/models';
 
 @Component({
 	selector: 'app-section-viewer',

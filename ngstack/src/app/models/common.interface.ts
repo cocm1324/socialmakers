@@ -1,8 +1,20 @@
 import { Binary } from '@angular/compiler';
-import { PAGE_TYPE, WIDTH_TYPE, CONTENT_TYPE } from './common.enum';
+import { PAGE_TYPE, TypeSectionWidth, TypeContent } from './common.enum';
+
+export interface ISection {
+    width: TypeSectionWidth;
+    type: TypeContent;
+    content: string;
+    imageId?: number;
+    seq: number;
+}
 
 export interface ICommonRes {
     status: boolean;
+    error?: {
+        code?: number;
+        message?: string;
+    }
 }
 
 export interface IRunLoginReq {
@@ -36,8 +48,8 @@ export interface IGetPostAboutUs extends ICommonRes {
         contents: Array<{
             contentId: number;
             seq: number;
-            width: WIDTH_TYPE;
-            type: CONTENT_TYPE;
+            width: number;
+            type: number;
             content: string;
             imageId: number;
         }>;
@@ -48,16 +60,18 @@ export interface IUpdateSectionReq {
     content: string;
     pageId: number;
     seq: number;
-    type: CONTENT_TYPE;
-    width: WIDTH_TYPE;
+    type: TypeContent;
+    width: TypeSectionWidth;
+    imageId?: number;
 }
 
 export interface ICreateSectionReq {
     content: string;
     pageId: number;
     seq: number;
-    type: CONTENT_TYPE;
-    width: WIDTH_TYPE;
+    type: TypeContent;
+    width: TypeSectionWidth;
+    imageId?: number;
 }
 
 export interface IDeleteSectionReq {

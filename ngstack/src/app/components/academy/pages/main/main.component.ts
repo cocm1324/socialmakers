@@ -81,21 +81,6 @@ const courseCategory = [
 		id: 0,
 		title: "웹디자인 과정",
 		description: "창의적이고 실력있는 코딩 메이커가 되기 위한 웹 디자인 패키지"
-	},
-	{
-		id: 1,
-		title: "1:1 영어와 코딩을 함께하는 CLASS",
-		description: "영어가 자신 없는 수강생들을 위한 코딩과 영어공부를 함께하는 1:1 CLASS"
-	},
-	{
-		id: 2,
-		title: "AP Computer Science",
-		description: "프로그램 디자인, 쓰기, 분석 및 문서화 할 수 있는 능력을 테스트하는 AP Computer Science 시험 대비반"
-	},
-	{
-		id: 3,
-		title: "Test",
-		description: "ewigjoiqwjoigqijoewpijopeqwgjoipegqwjoipegwqjoi"
 	}
 ]
 
@@ -125,6 +110,6 @@ export class MainComponent implements OnInit {
 	}
 
 	goToCourse(id) {
-		this.router.navigate([`courses/${id}`]);
+		this.router.navigate([`academy/courses/${id}`]);
 	}
 }

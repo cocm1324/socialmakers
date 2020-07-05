@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ISection } from '../common';
+import { ISection } from '@app/models';
 
 @Component({
 	selector: 'ple-viewer',

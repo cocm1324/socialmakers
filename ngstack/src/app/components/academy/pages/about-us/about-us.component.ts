@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ISection, TypeSectionWidth, TypeContent } from '@components/common/page/common';
+import { ISection, TypeSectionWidth, TypeContent } from '@app/models';
 import { DataService } from '@services/data/data.service';
-import { WIDTH_TYPE, CONTENT_TYPE } from '@app/models';
 import { sequence } from '@angular/animations';
 
 @Component({
@@ -30,8 +29,8 @@ export class AboutUsComponent implements OnInit {
 				});
 				this.page = contents.map(content => {
 					const contentMap = {
-						width: content.width===WIDTH_TYPE.NARROW ? TypeSectionWidth.NARROW : content.width===WIDTH_TYPE.MEDIUM ? TypeSectionWidth.MEDIUM : TypeSectionWidth.WIDE,
-						type: content.type===CONTENT_TYPE.POST ? TypeContent.POST : TypeContent.IMAGE,
+						width: content.width,
+						type: content.type,
 						content: content.content,
 						seq: content.seq
 					};

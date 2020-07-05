@@ -17,9 +17,12 @@ router.get('/', (req, res) => {
         }
         mysqlPool.getConnection((err, connection) => {
             if (err) {
-                res.status(500).send({
+                res.send({
                     status: false,
-                    message: 'Internal Server Error'
+                    error: {
+                        code: 500,
+                        message: 'Internal Server Error'
+                    }
                 });
                 return;
             }
@@ -27,9 +30,12 @@ router.get('/', (req, res) => {
             connection.query(queryStatement.selectPageImage(pageCount, pageNo), (err1, rows) => {
                 connection.release();
                 if (err1) {
-                    res.status(500).send({
+                    res.send({
                         status: false,
-                        message: 'Internal Server Error'
+                        error: {
+                            code: 500,
+                            message: 'Internal Server Error'
+                        }
                     });
                     return;
                 } else {
@@ -54,11 +60,13 @@ router.get('/', (req, res) => {
         });
     } else {
         mysqlPool.getConnection((err2, connection) => {
-
             if (err2) {
-                res.status(500).send({
+                res.send({
                     status: false,
-                    message: 'Internal Server Error'
+                    error: {
+                        code: 500,
+                        message: 'Internal Server Error'
+                    }
                 });
                 return;
             }
@@ -66,9 +74,12 @@ router.get('/', (req, res) => {
             connection.query(queryStatement.selectAllImage(), (err3, rows) => {
                 connection.release();
                 if (err3) {
-                    res.status(500).send({
+                    res.send({
                         status: false,
-                        message: 'Internal Server Error'
+                        error: {
+                            code: 500,
+                            message: 'Internal Server Error'
+                        }
                     });
                     return;
                 } else {
@@ -97,7 +108,10 @@ router.post('/', (req, res) => {
         if(!req.files) {
             res.send({
                 status: false,
-                message: 'No file uploaded'
+                error: {
+                    code: 401,
+                    message: 'No file uploaded'
+                }
             });
             return;
         } else {
@@ -118,26 +132,31 @@ router.post('/', (req, res) => {
                 }).toFile(`./assets/image/thumb/${fileName}`).then(info => {
                     mysqlPool.getConnection((err, connection) => {
                         if (err) {
-                            res.status(500).send({
+                            res.send({
                                 status: false,
-                                message: 'Internal Server Error'
+                                error: {
+                                    code: 500,
+                                    message: 'Internal Server Error'
+                                }
                             });
                             return;
                         }
 
-                        connection.query(queryStatement.createSingleImage(fileUid, fileNameSplit[0], fileNameSplit[1]), (err, rows) => {
+                        connection.query(queryStatement.createSingleImage(fileUid, fileNameSplit[0], fileNameSplit[1]), (err1, rows) => {
                             connection.release();
 
-                            if (err) {
-                                res.status(500).send({
+                            if (err1) {
+                                res.send({
                                     status: false,
-                                    message: 'Internal Server Error'
+                                    error: {
+                                        code: 500,
+                                        message: 'Internal Server Error'
+                                    }
                                 });
                                 return;
                             } else {
                                 res.send({
                                     status: true,
-                                    message: 'File is uploaded',
                                     data: {
                                         name: file.name,
                                         url: url,
@@ -149,21 +168,33 @@ router.post('/', (req, res) => {
                         });    
                     });
                 }).catch((err) => {
-                    res.status(500).send({
+                    res.send({
                         status: false,
-                        message: 'Internal Server Error'
+                        error: {
+                            code: 500,
+                            message: 'Internal Server Error'
+                        }
                     });
                     return;
                 });
             } else {
                 res.send({
                     status: false,
-                    message: 'Only image file is permitted'
+                    error: {
+                        code: 401,
+                        message: 'Only image file is permitted'
+                    }
                 });
             }
         }
     } catch (err) {
-        res.status(500).send(err);
+        res.send({
+            status: false,
+            error: {
+                code: 500,
+                message: 'Internal Server Error'
+            }
+        });
         return;
     }
 });
@@ -174,9 +205,12 @@ router.delete('/:id', (req, res) => {
     if (id) {
         mysqlPool.getConnection((err, connection) => {
             if (err) {
-                res.status(500).send({
+                res.send({
                     status: false,
-                    message: 'Internal Server Error'
+                    error: {
+                        code: 500,
+                        message: 'Internal Server Error'
+                    }
                 });
                 return;
             }
@@ -184,16 +218,22 @@ router.delete('/:id', (req, res) => {
             connection.query(queryStatement.selectSingleImage(id), (err1, rows) => {
                 if (err1) {
                     connection.release();
-                    res.status(500).send({
+                    res.send({
                         status: false,
-                        message: 'Internal Server Error'
+                        error: {
+                            code: 500,
+                            message: 'Internal Server Error'
+                        }
                     });
                     return;
                 } else if (rows.length <= 0) {
                     connection.release();
-                    res.status(404).send({
+                    res.send({
                         status: false,
-                        message: 'No such image'
+                        error: {
+                            code: 404,
+                            message: 'No such image'
+                        }
                     });
                     return;
                 } else {
@@ -204,9 +244,12 @@ router.delete('/:id', (req, res) => {
                     connection.query(queryStatement.deleteSingleImage(id), (err2, rows) => {
                         connection.release();
                         if (err2) {
-                            res.status(500).send({
+                            res.send({
                                 status: false,
-                                message: 'Internal Server Error'
+                                error: {
+                                    code: 500,
+                                    message: 'Internal Server Error'
+                                }
                             });
                             return;
                         } else {
@@ -222,9 +265,12 @@ router.delete('/:id', (req, res) => {
             });    
         });
     } else {
-        res.status(404).send({
+        res.send({
             status: false,
-            message: 'Not found'
+            error: {
+                code: 404,
+                message: 'Not found'
+            }
         });
     }
 });

@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ISection, TypeSectionWidth, TypeContent } from '@components/common/page/common';
+import { ISection, TypeSectionWidth, TypeContent } from '@app/models';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PAGE_URL_TYPE, WIDTH_TYPE, CONTENT_TYPE } from '@app/models';
+import { PAGE_URL_TYPE} from '@app/models';
 import { DataService } from '@services/data/data.service';
 import { IUpdateSectionReq } from '@app/models';
 
@@ -51,8 +51,8 @@ export class PageEditorComponent implements OnInit {
 					});
 					this.contents = contents.map(content => {
 						const contentMap = {
-							width: content.width === WIDTH_TYPE.NARROW ? TypeSectionWidth.NARROW : content.width === WIDTH_TYPE.MEDIUM ? TypeSectionWidth.MEDIUM : TypeSectionWidth.WIDE,
-							type: content.type === CONTENT_TYPE.POST ? TypeContent.POST : content.type === CONTENT_TYPE.IMAGE_URL ? TypeContent.IMAGE_URL: TypeContent.IMAGE,
+							width: content.width,
+							type: content.type,
 							content: content.content,
 							seq: content.seq
 						};
@@ -82,17 +82,21 @@ export class PageEditorComponent implements OnInit {
 			...e
 		};
 
-		console.log(request);
-
 		if (this.contents.some(section => {return section.seq == request.seq})) {
 			this.dataService.updateSection(request).toPromise().then((response) => {
-				console.log(response);
-				this.loadPage();
+				if (response.status) {
+					this.loadPage();
+				} else {
+					alert(response.error ? response.error.message: "unknown error");
+				}
 			});
 		} else {
 			this.dataService.createSection(request).toPromise().then((response) => {
-				console.log(response);
-				this.loadPage();
+				if (response.status) {
+					this.loadPage();
+				} else {
+					alert(response.error ? response.error.message: "unknown error");
+				}
 			});
 		}
 	}
@@ -104,8 +108,10 @@ export class PageEditorComponent implements OnInit {
 		}
 
 		this.dataService.deleteSection(request).toPromise().then((response) => {
-			if(response.status) {
+			if (response.status) {
 				this.loadPage();
+			} else {
+				alert(response.error ? response.error.message: "unknown error");
 			}
 		});
 	}

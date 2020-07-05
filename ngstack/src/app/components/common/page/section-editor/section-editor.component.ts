@@ -1,6 +1,6 @@
 import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 import {FormBuilder, FormGroup, Validators, AbstractControl} from '@angular/forms';
-import {ISection, TypeSectionWidth, TypeContent} from '../common';
+import {ISection, TypeSectionWidth, TypeContent} from '@app/models';
 
 @Component({
 	selector: 'app-section-editor',

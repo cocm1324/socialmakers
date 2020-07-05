@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef, Input, EventEmitter, Output } from '@angular/core';
-import { ISection, TypeContent, TypeSectionWidth } from '../common';
+import { ISection, TypeContent, TypeSectionWidth } from '@app/models';
 import * as _ from 'lodash';
 
 @Component({

@@ -19,9 +19,12 @@ router.post('/register', (req, res) => {
 
     mysqlPool.getConnection((err, connection) => {
         if (err) {
-            res.status(500).send({
+            res.status(200).send({
                 status: false,
-                message: 'Internal Server Error'
+                error: {
+                    code: 500,
+                    message: 'Internal Server Error'   
+                }
             });
             return;
         }
@@ -29,18 +32,24 @@ router.post('/register', (req, res) => {
         connection.query(queryStatement.selectUser(login), (err1, rows) => {
             if (err1) {
                 connection.release();
-                res.status(500).send({
+                res.status(200).send({
                     status: false,
-                    message: 'Internal Server Error'
+                    error: {
+                        code: 500,
+                        message: 'Internal Server Error'   
+                    }
                 });
                 return;
             }
 
             if (rows.length > 0) {
                 connection.release();
-                res.status(402).send({
+                res.status(200).send({
                     status: false,
-                    message: 'User Already Exists'
+                    error: {
+                        code: 402,
+                        message: 'User Already Exists'
+                    }
                 });
                 return;
             }
@@ -50,9 +59,12 @@ router.post('/register', (req, res) => {
             connection.query(queryStatement.createUser(login, passwordHash, 'ADMIN'), (err2, rows) => {
                 connection.release();
                 if (err2) {
-                    res.status(500).send({
+                    res.status(200).send({
                         status: false,
-                        message: 'Internal Server Error'
+                        error: {
+                            code: 500,
+                            message: 'Internal Server Error'   
+                        }
                     });
                     return;
                 }
@@ -75,27 +87,36 @@ router.post('/register', (req, res) => {
 
 router.get('/login', (req, res) => {
     if (!req.headers.authorization) {
-        res.status(403).send({
+        res.status(200).send({
             status: false,
-            message: 'Unauthorized'
+            error: {
+                code: 403,
+                message: 'Unauthorized'
+            }
         });
         return;
     }
 
     const token = req.headers.authorization.split(' ')[1];
     if (token === 'null') {
-        res.status(403).send({
+        res.status(200).send({
             status: false,
-            message: 'Unauthorized'
+            error: {
+                code: 403,
+                message: 'Unauthorized'
+            }
         });
         return;
     }
     
     const {subject, expiration, admin} = jwtHelper.unmarshallToken(token);
     if (!subject || !expiration || !admin) {
-        res.status(403).send({
+        res.status(200).send({
             status: false,
-            message: 'Unauthorized'
+            error: {
+                code: 403,
+                message: 'Unauthorized'
+            }
         });
         return;
     }
@@ -104,9 +125,12 @@ router.get('/login', (req, res) => {
     const currentDate = new Date();
     
     if (expirationDate < currentDate) {
-        res.status(401).send({
+        res.status(200).send({
             status: false,
-            message: 'Session has expired'
+            error: {
+                code: 401,
+                message: 'Session has expired'
+            }
         });
         return;
     }
@@ -141,29 +165,35 @@ router.post('/login', (req, res) => {
     mysqlPool.getConnection((err, connection) => {
         if (err) {
             connection.release();
-            console.log(err);
-            res.status(500).send({
+            res.status(200).send({
                 status: false,
-                message: 'Internal Server Error'
+                error: {
+                    code: 500,
+                    message: 'Internal Server Error'   
+                }
             });
             return;
         }
         connection.query(queryStatement.selectUser(login), (err1, rows) => {
             connection.release();
-
             if (err1) {
-                console.log(err);
-                res.status(500).send({
+                res.status(200).send({
                     status: false,
-                    message: 'Internal Server Error'
+                    error: {
+                        code: 500,
+                        message: 'Internal Server Error'   
+                    }
                 });
                 return;
             }
 
             if (!rows || (rows && rows.length == 0)) {
-                res.status(404).send({
+                res.status(200).send({
                     status: false,
-                    message: "login or password is wrong"
+                    error: {
+                        code: 404,
+                        message: "login or password is wrong"
+                    }
                 });
                 return;
             }
@@ -172,9 +202,12 @@ router.post('/login', (req, res) => {
             const passwordData = rows[0].password;
             
             if (passwordHash !== passwordData) {
-                res.status(404).send({
+                res.status(200).send({
                     status: false,
-                    message: "login or password is wrong"
+                    error: {
+                        code: 404,
+                        message: "login or password is wrong"
+                    }
                 });
                 return;
             }

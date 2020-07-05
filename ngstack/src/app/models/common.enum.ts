@@ -1,3 +1,15 @@
+export enum TypeSectionWidth {
+    NARROW,
+    MEDIUM,
+    WIDE
+}
+
+export enum TypeContent {
+    IMAGE_URL,
+    IMAGE,
+    POST
+}
+
 export enum ROUTER_TYPE {
     DEFAULT = "",
     ACADEMY = "academy",
@@ -20,16 +32,4 @@ export enum PAGE_URL_TYPE {
     COURSES = "courses",
     ABOUT_US = "aboutUs",
     NOTICE = "notice"
-}
-
-export enum WIDTH_TYPE {
-    NARROW = "NARROW",
-    MEDIUM = "MEDIUM",
-    WIDE = "WIDE"
-}
-
-export enum CONTENT_TYPE {
-    IMAGE_URL = "IMAGEURL",
-    IMAGE = "IMAGE",
-    POST = "POST"
 }
