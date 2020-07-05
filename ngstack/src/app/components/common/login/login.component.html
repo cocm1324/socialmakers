@@ -1,10 +1,10 @@
-
-    <div class="p-grid p-justify-center p-align-center h-100 w-100">
-        <form [formGroup]="loginFormGroup">
-            <p-card header="로그인하기">
-                <!-- <p-header>
-                    <img style="border-radius: 3px 3px 0 0;" src="https://picsum.photos/400/200?blur=2">
-                </p-header> -->
+<div class="p-grid p-justify-center p-align-center h-100 w-100">
+    <form [formGroup]="loginFormGroup">
+        <p-card header="로그인하기">
+            <!-- <p-header>
+                <img style="border-radius: 3px 3px 0 0;" src="https://picsum.photos/400/200?blur=2">
+            </p-header> -->
+            <div class="card-body">
                 <div class="d-block w-100">
                     <span class="ui-float-label">
                         <input formControlName="login" class="w-100" pInputText> 
@@ -17,12 +17,13 @@
                         <label for="float-input">Password</label>
                     </span>
                 </div>
-                <p-footer>
-                    <div class="p-grid p-justify-end p-nogutter">
-                        <button label="로그인" (click)="loginButtonClicked($event)" [disabled]="loginFormGroup.invalid" pButton></button>
-                    </div>
-                </p-footer>
-            </p-card>
-            <!-- <pre>{{loginFormGroup.getRawValue() | json}}</pre> -->
-        </form>
-    </div>
+            </div>
+            <p-footer>
+                <div class="p-grid p-justify-end p-nogutter">
+                    <button label="로그인" (click)="loginButtonClicked($event)" [disabled]="loginFormGroup.invalid" pButton></button>
+                </div>
+            </p-footer>
+        </p-card>
+        <!-- <pre>{{loginFormGroup.getRawValue() | json}}</pre> -->
+    </form>
+</div>

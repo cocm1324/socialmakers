@@ -10,11 +10,11 @@ const courseData = {
 		pageThumb: "/api/static/image/MjIzMERBNzhFOEIxMjQzQUUwRDlEQTExQzg3N0VFMUQ=.gif",
 		pageThumbId: 5,
 		pageHeader: "/api/static/image/RTJFMUEwNUFCRERGMzlBMkNGMEQyODJFQUVFNTA5OEI=.jpg",
-		pageHeaderId: 4, 
-		courseMeta: {
-			registerUrl: "http://google.com",
-			subTitle: "메이커를 꿈꾸는 중고생 청소년들을 위한\n 웹 디자인 기초과정 Online Live Class",
-			description: "웹페이지의 제작의 기본 HTML & CSS,\nHTML과 CSS는 어떻게 다르고, 왜 공부해야 할까요?\n사람들의 정보공유를 위해 만들어진\n세상의 모든 웹페이지가\n HTML & CSS를 사용해서 만들어지고 있습니다.",
+		pageHeaderId: 4,
+		course: {
+			url: "http://google.com",
+			description1: "메이커를 꿈꾸는 중고생 청소년들을 위한\n 웹 디자인 기초과정 Online Live Class",
+			description2: "웹페이지의 제작의 기본 HTML & CSS,\nHTML과 CSS는 어떻게 다르고, 왜 공부해야 할까요?\n사람들의 정보공유를 위해 만들어진\n세상의 모든 웹페이지가\nHTML & CSS를 사용해서 만들어지고 있습니다.",
 			fieldTitle1: "일시",
 			fieldTitle2: "교육기간",
 			fieldTitle3: "교육인원",
@@ -64,12 +64,46 @@ const courseData = {
 })
 export class CourseComponent implements OnInit {
 
-	page: ISection[] = courseData.data.contents;
+	pageName: string;
+	description1: string;
+	description2: string;
+	pageHeader: string;
+	fieldTitle1: string;
+	fieldTitle2: string;
+	fieldTitle3: string;
+	fieldTitle4: string;
+	fieldTitle5: string;
+	fieldTitle6: string;
+	field1: string;
+	field2: string;
+	field3: string;
+	field4: string;
+	field5: string;
+	field6: string;
+	url: string;
+	contents: ISection[];
 
 	constructor() { }
 
 	ngOnInit() {
-
+		this.pageName = courseData.data.pageName;
+		this.description1 = courseData.data.course.description1;
+		this.description2 = courseData.data.course.description2;
+		this.pageHeader = courseData.data.pageHeader;
+		this.field1 = courseData.data.course.field1;
+		this.field2 = courseData.data.course.field2;
+		this.field3 = courseData.data.course.field3;
+		this.field4 = courseData.data.course.field4;
+		this.field5 = courseData.data.course.field5;
+		this.field6 = courseData.data.course.field6;
+		this.fieldTitle1 = courseData.data.course.fieldTitle1;
+		this.fieldTitle2 = courseData.data.course.fieldTitle2;
+		this.fieldTitle3 = courseData.data.course.fieldTitle3;
+		this.fieldTitle4 = courseData.data.course.fieldTitle4;
+		this.fieldTitle5 = courseData.data.course.fieldTitle5;
+		this.fieldTitle6 = courseData.data.course.fieldTitle6;
+		this.url = courseData.data.course.url;
+		this.contents = courseData.data.contents;
 	}
 
 }
