@@ -4,10 +4,23 @@
             hi
         </p-panel>
         <p-panel header="About Us" [toggleable]="true" [style]="{'margin-bottom':'20px'}">
-            <button pButton label="Edit" (click)="goToEditAboutUs($event)"></button>
+            <button pButton label="수정" class="ui-button-raised ui-button-secondary" (click)="goToEditAboutUs($event)"></button>
         </p-panel>
         <p-panel header="Courses" [toggleable]="true" [style]="{'margin-bottom':'20px'}">
-            hi
+            <p-orderList [value]="courses" [listStyle]="{'height':'250px'}" header="Courses" filter="filter" filterBy="pageName" filterPlaceholder="Course 이름으로 검색" dragdrop="true">
+                <ng-template let-course pTemplate="item">
+                    <div class="ui-helper-clearfix w-100 p-d-flex p-justify-between">
+                        <div style="width: 50%;">{{course.pageName}}</div>
+                        <div>
+                            <button pButton label="수정" class="ui-button-raised ui-button-secondary" style="margin-right: 0.5em;"></button>
+                            <button pButton label="삭제" class="ui-button-raised ui-button-danger"></button>
+                        </div>
+                    </div>
+                </ng-template>
+            </p-orderList>
+            <div class="w-100 p-d-flex p-justify-end p-mt-2">
+                <button pButton label="새 Course만들기"></button>
+            </div>
         </p-panel>
     </div>
 </div>

@@ -60,7 +60,8 @@
                 <p-footer class="p-d-flex p-justify-between">
                     <div>
                         <p-colorPicker formControlName="background"></p-colorPicker>
-                        <span> 배경색</span>
+                        <input type="text" formControlName="background" style="width: 6em; margin-left: 0.5em;" pInputText>
+                        <span style="margin-left: 0.5em;">배경색(#RGB)</span>
                     </div>
                     <div>
                         <button (click)="save()" [disabled]="isFormInvalid()" pButton type="button" label="Save" icon="pi pi-check" class="ui-button-primary p-mr-2"></button>
