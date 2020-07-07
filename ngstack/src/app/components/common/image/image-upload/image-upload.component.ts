@@ -1,7 +1,6 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DataService } from '@services/data/data.service';
-import { take } from 'rxjs/operators';
 
 const MAX_SIZE = 1024 * 1024 * 20;
 
