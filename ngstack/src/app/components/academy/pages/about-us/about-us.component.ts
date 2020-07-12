@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ISection, TypeSectionWidth, TypeContent } from '@app/models';
 import { DataService } from '@services/data/data.service';
-import { sequence } from '@angular/animations';
 
 @Component({
 	selector: 'app-about-us',
@@ -17,12 +16,13 @@ export class AboutUsComponent implements OnInit {
 	ngOnInit() {
 		this.dataService.getAboutUs().toPromise().then(resolve => {
 			if (resolve.status) {
-				const {contents} = resolve.data;
+				const {pageId, contents} = resolve.data;
 				contents.sort((a, b)=> {
-					if (a.seq - b.seq < 0) {
+					const diff = a.seqBase != 0 && b.seqBase != 0 ? a.seq / a.seqBase - b.seq / b.seqBase : -1;
+					if (diff < 0) {
 						return -1;
 					}
-					if (a.seq - b.seq > 0) {
+					if (diff > 0) {
 						return 1;
 					}
 					return 0;
@@ -33,6 +33,7 @@ export class AboutUsComponent implements OnInit {
 						type: content.type,
 						content: content.content,
 						seq: content.seq,
+						seqBase: content.seqBase,
 						background: content.background
 					};
 					if (content.imageId) {

@@ -1,13 +1,14 @@
 <div #page>
     <div *ngFor="let pageDatum of pageData; let i = index">
-        <div *ngIf="i == curEdit">
+        <div *ngIf="pageDatum.seq==curEdit && pageDatum.seqBase==curEditBase">
             <app-section-editor [section]="pageDatum" (onFinished)="closeEdit($event)"></app-section-editor>
         </div>
-        <div *ngIf="i != curEdit">
+        <div *ngIf="pageDatum.seq!=curEdit || pageDatum.seqBase!=curEditBase">
             <app-section-viewer 
                 [section]="pageDatum" 
                 [editable]="!isEditing()" 
-                [index]="i" 
+                [seq]="pageDatum.seq"
+                [seqBase]="pageDatum.seqBase" 
                 (onEdit)="viewerEdit($event)"
                 (onDelete)="viewerDelete($event)"
             ></app-section-viewer>

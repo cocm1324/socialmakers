@@ -50,10 +50,12 @@ router.get('/aboutUs', (req, res) => {
                 return;
             }
 
+            const pageId = rows1[0].page_id;
             const contents = rows1.map(row => {
                 const rowMap = {
                     contentId: row.content_id,
                     seq: row.seq,
+                    seqBase: row.seq_base,
                     width: row.width === widthEnum[0] ? 0 : row.width === widthEnum[1] ? 1 : 2,
                     type: row.type === typeEnum[0] ? 0 : row.type === typeEnum[1] ? 1 : 2,
                 };
@@ -73,7 +75,10 @@ router.get('/aboutUs', (req, res) => {
 
             res.status(200).send({
                 status: true,
-                data: contents
+                data: {
+                    pageId: pageId,
+                    contents: contents
+                }
             });
         });
     });
@@ -391,14 +396,14 @@ router.post('/notice', (req, res) => {
 
 });
 
-router.post('/:pageId/:seq', (req, res) => {
-    const {pageId, seq} = req.params;
+router.post('/:pageId/:seq/:seqBase', (req, res) => {
+    const {pageId, seq, seqBase} = req.params;
     const {type, width, content, imageId, background} = req.body;
 
     const typeStr = typeEnum[type];
     const widthStr = widthEnum[width];
 
-    if (req.body.pageId != pageId || req.body.seq != seq) {
+    if (req.body.pageId != pageId || req.body.seq != seq || req.body.seqBase != seqBase) {
         res.send({
             status: false,
             error: {
@@ -433,7 +438,7 @@ router.post('/:pageId/:seq', (req, res) => {
                 });
                 return;
             }
-            connection.query(queryStatement.createPageContentTransactionCreateContent(seq, widthStr, typeStr, content, background), (err2, result1) => {
+            connection.query(queryStatement.createPageContentTransactionCreateContent(seq, seqBase, widthStr, typeStr, content, background), (err2, result1) => {
                 if (err2) { 
                     connection.rollback(() => {
                         connection.release();
@@ -543,14 +548,14 @@ router.post('/:pageId/:seq', (req, res) => {
     });
 });
 
-router.put('/:pageId/:seq', (req, res) => {
-    const {pageId, seq} = req.params;
+router.put('/:pageId/:seq/:seqBase', (req, res) => {
+    const {pageId, seq, seqBase} = req.params;
     const {type, width, content, imageId, background} = req.body;
 
     const typeStr = typeEnum[type];
     const widthStr = widthEnum[width];
 
-    if (req.body.pageId != pageId || req.body.seq != seq) {
+    if (req.body.pageId != pageId || req.body.seq != seq || req.body.seqBase != seqBase) {
         res.send({
             status: false,
             error: {
@@ -573,7 +578,7 @@ router.put('/:pageId/:seq', (req, res) => {
             return;
         }
 
-        connection.query(queryStatement.updatePageContent(pageId, seq, typeStr, widthStr, content, imageId, background), (err1, rows1) => {
+        connection.query(queryStatement.updatePageContent(pageId, seq, seqBase, typeStr, widthStr, content, imageId, background), (err1, rows1) => {
             connection.release();
             if (err1) {
                 res.send({
@@ -593,8 +598,8 @@ router.put('/:pageId/:seq', (req, res) => {
     });
 }); 
 
-router.delete('/:pageId/:seq', (req, res) => {
-    const {pageId, seq} = req.params;
+router.delete('/:pageId/:seq/:seqBase', (req, res) => {
+    const {pageId, seq, seqBase} = req.params;
 
     mysqlPool.getConnection((err, connection) => {
         if (err) {
@@ -608,7 +613,7 @@ router.delete('/:pageId/:seq', (req, res) => {
             return;
         }
 
-        connection.query(queryStatement.deletePageContent(pageId, seq), (err1, rows1) => {
+        connection.query(queryStatement.deletePageContent(pageId, seq, seqBase), (err1, rows1) => {
             connection.release();
             if (err1) {
                 res.send({

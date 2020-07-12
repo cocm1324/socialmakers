@@ -70,6 +70,7 @@ const query = {
                 a.page_id, 
                 b.content_id, 
                 c.seq,
+                c.seq_base,
                 c.width,
                 c.type,
                 c.content,
@@ -93,6 +94,7 @@ const query = {
                 a.page_id, 
                 a.content_id, 
                 b.seq,
+                b.seq_base,
                 b.width,
                 b.type,
                 b.content,
@@ -109,11 +111,11 @@ const query = {
                 a.page_id=${pageId}
         `;
     },
-    createPageContentTransactionCreateContent: (seq, width, type, content, background) => {
+    createPageContentTransactionCreateContent: (seq, seqBase, width, type, content, background) => {
         const eContent = sqlStringEscape(content);
         return `
-            insert into dbibridge.content (seq, width, type, content, background) 
-            values (${seq}, '${width}', '${type}', '${eContent}', '${background}');
+            insert into dbibridge.content (seq, seq_base, width, type, content, background) 
+            values (${seq}, ${seqBase}, '${width}', '${type}', '${eContent}', '${background}');
         `;
     },
     createPageContentTransactionCreatePageContent: (pageId, contentId) => {
@@ -128,7 +130,7 @@ const query = {
             values (${imageId}, ${contentId});
         `;
     },
-    updatePageContent: (pageId, seq, type, width, content, imageId, background) => {        
+    updatePageContent: (pageId, seq, seqBase, type, width, content, imageId, background) => {        
         const eContent = sqlStringEscape(content);
 
         if (type === 'IMAGE' && imageId) {
@@ -144,7 +146,7 @@ const query = {
                     b.background='${background}', 
                     c.image_id=${imageId} 
                 where 
-                    a.page_id=${pageId} and b.seq=${seq};
+                    a.page_id=${pageId} and b.seq=${seq} and b.seq_base=${seqBase};
             `;
         } else {
             return `
@@ -157,11 +159,11 @@ const query = {
                     b.content='${eContent}', 
                     b.background='${background}' 
                 where 
-                    a.page_id=${pageId} and b.seq=${seq};
+                    a.page_id=${pageId} and b.seq=${seq} and b.seq_base=${seqBase};
             `;
         }
     },
-    deletePageContent: (pageId, seq) => {
+    deletePageContent: (pageId, seq, seqBase) => {
         return `
             delete
                 a, b, c
@@ -170,7 +172,7 @@ const query = {
                 inner join dbibridge.content b on a.content_id=b.content_id 
                 left join dbibridge.image_content c on b.content_id=c.content_id
             where 
-                a.page_id=${pageId} and b.seq=${seq};
+                a.page_id=${pageId} and b.seq=${seq} and b.seq_base=${seqBase};
         `;
     },
     selectCourse: () => {

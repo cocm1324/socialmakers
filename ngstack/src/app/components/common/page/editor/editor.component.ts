@@ -11,11 +11,12 @@ export class EditorComponent implements OnInit {
 
 	@Input() pageData: ISection[];
 	@Output() onFinished: EventEmitter<any> = new EventEmitter();
-	@Output() onSectionFinished: EventEmitter<any> = new EventEmitter();
-	@Output() onSectionDelete: EventEmitter<any> = new EventEmitter();
+	@Output() onSectionFinished: EventEmitter<ISection> = new EventEmitter();
+	@Output() onSectionDelete: EventEmitter<ISection> = new EventEmitter();
 
 	curEditSectionData = null;
 	curEdit: number = -1;
+	curEditBase: number = 1;
 	newSection: ISection = null;
 
 	constructor() { }
@@ -24,15 +25,22 @@ export class EditorComponent implements OnInit {
 	}
 
 	createNewSection() {
+		let newSeq = 0;
+		if (this.pageData && this.pageData.length > 0 && this.pageData[this.pageData.length - 1].seqBase != 0) {
+			newSeq = Math.floor(this.pageData[this.pageData.length - 1].seq / this.pageData[this.pageData.length - 1].seqBase) + 1;
+		}
+
 		this.newSection = {
 			type: null,
 			content: "",
 			width: TypeSectionWidth.NARROW,
-			seq: this.pageData && this.pageData.length > 0 ? this.pageData[this.pageData.length - 1].seq + 1 : 0,
+			seq: newSeq,
+			seqBase: 1,
 			background: "#FFFFFF"
 		};
 		this.curEditSectionData = _.cloneDeep(this.newSection);
-		this.curEdit = this.pageData && this.pageData.length > 0 ? this.pageData[this.pageData.length - 1].seq + 1 : 0;
+		this.curEdit = newSeq;
+		this.curEditBase = 1;
 	}
 
 	isEditing() {
@@ -43,9 +51,11 @@ export class EditorComponent implements OnInit {
 		return this.pageData == undefined || this.pageData.length == 0;
 	}
 
-	viewerEdit($event) {
-		this.curEditSectionData = _.cloneDeep(this.pageData[$event]);
-		this.curEdit = $event;
+	viewerEdit(e) {
+		const {seq, seqBase} = e;
+		this.curEditSectionData = _.cloneDeep(this.pageData.filter(pageDatum => pageDatum.seq==seq && pageDatum.seqBase==seqBase)[0]);
+		this.curEdit = seq;
+		this.curEditBase = seqBase;
 	}
 
 	closeEdit(e) {
@@ -54,6 +64,7 @@ export class EditorComponent implements OnInit {
 		if (changed) {
 			const sectionChange = {
 				seq: this.curEdit,
+				seqBase: this.curEditBase,
 				...e
 			}
 			this.onSectionFinished.emit(sectionChange);
@@ -65,10 +76,11 @@ export class EditorComponent implements OnInit {
 
 		this.curEditSectionData = null;
 		this.curEdit = -1;
+		this.curEditBase = 1;
 	}
 
 	viewerDelete(e) {
-		this.onSectionDelete.emit(this.pageData[e].seq);
+		this.onSectionDelete.emit(e);
 	}
 
 	finish() {

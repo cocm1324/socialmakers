@@ -32,6 +32,7 @@ const courseData = {
 			{
 				contentId: 5,
 				seq: 0,
+				seqBase: 1,
 				width: 0,
 				type: 1,
 				content: "/api/static/image/QUY4ODE3NzE3QzA1ODFBNEI3NjBEOUJDMkQxREExNjU=.jpg",
@@ -41,6 +42,7 @@ const courseData = {
 			{
 				contentId: 7,
 				seq: 1,
+				seqBase: 1,
 				width: 0,
 				type: 1,
 				content: "/api/static/image/RDUyOTY3RjQ3REREMDA4MzhDM0YxNzU5MUZCN0NCNUE=.jpg",
@@ -50,6 +52,7 @@ const courseData = {
 			{
 				contentId: 8,
 				seq: 2,
+				seqBase: 1,
 				width: 0,
 				type: 1,
 				content: "/api/static/image/RjcwNzdGMTY5RkZGMjJBNUFFNTEzOTdCMzFFOUY1N0Q=.png",

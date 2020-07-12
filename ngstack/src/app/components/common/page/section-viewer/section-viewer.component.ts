@@ -10,9 +10,10 @@ export class SectionViewerComponent implements OnInit {
 
 	@Input() section: ISection;
 	@Input() editable: boolean = false;
-	@Input() index: number;
-	@Output() onEdit: EventEmitter<number> = new EventEmitter();
-	@Output() onDelete: EventEmitter<number> = new EventEmitter();
+	@Input() seq: number;
+	@Input() seqBase: number;
+	@Output() onEdit: EventEmitter<any> = new EventEmitter();
+	@Output() onDelete: EventEmitter<any> = new EventEmitter();
 	typeWidth = TypeSectionWidth;
 	typeContent = TypeContent;
 	
@@ -33,14 +34,18 @@ export class SectionViewerComponent implements OnInit {
 	isNarrow() {return this.width == this.typeWidth.NARROW}
 
 	edit() {
-		if (this.index >= 0) {
-			this.onEdit.emit(this.index);
-		} 
+		this.onEdit.emit({
+			seq: this.seq,
+			seqBase: this.seqBase
+		});
 	}
 
 	delete() {
 		if (confirm("섹션을 삭제하시겠습니까?")) {
-			this.onDelete.emit(this.index);
+			this.onDelete.emit({
+				seq: this.seq,
+				seqBase: this.seqBase
+			});
 		}
 	}
 }

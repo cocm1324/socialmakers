@@ -10,7 +10,7 @@ import { map } from 'rxjs/operators';
 export class DataService {
 	private userUrl = "/api/user";
 	private imageUrl = "/api/image";
-	private postUrl = "/api/page";
+	private pageUrl = "/api/page";
 
 	constructor(private http: HttpClient) { }
 
@@ -41,21 +41,21 @@ export class DataService {
 	}
 
 	getAboutUs() {
-		return this.http.get<IGetPostAboutUs>(`${this.postUrl}/aboutUs`);
+		return this.http.get<IGetPostAboutUs>(`${this.pageUrl}/aboutUs`);
 	}
 
 	createSection(request: ICreateSectionReq): Observable<ICommonRes> {
-		const {pageId, seq} = request;
-		return this.http.post<ICommonRes>(`${this.postUrl}/${pageId}/${seq}`, request);
+		const {pageId, seq, seqBase} = request;
+		return this.http.post<ICommonRes>(`${this.pageUrl}/${pageId}/${seq}/${seqBase}`, request);
 	}
 
 	updateSection(request: IUpdateSectionReq): Observable<ICommonRes> {
-		const {pageId, seq} = request;
-		return this.http.put<ICommonRes>(`${this.postUrl}/${pageId}/${seq}`, request);
+		const {pageId, seq, seqBase} = request;
+		return this.http.put<ICommonRes>(`${this.pageUrl}/${pageId}/${seq}/${seqBase}`, request);
 	}
 
 	deleteSection(request: IDeleteSectionReq): Observable<ICommonRes> {
-		const {pageId, seq} = request;
-		return this.http.delete<ICommonRes>(`${this.postUrl}/${pageId}/${seq}`);
+		const {pageId, seq, seqBase} = request;
+		return this.http.delete<ICommonRes>(`${this.pageUrl}/${pageId}/${seq}/${seqBase}`);
 	}
 }

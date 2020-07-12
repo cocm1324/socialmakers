@@ -55,6 +55,7 @@ export class PageEditorComponent implements OnInit {
 							type: content.type,
 							content: content.content,
 							seq: content.seq,
+							seqBase: content.seqBase,
 							background: content.background
 						};
 						if (content.imageId) {
@@ -103,9 +104,11 @@ export class PageEditorComponent implements OnInit {
 	}
 
 	onSectionDelete(e) {
+		const {seq, seqBase} = e;
 		const request = {
 			pageId: this.id,
-			seq: e
+			seq: seq,
+			seqBase: seqBase
 		}
 
 		this.dataService.deleteSection(request).toPromise().then((response) => {

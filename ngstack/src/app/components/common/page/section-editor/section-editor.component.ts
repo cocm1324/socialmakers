@@ -30,6 +30,7 @@ export class SectionEditorComponent implements OnInit {
 			type: [null, Validators.required],
 			content: ["", Validators.required],
 			seq: [0, Validators.required],
+			seqBase: [1, Validators.required],
 			background: ["#FFFFFF", Validators.required]
 		});
 
@@ -39,6 +40,7 @@ export class SectionEditorComponent implements OnInit {
 				type: this.section.type,
 				content: this.section.content,
 				seq: this.section.seq,
+				seqBase: this.section.seqBase,
 				background: this.section.background
 			});
 
