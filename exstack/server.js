@@ -11,7 +11,8 @@ const user = require('./src/endpoints/user');
 
 // enable files uploads
 app.use(fileUpload({
-    createParentPath: true
+    createParentPath: true,
+    limits: { fileSize: 20 * 1024 * 1024 }
 }));
 
 //add other middleware

@@ -105,6 +105,8 @@ router.get('/', (req, res) => {
 
 router.post('/', (req, res) => {
     try {
+        console.log(req)
+
         if(!req.files) {
             res.send({
                 status: false,

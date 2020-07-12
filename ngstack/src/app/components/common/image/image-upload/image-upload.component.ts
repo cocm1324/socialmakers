@@ -2,7 +2,7 @@ import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DataService } from '@services/data/data.service';
 
-const MAX_SIZE = 1024 * 1024 * 20;
+const MAX_SIZE = 1024 * 1024 * 40;
 
 @Component({
 	selector: 'app-image-upload',
