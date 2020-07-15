@@ -459,6 +459,53 @@ router.delete('/course/:pageId', (req, res) => {
     });
 });
 
+router.put('/course/updateSeq/:pageId', (req, res) => {
+    const {pageId} = req.params;
+    const {courseId, seq, seqBase} = req.body;
+
+    if (courseId != pageId) {
+        res.send({
+            status: false,
+            error: {
+                code:403,
+                message: 'Invalid Request'
+            }
+        });
+        return;
+    }
+
+    mysqlPool.getConnection((err, connection) => {
+        if (err) {
+            rres.send({
+                status: false,
+                error: {
+                    code: 500,
+                    message: 'Internal Server Error'
+                }
+            });
+            return;
+        }
+
+        connection.query(queryStatement.updateCourseSeq(pageId, seq, seqBase), (err1, rows1) => {
+            connection.release();
+            if (err1) {
+                res.send({
+                    status: false,
+                    error: {
+                        code: 500,
+                        message: 'Internal Server Error'
+                    }
+                });
+                return;
+            }
+
+            res.status(200).send({
+                status: true,
+            });
+        });
+    });
+});
+
 router.get('/notice', (req, res) => {
 
 });

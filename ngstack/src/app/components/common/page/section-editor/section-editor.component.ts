@@ -31,7 +31,7 @@ export class SectionEditorComponent implements OnInit, OnDestroy {
 			width: [this.typeWidth.MEDIUM],
 			type: [null, Validators.required],
 			content: ["", Validators.required],
-			seq: [0, Validators.required],
+			seq: [1, Validators.required],
 			seqBase: [1, Validators.required],
 			background: ["#FFFFFF", Validators.required],
 			backgroundInput: ["#FFFFFF", Validators.required]

@@ -19,6 +19,11 @@ export class AcademyAdminComponent implements OnInit {
 		this.router.navigate(['academy/admin']);
 	}
 
+	goToMain(e) {
+		e.preventDefault();
+		this.router.navigate(['academy/admin']);
+	}
+
 	logout(e) {
 		e.preventDefault();
 		localStorage.removeItem(LOCAL_STORAGE_TYPE.LOGIN);

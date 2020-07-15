@@ -1,17 +1,17 @@
 <div class="p-grid-medium">
     <div class="p-col">
         <p-panel header="Main Menu" [toggleable]="true" [style]="{'margin-bottom':'20px'}">
-            hi
+            To Be Delivered
         </p-panel>
         <p-panel header="About Us" [toggleable]="true" [style]="{'margin-bottom':'20px'}">
             <button pButton label="수정" class="ui-button-secondary" (click)="goToEditAboutUs($event)"></button>
         </p-panel>
         <p-panel header="Courses" [toggleable]="true" [style]="{'margin-bottom':'20px'}">
             <div class="p-d-flex p-justify-end p-mb-2">
-                <button [disabled]="selectedCourseId==-1" class="p-mr-2 ui-button-secondary" pButton label="이름 변경하기"></button>
-                <button [disabled]="selectedCourseId==-1" class="p-mr-2 ui-button-secondary" pButton label="썸네일 변경하기"></button>
+                <!-- <button [disabled]="selectedCourseId==-1" class="p-mr-2 ui-button-secondary" pButton label="이름 변경하기"></button>
+                <button [disabled]="selectedCourseId==-1" class="p-mr-2 ui-button-secondary" pButton label="썸네일 변경하기"></button> -->
                 <button [disabled]="selectedCourseId==-1" class="p-mr-2 ui-button-secondary" pButton label="내용 수정하기" (click)="goToEditCourse($event)"></button>
-                <button class="ui-button-danger" [disabled]="selectedCourseId==-1" pButton label="삭제하기"></button>
+                <button class="ui-button-danger" [disabled]="selectedCourseId==-1" pButton label="삭제하기" (click)="onCourseDelete()"></button>
             </div>
             <p-orderList 
                 [value]="courses" 
@@ -21,7 +21,6 @@
                 filterPlaceholder="Course 이름으로 검색" 
                 (onReorder)="onCourseOrdered($event)"
                 (onSelectionChange)="onCourseSelected($event)"
-                dragdrop="true"
             >
                 <ng-template let-course pTemplate="item">
                     <div class="ui-helper-clearfix w-100 p-d-flex p-justify-between">
@@ -33,6 +32,12 @@
             <div class="w-100 p-d-flex p-justify-end p-mt-2">
                 <button pButton label="새 Course만들기"></button>
             </div>
+        </p-panel>
+        <p-panel header="Notice" [toggleable]="true" [style]="{'margin-bottom':'20px'}">
+            To Be Delivered
+        </p-panel>
+        <p-panel header="이미지 관리" [toggleable]="true" [style]="{'margin-bottom':'20px'}">
+            To Be Delivered
         </p-panel>
     </div>
 </div>

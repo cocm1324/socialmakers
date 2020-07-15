@@ -25,7 +25,7 @@ export class EditorComponent implements OnInit {
 	}
 
 	createNewSection() {
-		let newSeq = 0;
+		let newSeq = 1;
 		if (this.pageData && this.pageData.length > 0 && this.pageData[this.pageData.length - 1].seqBase != 0) {
 			newSeq = Math.floor(this.pageData[this.pageData.length - 1].seq / this.pageData[this.pageData.length - 1].seqBase) + 1;
 		}

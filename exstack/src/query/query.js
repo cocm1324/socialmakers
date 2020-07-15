@@ -310,6 +310,16 @@ const query = {
             where 
                 a.page_id=${pageId};
         `;
+    },
+    updateCourseSeq: (pageId, seq, seqBase) => {
+        return `
+            update
+                dbibridge.course
+            set
+                seq=${seq}, seq_base=${seqBase}
+            where
+                page_id=${pageId};
+        `;
     }
 }
 

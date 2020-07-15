@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {IRunLoginReq, IRunLoginRes, IRunVerifyLoginRes, ICreateImageReq, IGetPostAboutUs, ICreateSectionReq, IUpdateSectionReq, IDeleteSectionReq, ICommonRes, IGetCourseRes, IGetCourseListRes} from '../../models';
+import {IRunLoginReq, IRunLoginRes, IRunVerifyLoginRes, ICreateImageReq, IGetPostAboutUs, ICreateSectionReq, IUpdateSectionReq, IDeleteSectionReq, ICommonRes, IGetCourseRes, IGetCourseListRes, IUpdateCourseSeqReq} from '../../models';
 import { map } from 'rxjs/operators';
 
 @Injectable({
@@ -65,5 +65,13 @@ export class DataService {
 
 	getCourse(id: number): Observable<IGetCourseRes> {
 		return this.http.get<IGetCourseRes>(`${this.pageUrl}/course/${id}`);
+	}
+
+	updateCourseSeq(request: IUpdateCourseSeqReq): Observable<ICommonRes> {
+		return this.http.put<ICommonRes>(`${this.pageUrl}/course/updateSeq/${request.courseId}`, request);
+	}
+
+	deleteCourse(id: number): Observable<ICommonRes> {
+		return this.http.delete<ICommonRes>(`${this.pageUrl}/course/${id}`);
 	}
 }

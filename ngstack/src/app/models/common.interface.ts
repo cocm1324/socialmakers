@@ -113,3 +113,9 @@ export interface IGetCourseRes extends ICommonRes {
         contents: Array<ISection>;
     }
 }
+
+export interface IUpdateCourseSeqReq {
+    courseId: number;
+    seq: number;
+    seqBase: number;
+}
