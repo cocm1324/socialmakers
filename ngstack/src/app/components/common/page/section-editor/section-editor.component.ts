@@ -1,13 +1,14 @@
-import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
+import {Component, OnInit, Input, Output, EventEmitter, OnDestroy} from '@angular/core';
 import {FormBuilder, FormGroup, Validators, AbstractControl} from '@angular/forms';
 import {ISection, TypeSectionWidth, TypeContent} from '@app/models';
+import {Subscription} from 'rxjs';
 
 @Component({
 	selector: 'app-section-editor',
 	templateUrl: './section-editor.component.html',
 	styleUrls: ['./section-editor.component.scss']
 })
-export class SectionEditorComponent implements OnInit {
+export class SectionEditorComponent implements OnInit, OnDestroy {
 
 	@Input() section: ISection;
 	@Output() onFinished: EventEmitter<any> = new EventEmitter();
@@ -15,14 +16,15 @@ export class SectionEditorComponent implements OnInit {
 	typeWidth = TypeSectionWidth;
 	typeContent = TypeContent;
 	
-	get width() {return this.sectionForm.get('width').value}
-	get type() {return this.sectionForm.get('type').value}
-	get content() {return this.sectionForm.get('content').value}
-	get background() {return this.sectionForm.get('background').value}
+	subscription: Subscription[] = [];
 
-	constructor(
-		private fb: FormBuilder
-	) { }
+	get width() {return this.sectionForm.get('width')}
+	get type() {return this.sectionForm.get('type')}
+	get content() {return this.sectionForm.get('content')}
+	get background() {return this.sectionForm.get('background')}
+	get backgroundInput() {return this.sectionForm.get('backgroundInput')}
+
+	constructor(private fb: FormBuilder) { }
 
 	ngOnInit() {
 		this.sectionForm = this.fb.group({
@@ -31,8 +33,22 @@ export class SectionEditorComponent implements OnInit {
 			content: ["", Validators.required],
 			seq: [0, Validators.required],
 			seqBase: [1, Validators.required],
-			background: ["#FFFFFF", Validators.required]
+			background: ["#FFFFFF", Validators.required],
+			backgroundInput: ["#FFFFFF", Validators.required]
 		});
+
+		const backgroundChange = this.background.valueChanges.subscribe(value => {
+			if (this.backgroundInput.value !== value) {
+				this.backgroundInput.setValue(value);
+			}
+		});
+		this.subscription.push(backgroundChange);
+		const backgroundInputChange = this.backgroundInput.valueChanges.subscribe(value => {
+			if (value !== this.background.value) {
+				this.background.setValue(value);
+			}
+		});
+		this.subscription.push(backgroundInputChange);
 
 		if (this.section) {
 			this.sectionForm.patchValue({
@@ -41,7 +57,8 @@ export class SectionEditorComponent implements OnInit {
 				content: this.section.content,
 				seq: this.section.seq,
 				seqBase: this.section.seqBase,
-				background: this.section.background
+				background: this.section.background,
+				backgroundInput: this.section.background
 			});
 
 			if (this.section.imageId != undefined) {
@@ -50,13 +67,13 @@ export class SectionEditorComponent implements OnInit {
 		}
 	}
 
-	isTypeNull() {return this.type == null}
-	isImage() {return this.type == this.typeContent.IMAGE || this.type == this.typeContent.IMAGE_URL}
-	isPost() {return this.type == this.typeContent.POST}
+	isTypeNull() {return this.type.value == null}
+	isImage() {return this.type.value == this.typeContent.IMAGE || this.type.value == this.typeContent.IMAGE_URL}
+	isPost() {return this.type.value == this.typeContent.POST}
 	
-	isWide() {return this.width == this.typeWidth.WIDE}
-	isMedium() {return this.width == this.typeWidth.MEDIUM}
-	isNarrow() {return this.width == this.typeWidth.NARROW}
+	isWide() {return this.width.value == this.typeWidth.WIDE}
+	isMedium() {return this.width.value == this.typeWidth.MEDIUM}
+	isNarrow() {return this.width.value == this.typeWidth.NARROW}
 
 	isFormInvalid() {
 		return this.sectionForm.invalid;
@@ -106,7 +123,7 @@ export class SectionEditorComponent implements OnInit {
 	}
 
 	isFormModified() {
-		return this.section.width != this.width || this.section.type != this.type || this.section.content != this.content;
+		return this.section.width != this.width.value || this.section.type != this.type.value || this.section.content != this.content.value;
 	}
 
 	imageUrlSubmitted(url) {
@@ -136,5 +153,11 @@ export class SectionEditorComponent implements OnInit {
 
 	save() {
 		this.onFinished.emit(this.sectionForm.getRawValue());
+	}
+
+	ngOnDestroy() {
+		this.subscription.forEach(item => {
+			item.unsubscribe();
+		});
 	}
 }

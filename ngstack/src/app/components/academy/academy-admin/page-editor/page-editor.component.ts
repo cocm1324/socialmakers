@@ -3,7 +3,6 @@ import { ISection, TypeSectionWidth, TypeContent } from '@app/models';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PAGE_URL_TYPE} from '@app/models';
 import { DataService } from '@services/data/data.service';
-import { IUpdateSectionReq } from '@app/models';
 
 @Component({
   selector: 'app-page-editor',
@@ -36,9 +35,9 @@ export class PageEditorComponent implements OnInit {
 
 	loadPage() {
 		if (this.pageType === PAGE_URL_TYPE.ABOUT_US) {
-			this.dataService.getAboutUs().toPromise().then(resolve => {
-				if (resolve.status) {
-					const {pageId, contents} = resolve.data;
+			this.dataService.getAboutUs().toPromise().then(res => {
+				if (res.status) {
+					const {pageId, contents} = res.data;
 					this.id = pageId;
 					contents.sort((a, b)=> {
 						if (a.seq - b.seq < 0) {
@@ -67,8 +66,36 @@ export class PageEditorComponent implements OnInit {
 			}, reject => {
 				console.log(reject);
 			});
-		} else {
-
+		} else if (this.pageType === PAGE_URL_TYPE.COURSE) {
+			this.dataService.getCourse(this.id).toPromise().then(res => {
+				if (res.status) {
+					const {courseId, contents} = res.data;
+					this.id = courseId;
+					contents.sort((a, b)=> {
+						if (a.seq - b.seq < 0) {
+							return -1;
+						}
+						if (a.seq - b.seq > 0) {
+							return 1;
+						}
+						return 0;
+					});
+					this.contents = contents.map(content => {
+						const contentMap = {
+							width: content.width,
+							type: content.type,
+							content: content.content,
+							seq: content.seq,
+							seqBase: content.seqBase,
+							background: content.background
+						};
+						if (content.imageId) {
+							contentMap['imageId'] = content.imageId;
+						}
+						return contentMap;
+					});
+				}
+			});
 		}
 	}
 

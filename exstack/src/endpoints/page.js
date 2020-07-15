@@ -110,9 +110,21 @@ router.get('/course', (req, res) => {
                 return;
             }
 
+            const courses = rows1.map(row => {
+                return {
+                    courseThumb: `/api/static/image/${row.message_digest}.${row.extension}`,
+                    courseThumbThumb: `/api/static/image/thumb/${row.message_digest}.${row.extension}`,
+                    courseThumbImageId: row.image_id,
+                    courseName: row.name,
+                    courseId: row.page_id,
+                    seq: row.seq,
+                    seqBase: row.seq_base
+                };
+            });
+
             res.status(200).send({
                 status: true,
-                data: rows1
+                data: courses
             });
         });
     });
@@ -276,8 +288,8 @@ router.get('/course/:pageId', (req, res) => {
         }
 
         connection.query(queryStatement.selectCourseInfo(pageId), (err1, rows1) => {
-            connection.release();
             if (err1) {
+                connection.release();
                 res.send({
                     status: false,
                     error: {
@@ -288,9 +300,68 @@ router.get('/course/:pageId', (req, res) => {
                 return;
             }
 
-            res.status(200).send({
-                status: true,
-                data: rows1
+            const row = rows1[0]
+            const coursePage = {
+                courseId: row.page_id,
+                headerImage: `/api/static/image/${row.message_digest}.${row.extension}`,
+                headerImageThumb: `/api/static/image/thumb/${row.message_digest}.${row.extension}`,
+                courseName: row.name,
+                description1: row.description1,
+                description2: row.description2,
+                fieldTitle1: row.field_title1,
+                fieldTitle2: row.field_title2,
+                fieldTitle3: row.field_title3,
+                fieldTitle4: row.field_title4,
+                fieldTitle5: row.field_title5,
+                fieldTitle6: row.field_title6,
+                field1: row.field1,
+                field2: row.field2,
+                field3: row.field3,
+                field4: row.field4,
+                field5: row.field5,
+                field6: row.field6,
+                registerUrl: row.register_url
+            }
+
+            connection.query(queryStatement.selectPageContent(pageId), (err2, rows2) => {
+                connection.release();
+                if (err2) {
+                    res.send({
+                        status: false,
+                        error: {
+                            code: 500,
+                            message: 'Internal Server Error'
+                        }
+                    });
+                    return;
+                }
+
+                const contents = rows2.map(row2 => {
+                    const rowMap = {
+                        contentId: row2.content_id,
+                        seq: row2.seq,
+                        seqBase: row2.seq_base,
+                        width: row2.width === widthEnum[0] ? 0 : row2.width === widthEnum[1] ? 1 : 2,
+                        type: row2.type === typeEnum[0] ? 0 : row2.type === typeEnum[1] ? 1 : 2,
+                    };
+                    if (row2.background) {
+                        rowMap.background = row2.background;
+                    }
+                    if (rowMap.type === 'IMAGE') {
+                        rowMap.content = `/api/static/image/${row2.message_digest}.${row2.extension}`;
+                        rowMap.imageId = row2.image_id;
+                    } else {
+                        rowMap.content = row2.content;
+                    }
+    
+                    return rowMap;
+                });
+                coursePage.contents = contents;
+
+                res.status(200).send({
+                    status: true,
+                    data: coursePage
+                });
             });
         });
     });
@@ -452,6 +523,7 @@ router.post('/:pageId/:seq/:seqBase', (req, res) => {
                         return;
                     });
                 }
+
 
                 const contentId = result1.insertId;
                 if (!contentId) {

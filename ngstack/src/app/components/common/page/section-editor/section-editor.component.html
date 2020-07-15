@@ -1,5 +1,5 @@
 <form [formGroup]="sectionForm">
-<div class="w-100 p-my-3" [ngStyle]="{'background-color': background}">
+<div class="w-100 p-my-3" [ngStyle]="{'background-color': background.value}">
     <div class="p-relative p-nogutter"
         [class.p-grid]="isWide()"
         [class.p-grid-medium]="isMedium()"
@@ -49,18 +49,18 @@
                     <div class="ui-g-12 p-pl-0 p-pr-0">
                         <div class="ui-inputgroup w-100">
                             <input type="text" formControlName="content" pInputText>
-                            <app-image-url label="URL등록하기" [initialValue]="content" (onSubmit)="imageUrlSubmitted($event)"></app-image-url>
+                            <app-image-url label="URL등록하기" [initialValue]="content.value" (onSubmit)="imageUrlSubmitted($event)"></app-image-url>
                             <app-image-upload label="추가하기" (onSubmit)="imageUploaded($event)"></app-image-upload>
                         </div>
                     </div>
                 </div>
                 <div class="preview">
-                    <img class="image-container" [src]="content" onerror="this.src='./assets/img/notfound.jpg';">
+                    <img class="image-container" [src]="content.value" onerror="this.src='./assets/img/notfound.jpg';">
                 </div>
                 <p-footer class="p-d-flex p-justify-between">
                     <div>
                         <p-colorPicker formControlName="background"></p-colorPicker>
-                        <input type="text" formControlName="background" style="width: 6em; margin-left: 0.5em;" pInputText>
+                        <input type="text" formControlName="backgroundInput" style="width: 6em; margin-left: 0.5em;" pInputText>
                         <span style="margin-left: 0.5em;">배경색(#RGB)</span>
                     </div>
                     <div>
@@ -75,7 +75,7 @@
             <p-card styleClass="ui-card-shadow">
                 <p-editor formControlName="content" [style]="{'height':'20em'}"></p-editor>
                 <div class="preview p-post-style">
-                    <div [innerHTML]="content"></div>
+                    <div [innerHTML]="content.value"></div>
                 </div>
                 <p-footer class="p-d-flex p-justify-end">
                     <p-colorPicker formControlName="background"></p-colorPicker>

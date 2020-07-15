@@ -29,7 +29,7 @@ export enum PAGE_TYPE {
 }
 
 export enum PAGE_URL_TYPE {
-    COURSES = "courses",
+    COURSE = "course",
     ABOUT_US = "aboutUs",
     NOTICE = "notice"
 }

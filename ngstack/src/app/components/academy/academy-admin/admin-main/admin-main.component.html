@@ -4,17 +4,29 @@
             hi
         </p-panel>
         <p-panel header="About Us" [toggleable]="true" [style]="{'margin-bottom':'20px'}">
-            <button pButton label="수정" class="ui-button-raised ui-button-secondary" (click)="goToEditAboutUs($event)"></button>
+            <button pButton label="수정" class="ui-button-secondary" (click)="goToEditAboutUs($event)"></button>
         </p-panel>
         <p-panel header="Courses" [toggleable]="true" [style]="{'margin-bottom':'20px'}">
-            <p-orderList [value]="courses" [listStyle]="{'height':'250px'}" header="Courses" filter="filter" filterBy="pageName" filterPlaceholder="Course 이름으로 검색" dragdrop="true">
+            <div class="p-d-flex p-justify-end p-mb-2">
+                <button [disabled]="selectedCourseId==-1" class="p-mr-2 ui-button-secondary" pButton label="이름 변경하기"></button>
+                <button [disabled]="selectedCourseId==-1" class="p-mr-2 ui-button-secondary" pButton label="썸네일 변경하기"></button>
+                <button [disabled]="selectedCourseId==-1" class="p-mr-2 ui-button-secondary" pButton label="내용 수정하기" (click)="goToEditCourse($event)"></button>
+                <button class="ui-button-danger" [disabled]="selectedCourseId==-1" pButton label="삭제하기"></button>
+            </div>
+            <p-orderList 
+                [value]="courses" 
+                [listStyle]="{'height':'168px'}" 
+                filter="filter" 
+                filterBy="courseName" 
+                filterPlaceholder="Course 이름으로 검색" 
+                (onReorder)="onCourseOrdered($event)"
+                (onSelectionChange)="onCourseSelected($event)"
+                dragdrop="true"
+            >
                 <ng-template let-course pTemplate="item">
                     <div class="ui-helper-clearfix w-100 p-d-flex p-justify-between">
-                        <div style="width: 50%;">{{course.pageName}}</div>
-                        <div>
-                            <button pButton label="수정" class="ui-button-raised ui-button-secondary" style="margin-right: 0.5em;"></button>
-                            <button pButton label="삭제" class="ui-button-raised ui-button-danger"></button>
-                        </div>
+                        <img [src]="course.courseThumbThumb" class="p-d-inline-block" width="72">
+                        <div style="width: 70%;">{{course.courseName}}</div>
                     </div>
                 </ng-template>
             </p-orderList>

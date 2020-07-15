@@ -1,17 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-
-const course = [
-	{
-		pageName: "fqojerwg"
-	},
-	{
-		pageName: "fqoje124rwg"
-	},
-	{
-		pageName: "f1623qojerwg"
-	}
-]
+import { DataService } from '@services/data/data.service';
 
 @Component({
 	selector: 'app-main',
@@ -21,15 +10,37 @@ const course = [
 export class AdminMainComponent implements OnInit {
 
 	courses;
+	selectedCourseId = -1;
 
-  	constructor(private router: Router) { }
+  	constructor(private router: Router, private dataService: DataService) { }
 
 	ngOnInit() {
-		this.courses = course;
+		this.dataService.getCourseList().toPromise().then((res) => {
+			if (res.status) {
+				this.courses = res.data;
+			} else {
+				alert(`${res.error.code}: ${res.error.message}`);
+			}
+		});
 	}
 
   	goToEditAboutUs(e) {
 		e.preventDefault();
 		this.router.navigate(['academy/admin/pageEditor/aboutUs']);
+	}
+
+	onCourseSelected(e) {
+		e.originalEvent ? e.originalEvent.preventDefault(): null;
+		this.selectedCourseId = e.value[0].courseId;
+	}
+
+	onCourseOrdered(e) {
+		console.log(e)
+		console.log(this.courses);
+	}
+
+	goToEditCourse(e) {
+		e.preventDefault();
+		this.router.navigate([`academy/admin/pageEditor/course/${this.selectedCourseId}`]);
 	}
 }

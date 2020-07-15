@@ -9,7 +9,7 @@ import { AdminMainComponent } from './admin-main/admin-main.component';
         RouterModule.forChild([
             {path: '', component: AcademyAdminComponent, children: [
                 {path: '', component: AdminMainComponent},
-                {path: 'pageEditor/:pageType', component: PageEditorComponent},
+                {path: 'pageEditor/:id', component: PageEditorComponent},
                 {path: 'pageEditor/:pageType/:id', component: PageEditorComponent}
             ]}
         ])
