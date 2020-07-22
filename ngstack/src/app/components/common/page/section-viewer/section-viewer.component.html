@@ -1,4 +1,4 @@
-<div class="w-100 p-my-3" [ngStyle]="{'background-color': background}">
+<div class="w-100" [ngStyle]="{'background-color': background}">
     <div class="p-relative p-nogutter item"
         [class.p-grid]="isWide()"
         [class.p-grid-medium]="isMedium()"
@@ -14,7 +14,7 @@
             <img class="image-container" [src]="content" onerror="this.src='./assets/img/notfound.jpg';">
         </div>
 
-        <div *ngIf="isPost()" class="w-100">
+        <div *ngIf="isPost()" class="w-100 p-py-3">
             <div class="p-post-style">
                 <div [innerHTML]="content"></div>
             </div>

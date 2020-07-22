@@ -5,16 +5,16 @@
         [class.p-grid-medium]="isMedium()"
         [class.p-grid-narrow]="isNarrow()"
     >
-        <div *ngIf="!isWide()" (click)="spread()" class="p-absolute p-d-flex p-align-center h-100" style="width: 1.2em; left: -1.2em;">
+        <div *ngIf="!isWide() && !eyedrop" (click)="spread()" class="p-absolute p-d-flex p-align-center h-100" style="width: 1.2em; left: -1.2em;">
             <i class="pi pi-chevron-left"></i>
         </div>
-        <div *ngIf="!isNarrow()" (click)="shrink()" class="p-absolute p-d-flex p-align-center h-100" style="width: 1.2em; left: 0;">
+        <div *ngIf="!isNarrow() && !eyedrop" (click)="shrink()" class="p-absolute p-d-flex p-align-center h-100" style="width: 1.2em; left: 0;">
             <i class="pi pi-chevron-right"></i>
         </div>
-        <div *ngIf="!isNarrow()" (click)="shrink()" class="p-absolute p-d-flex p-align-center h-100" style="width: 1.2em; right: 0;">
+        <div *ngIf="!isNarrow() && !eyedrop" (click)="shrink()" class="p-absolute p-d-flex p-align-center h-100" style="width: 1.2em; right: 0;">
             <i class="pi pi-chevron-left"></i>
         </div>
-        <div *ngIf="!isWide()" (click)="spread()" class="p-absolute p-d-flex p-align-center h-100" style="width: 1.2em; right: -1.2em;">
+        <div *ngIf="!isWide() && !eyedrop" (click)="spread()" class="p-absolute p-d-flex p-align-center h-100" style="width: 1.2em; right: -1.2em;">
             <i class="pi pi-chevron-right"></i>
         </div>
 
@@ -48,24 +48,26 @@
                 <div class="ui-g ui-fluid">
                     <div class="ui-g-12 p-pl-0 p-pr-0">
                         <div class="ui-inputgroup w-100">
-                            <input type="text" formControlName="content" pInputText>
+                            <input type="text" formControlName="content" readonly pInputText>
                             <app-image-url label="URL등록하기" [initialValue]="content.value" (onSubmit)="imageUrlSubmitted($event)"></app-image-url>
                             <app-image-upload label="추가하기" (onSubmit)="imageUploaded($event)"></app-image-upload>
                         </div>
                     </div>
                 </div>
                 <div class="preview">
-                    <img class="image-container" [src]="content.value" onerror="this.src='./assets/img/notfound.jpg';">
+                    <img #image class="image-container" [ngClass]="{'p-highlight p-crosshair': eyedrop}" [src]="content.value" (click)="onImageClick($event)" onerror="this.src='./assets/img/notfound.jpg';">
                 </div>
                 <p-footer class="p-d-flex p-justify-between">
                     <div>
+                        <button *ngIf="!eyedrop && type.value === typeContent.IMAGE" (click)="onEyedrop(true)" pButton type="button" label="아이드롭" class="ui-button-secondary p-mr-2"></button>
+                        <button *ngIf="eyedrop && type.value === typeContent.IMAGE" (click)="onEyedrop(false)" pButton type="button" label="취소하기" class="ui-button-danger p-mr-2"></button>
                         <p-colorPicker formControlName="background"></p-colorPicker>
                         <input type="text" formControlName="backgroundInput" style="width: 6em; margin-left: 0.5em;" pInputText>
                         <span style="margin-left: 0.5em;">배경색(#RGB)</span>
                     </div>
                     <div>
-                        <button (click)="save()" [disabled]="isFormInvalid()" pButton type="button" label="Save" icon="pi pi-check" class="ui-button-primary p-mr-2"></button>
-                        <button (click)="cancel()" pButton type="button" label="Cancel" icon="pi pi-times" class="ui-button-secondary"></button>
+                        <button (click)="save()" [disabled]="isFormInvalid()" pButton type="button" label="저장하기" icon="pi pi-check" class="ui-button-primary p-mr-2"></button>
+                        <button (click)="cancel()" pButton type="button" label="취소하기" icon="pi pi-times" class="ui-button-secondary"></button>
                     </div>
                 </p-footer>
             </p-card>
@@ -77,10 +79,16 @@
                 <div class="preview p-post-style">
                     <div [innerHTML]="content.value"></div>
                 </div>
-                <p-footer class="p-d-flex p-justify-end">
-                    <p-colorPicker formControlName="background"></p-colorPicker>
-                    <button (click)="save()" [disabled]="isFormInvalid()" pButton type="button" label="Save" icon="pi pi-check" class="ui-button-primary p-mr-2"></button>
-                    <button (click)="cancel()" pButton type="button" label="Cancel" icon="pi pi-times" class="ui-button-secondary"></button>
+                <p-footer class="p-d-flex p-justify-between">
+                    <div>
+                        <p-colorPicker formControlName="background"></p-colorPicker>
+                        <input type="text" formControlName="backgroundInput" style="width: 6em; margin-left: 0.5em;" pInputText>
+                        <span style="margin-left: 0.5em;">배경색(#RGB)</span>
+                    </div>
+                    <div>
+                        <button (click)="save()" [disabled]="isFormInvalid()" pButton type="button" label="저장하기" icon="pi pi-check" class="ui-button-primary p-mr-2"></button>
+                        <button (click)="cancel()" pButton type="button" label="취소하기" icon="pi pi-times" class="ui-button-secondary"></button>
+                    </div>
                 </p-footer>
             </p-card>
         </div>

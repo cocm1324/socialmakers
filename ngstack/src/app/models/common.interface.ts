@@ -119,3 +119,15 @@ export interface IUpdateCourseSeqReq {
     seq: number;
     seqBase: number;
 }
+
+export interface IRunEyedropReq {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    imageId: number;
+}
+
+export interface IRunEyedropRes extends ICommonRes {
+    data: string;
+}

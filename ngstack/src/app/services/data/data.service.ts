@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {IRunLoginReq, IRunLoginRes, IRunVerifyLoginRes, ICreateImageReq, IGetPostAboutUs, ICreateSectionReq, IUpdateSectionReq, IDeleteSectionReq, ICommonRes, IGetCourseRes, IGetCourseListRes, IUpdateCourseSeqReq} from '../../models';
+import {IRunLoginReq, IRunLoginRes, IRunVerifyLoginRes, ICreateImageReq, IGetPostAboutUs, ICreateSectionReq, IUpdateSectionReq, IDeleteSectionReq, ICommonRes, IGetCourseRes, IGetCourseListRes, IUpdateCourseSeqReq, IRunEyedropReq, IRunEyedropRes} from '../../models';
 import { map } from 'rxjs/operators';
 
 @Injectable({
@@ -38,6 +38,10 @@ export class DataService {
 				}
 			})
 		);
+	}
+
+	runEyeDrop(request: IRunEyedropReq): Observable<IRunEyedropRes> {
+		return this.http.post<IRunEyedropRes>(`${this.imageUrl}/eyedrop/${request.imageId}`, request);
 	}
 
 	getAboutUs() {

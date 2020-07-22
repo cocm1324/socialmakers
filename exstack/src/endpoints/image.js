@@ -7,6 +7,19 @@ const fileHelper = require('../helpers/fileHelper');
 const mdHelper = require('../helpers/messageDigestHelper');
 const sharp = require('sharp');
 const fs = require('fs');
+const getPixels = require('get-pixels');
+const { format } = require('path');
+
+
+const componentToHex = (c) => {
+    var hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+}
+  
+const rgbToHex = (r, g, b) => {
+    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
 
 router.get('/', (req, res) => {
     let {pageCount, pageNo} = req.query;
@@ -126,10 +139,7 @@ router.post('/', (req, res) => {
 
             if (file.mimetype.split('/')[0] === 'image') {
                 file.mv(`./assets/image/${fileName}`);
-                sharp(file.data).resize({
-                    width:THUMBNAIL_WIDTH, 
-                    fit: sharp.fit.cover
-                }).toFile(`./assets/image/thumb/${fileName}`).then(info => {
+                sharp(file.data).resize({width:THUMBNAIL_WIDTH, fit: sharp.fit.cover, format: fileNameSplit[1]}).toFile(`./assets/image/thumb/${fileName}`).then(info => {
                     mysqlPool.getConnection((err, connection) => {
                         if (err) {
                             res.send({
@@ -273,6 +283,104 @@ router.delete('/:id', (req, res) => {
             }
         });
     }
+});
+
+router.post('/eyedrop/:id', (req, res) => {
+    const {id} = req.params;
+    const {x, y, width, height, imageId} = req.body;
+
+    if (!imageId || imageId != id || !x || !y || !width || !height) {
+        res.send({
+            status: false,
+            error: {
+                code: 403, 
+                message: 'Invalid Request'
+            }
+        });
+        return;
+    }
+
+    mysqlPool.getConnection((err, connection) => {
+        if (err) {
+            console.log(err)
+            res.send({
+                status: false,
+                error: {
+                    code: 500,
+                    message: 'Internal Server Error'
+                }
+            });
+            return;
+        }
+
+        connection.query(queryStatement.selectSingleImage(imageId), (err1, rows1) => {
+            connection.release();
+            if (err1) {
+                console.log(err1)
+                res.send({
+                    status: false,
+                    error: {
+                        code: 500,
+                        message: 'Internal Server Error'
+                    }
+                });
+                return;
+            }
+            
+            const {message_digest, extension} = rows1[0];
+
+            getPixels(`./assets/image/thumb/${message_digest}.${extension}`, (err2, pixelData) => {
+                if (err2) {
+                    getPixels(`./assets/image/${message_digest}.${extension}`, (err3, pixelDataAlternative) => {
+                        if (err3) {
+                            res.send({
+                                status: false,
+                                error: {
+                                    code: 500,
+                                    message: 'Internal Server Error'
+                                }
+                            });
+                            return;
+                        }
+
+                        const tx = Math.round((x * pixelDataAlternative.shape[0]) / width);
+                        const ty = Math.round((y * pixelDataAlternative.shape[1]) / height);
+                        const target = (ty * pixelDataAlternative.shape[0] * pixelDataAlternative.shape[2]) + (tx * pixelDataAlternative.shape[2]);
+                        const pixels = [...pixelDataAlternative.data];
+
+                        const r = pixels[target];
+                        const g = pixels[target + 1];
+                        const b = pixels[target + 2];
+                        const a = pixels[target + 3];
+
+                        const code = rgbToHex(r, g, b);
+
+                        res.status(200).send({
+                            status: true,
+                            data: code
+                        });
+                    });
+                } else {
+                    const tx = Math.round((x * pixelData.shape[0]) / width);
+                    const ty = Math.round((y * pixelData.shape[1]) / height);
+                    const target = (ty * pixelData.shape[0] * pixelData.shape[2]) + (tx * pixelData.shape[2]);
+                    const pixels = [...pixelData.data];
+
+                    const r = pixels[target];
+                    const g = pixels[target + 1];
+                    const b = pixels[target + 2];
+                    const a = pixels[target + 3];
+
+                    const code = rgbToHex(r, g, b);
+
+                    res.status(200).send({
+                        status: true,
+                        data: code
+                    });
+                }
+            });
+        });
+    });
 });
 
 module.exports = router;

@@ -7,11 +7,14 @@
             <button pButton label="수정" class="ui-button-secondary" (click)="goToEditAboutUs($event)"></button>
         </p-panel>
         <p-panel header="Courses" [toggleable]="true" [style]="{'margin-bottom':'20px'}">
-            <div class="p-d-flex p-justify-end p-mb-2">
-                <!-- <button [disabled]="selectedCourseId==-1" class="p-mr-2 ui-button-secondary" pButton label="이름 변경하기"></button>
-                <button [disabled]="selectedCourseId==-1" class="p-mr-2 ui-button-secondary" pButton label="썸네일 변경하기"></button> -->
-                <button [disabled]="selectedCourseId==-1" class="p-mr-2 ui-button-secondary" pButton label="내용 수정하기" (click)="goToEditCourse($event)"></button>
-                <button class="ui-button-danger" [disabled]="selectedCourseId==-1" pButton label="삭제하기" (click)="onCourseDelete()"></button>
+            <div class="p-d-flex p-justify-between p-mb-2">
+                <div>
+                    <button pButton label="새 Course만들기" (click)="onCreateCourse()"></button>
+                </div>
+                <div>
+                    <button [disabled]="selectedCourseId==-1" class="p-mr-2 ui-button-secondary" pButton label="내용 수정하기" (click)="goToEditCourse($event)"></button>
+                    <button class="ui-button-danger" [disabled]="selectedCourseId==-1" pButton label="삭제하기" (click)="onCourseDelete()"></button>
+                </div>
             </div>
             <p-orderList 
                 [value]="courses" 
@@ -29,9 +32,6 @@
                     </div>
                 </ng-template>
             </p-orderList>
-            <div class="w-100 p-d-flex p-justify-end p-mt-2">
-                <button pButton label="새 Course만들기"></button>
-            </div>
         </p-panel>
         <p-panel header="Notice" [toggleable]="true" [style]="{'margin-bottom':'20px'}">
             To Be Delivered

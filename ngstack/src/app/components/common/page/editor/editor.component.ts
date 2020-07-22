@@ -62,6 +62,18 @@ export class EditorComponent implements OnInit {
 		const changed = e ? !_.isEqual(e, this.curEditSectionData): false;
 
 		if (changed) {
+			let index = -1;
+			this.pageData.map((section, i) => {
+				if (this.curEdit == section.seq && this.curEditBase == section.seqBase) {
+					index = i;
+					return true;
+				}
+			});
+
+			if (index != -1) {
+				this.pageData[index] = e;
+			}
+
 			const sectionChange = {
 				seq: this.curEdit,
 				seqBase: this.curEditBase,
@@ -80,6 +92,15 @@ export class EditorComponent implements OnInit {
 	}
 
 	viewerDelete(e) {
+		const {seq, seqBase} = e;
+		let index = -1;
+		this.pageData.map((section, i) => {
+			if (seq == section.seq && seqBase == section.seqBase) {
+				index = i;
+				return true;
+			}
+		});
+		this.pageData.splice(index, 1);
 		this.onSectionDelete.emit(e);
 	}
 

@@ -1,7 +1,8 @@
-import {Component, OnInit, Input, Output, EventEmitter, OnDestroy} from '@angular/core';
-import {FormBuilder, FormGroup, Validators, AbstractControl} from '@angular/forms';
+import {Component, OnInit, Input, Output, EventEmitter, OnDestroy, ViewChild, AfterViewInit, ElementRef} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ISection, TypeSectionWidth, TypeContent} from '@app/models';
 import {Subscription} from 'rxjs';
+import { DataService } from '@services/data/data.service';
 
 @Component({
 	selector: 'app-section-editor',
@@ -12,9 +13,11 @@ export class SectionEditorComponent implements OnInit, OnDestroy {
 
 	@Input() section: ISection;
 	@Output() onFinished: EventEmitter<any> = new EventEmitter();
+	@ViewChild('image', {static: false}) image: ElementRef;
 	sectionForm: FormGroup;
 	typeWidth = TypeSectionWidth;
 	typeContent = TypeContent;
+	eyedrop: boolean;
 	
 	subscription: Subscription[] = [];
 
@@ -23,8 +26,15 @@ export class SectionEditorComponent implements OnInit, OnDestroy {
 	get content() {return this.sectionForm.get('content')}
 	get background() {return this.sectionForm.get('background')}
 	get backgroundInput() {return this.sectionForm.get('backgroundInput')}
+	get imageId() {
+		if (this.sectionForm.contains('imageId')) {
+			return this.sectionForm.get('imageId');
+		} else {
+			return undefined;
+		}
+	}
 
-	constructor(private fb: FormBuilder) { }
+	constructor(private fb: FormBuilder, private dataService: DataService) { }
 
 	ngOnInit() {
 		this.sectionForm = this.fb.group({
@@ -65,6 +75,8 @@ export class SectionEditorComponent implements OnInit, OnDestroy {
 				this.sectionForm.addControl("imageId", this.fb.control(this.section.imageId));
 			}
 		}
+		
+		this.eyedrop = false;
 	}
 
 	isTypeNull() {return this.type.value == null}
@@ -105,7 +117,7 @@ export class SectionEditorComponent implements OnInit, OnDestroy {
 
 	openImage() {
 		this.sectionForm.patchValue({
-			type: this.typeContent.IMAGE
+			type: this.typeContent.IMAGE_URL
 		});
 	}
 
@@ -127,6 +139,9 @@ export class SectionEditorComponent implements OnInit, OnDestroy {
 	}
 
 	imageUrlSubmitted(url) {
+		if (this.sectionForm.contains('imageId')) {
+			this.sectionForm.removeControl('imageId');
+		}
 		this.sectionForm.patchValue({
 			type: this.typeContent.IMAGE_URL,
 			content: url
@@ -136,22 +151,65 @@ export class SectionEditorComponent implements OnInit, OnDestroy {
 	imageUploaded(e) {
 		const {url, imageId} = e;
 
-		this.sectionForm.patchValue({
-			type: this.typeContent.IMAGE,
-			content: url,
-		});
+		if (this.sectionForm.contains('imageId')) {
+			this.sectionForm.patchValue({
+				type: this.typeContent.IMAGE,
+				content: url,
+				imageId: imageId
+			});
+		} else {
+			this.sectionForm.patchValue({
+				type: this.typeContent.IMAGE,
+				content: url,
+			});
+			this.sectionForm.addControl('imageId', this.fb.control(imageId));
+		}
+	}
 
-		this.sectionForm.addControl('imageId', this.fb.control(imageId));
+	onImageClick(e: MouseEvent) {
+		if (this.eyedrop) {
+			const {offsetX, offsetY} = e;
+			const {clientWidth, clientHeight} = this.image.nativeElement;
+
+			if (this.type.value === this.typeContent.IMAGE) {
+				const idControl = this.imageId.value;
+				if (idControl != undefined || idControl != null) {
+					const request = {
+						x: offsetX,
+						y: offsetY,
+						width: clientWidth,
+						height: clientHeight,
+						imageId: idControl
+					}
+					this.dataService.runEyeDrop(request).toPromise().then((res) => {
+						if (res.status) {
+							this.background.setValue(res.data);
+						}
+						this.eyedrop = false;
+					});
+				}
+			}
+		}
+	}
+
+	onEyedrop(flag: boolean) {
+		this.eyedrop = flag;
 	}
 
 	cancel() {
+		this.eyedrop = false;
 		if (this.isFormModified) {
-			// TODO: ask if is it okay to lose changes
+			if (confirm("변경사항을 저장하지 않고 편집을 끝내시겠습니까?")) {
+				this.onFinished.emit(false);
+			}
 		}
-		this.onFinished.emit(false);
 	}
 
 	save() {
+		this.eyedrop = false;
+		if (this.sectionForm.contains('backgroundInput')) {
+			this.sectionForm.removeControl('backgroundInput');
+		}
 		this.onFinished.emit(this.sectionForm.getRawValue());
 	}
 

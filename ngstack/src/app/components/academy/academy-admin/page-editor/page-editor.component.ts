@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ISection, TypeSectionWidth, TypeContent } from '@app/models';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PAGE_URL_TYPE} from '@app/models';
+import { PAGE_URL_TYPE } from '@app/models';
 import { DataService } from '@services/data/data.service';
 
 @Component({
@@ -14,7 +14,6 @@ export class PageEditorComponent implements OnInit {
 	pageType: string;
 	id: any;
 	contents: ISection[] = null;
-	isEdit: boolean = true;
 
 	constructor(
 		private router: Router, 
@@ -34,7 +33,7 @@ export class PageEditorComponent implements OnInit {
 	}
 
 	loadPage() {
-		if (this.pageType === PAGE_URL_TYPE.ABOUT_US) {
+		if (this.isAboutUs()) {
 			this.dataService.getAboutUs().toPromise().then(res => {
 				if (res.status) {
 					const {pageId, contents} = res.data;
@@ -66,7 +65,7 @@ export class PageEditorComponent implements OnInit {
 			}, reject => {
 				console.log(reject);
 			});
-		} else if (this.pageType === PAGE_URL_TYPE.COURSE) {
+		} else if (this.isCourse()) {
 			this.dataService.getCourse(this.id).toPromise().then(res => {
 				if (res.status) {
 					const {courseId, contents} = res.data;
@@ -97,6 +96,16 @@ export class PageEditorComponent implements OnInit {
 				}
 			});
 		}
+	}
+
+	isAboutUs() {
+		return this.pageType === PAGE_URL_TYPE.ABOUT_US;
+	}
+	isCourse() {
+		return this.pageType === PAGE_URL_TYPE.COURSE;
+	}
+	isNotice() {
+		return this.pageType === PAGE_URL_TYPE.NOTICE;
 	}
 
 	onFinished(e) {

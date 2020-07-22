@@ -51,6 +51,9 @@ router.get('/aboutUs', (req, res) => {
             }
 
             const pageId = rows1[0].page_id;
+            const name = rows1[0].name;
+            const headerImageId = rows1[0].header_image_id;
+            const headerImageUrl = `/api/static/image/${rows1[0].header_message_digest}.${rows1[0].header_extension}`;
             const contents = rows1.map(row => {
                 const rowMap = {
                     contentId: row.content_id,
@@ -62,7 +65,7 @@ router.get('/aboutUs', (req, res) => {
                 if (row.background) {
                     rowMap.background = row.background;
                 }
-                if (rowMap.type === 'IMAGE') {
+                if (rowMap.type === 1) {
                     rowMap.content = `/api/static/image/${row.message_digest}.${row.extension}`;
                     rowMap.imageId = row.image_id;
                 } else {
@@ -77,8 +80,57 @@ router.get('/aboutUs', (req, res) => {
                 status: true,
                 data: {
                     pageId: pageId,
+                    name: name,
+                    imageId: headerImageId,
+                    imageUrl: headerImageUrl,
                     contents: contents
                 }
+            });
+        });
+    });
+});
+
+router.put('/aboutus', (req, res) => {
+    const {name, imageId} = req.body;
+
+    if (!name || !imageId) {
+        res.send({
+            status: false,
+            error: {
+                code:403,
+                message: 'Invalid Request'
+            }
+        });
+        return;
+    }
+
+    mysqlPool.getConnection((err, connection) => {
+        if (err) {
+            res.send({
+                status: false,
+                error: {
+                    code: 500,
+                    message: 'Internal Server Error'
+                }
+            });
+            return;
+        }
+
+        connection.query(queryStatement.updatePageAboutUs(name, imageId), (err1, rows1) => {
+            connection.release();
+            if (err1) {
+                res.send({
+                    status: false,
+                    error: {
+                        code: 500,
+                        message: 'Internal Server Error'
+                    }
+                });
+                return;
+            }
+
+            res.status(200).send({
+                status: true,
             });
         });
     });
@@ -347,7 +399,7 @@ router.get('/course/:pageId', (req, res) => {
                     if (row2.background) {
                         rowMap.background = row2.background;
                     }
-                    if (rowMap.type === 'IMAGE') {
+                    if (rowMap.type === 1) {
                         rowMap.content = `/api/static/image/${row2.message_digest}.${row2.extension}`;
                         rowMap.imageId = row2.image_id;
                     } else {

@@ -21,7 +21,7 @@ export class AcademyAdminComponent implements OnInit {
 
 	goToMain(e) {
 		e.preventDefault();
-		this.router.navigate(['academy/admin']);
+		this.router.navigate(['academy']);
 	}
 
 	logout(e) {

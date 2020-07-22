@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataService } from '@services/data/data.service';
 import * as _ from 'lodash';
+import { FormBuilder } from '@angular/forms';
 
 @Component({
 	selector: 'app-main',
@@ -13,7 +14,11 @@ export class AdminMainComponent implements OnInit {
 	courses;
 	selectedCourseId = -1;
 
-  	constructor(private router: Router, private dataService: DataService) { }
+  	constructor(
+		private router: Router, 
+		private dataService: DataService,
+		private fb: FormBuilder
+	) { }
 
 	ngOnInit() {
 		this.loadCourse();
@@ -100,5 +105,9 @@ export class AdminMainComponent implements OnInit {
 	goToEditCourse(e) {
 		e.preventDefault();
 		this.router.navigate([`academy/admin/pageEditor/course/${this.selectedCourseId}`]);
+	}
+
+	onCreateCourse() {
+
 	}
 }

@@ -68,22 +68,40 @@ const query = {
         return `
             select 
                 a.page_id, 
-                b.content_id, 
-                c.seq,
-                c.seq_base,
-                c.width,
-                c.type,
-                c.content,
-                c.background,
-                d.image_id,
-                e.message_digest,
-                e.extension
+                a.name,
+                b.image_id as header_image_id,
+                c.message_digest as header_message_digest,
+                c.extension as header_extension,
+                d.content_id, 
+                e.seq,
+                e.seq_base,
+                e.width,
+                e.type,
+                e.content,
+                e.background,
+                f.image_id,
+                g.message_digest,
+                g.extension
             from 
                 dbibridge.page a
-                inner join dbibridge.page_content b on a.page_id=b.page_id
-                inner join dbibridge.content c on b.content_id=c.content_id 
-                left join dbibridge.image_content d on b.content_id=d.content_id
-                left join dbibridge.image e on d.image_id=e.image_id
+                inner join dbibridge.page_image b on a.page_id=b.page_id
+                inner join dbibridge.image c on b.image_id=c.image_id
+                inner join dbibridge.page_content d on a.page_id=d.page_id
+                inner join dbibridge.content e on d.content_id=e.content_id 
+                left join dbibridge.image_content f on d.content_id=f.content_id
+                left join dbibridge.image g on f.image_id=g.image_id
+            where
+                a.page_type='ABOUTUS';
+        `;
+    },
+    updatePageAboutUs: (name, imageId) => {
+        return `
+            update 
+                dbibridge.page a
+                inner join dbibridge.page_image b on a.page_id=b.page_id
+            set
+                a.name='${name}',
+                b.image_id=${imageId}
             where
                 a.page_type='ABOUTUS';
         `;

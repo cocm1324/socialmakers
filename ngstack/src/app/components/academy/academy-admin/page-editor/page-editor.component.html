@@ -1,4 +1,9 @@
 <div class="w-100">
+    <app-about-us-editor *ngIf="isAboutUs()"></app-about-us-editor>
+    <app-course-editor *ngIf="isCourse()"></app-course-editor>
+    <app-notice-editor *ngIf="isNotice()"></app-notice-editor>
+</div>
+<div class="w-100">
     <ple-editor 
         [pageData]="contents" 
         (onFinished)="onFinished($event)" 

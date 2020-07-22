@@ -115,6 +115,14 @@ $color-bisque: bisque;
     cursor: pointer;
 }
 
+.p-crosshair {
+    cursor: crosshair;
+}
+
+.p-highlight {
+    border: 3px solid crimson;
+}
+
 .p-justify-center {
     justify-content: center;
 }
