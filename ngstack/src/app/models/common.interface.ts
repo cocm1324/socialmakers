@@ -42,9 +42,12 @@ export interface ICreateImageReq {
     upload: Binary;
 }
 
-export interface IGetPostAboutUs extends ICommonRes {
+export interface IGetPageAboutUs extends ICommonRes {
     data: {
         pageId: number;
+        name: string;
+        imageUrl: string;
+        imageId: number;
         contents: Array<ISection>
     };
 }
@@ -131,3 +134,10 @@ export interface IRunEyedropReq {
 export interface IRunEyedropRes extends ICommonRes {
     data: string;
 }
+
+export interface IAboutUsEditorInput {
+    name: string;
+    background: string;
+    imageId: number;
+}
+

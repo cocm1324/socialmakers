@@ -6,9 +6,10 @@
 
 .overlay {
     display: none;
+    background-color: rgba($color: #000000, $alpha: 0); 
 }
 
 .item:hover .overlay{
     display: inherit;
-    background-color: rgba($color: #000000, $alpha: 0.3);
+    background-color: rgba($color: #000000, $alpha: 0.3);    
 }

@@ -135,7 +135,10 @@ export class SectionEditorComponent implements OnInit, OnDestroy {
 	}
 
 	isFormModified() {
-		return this.section.width != this.width.value || this.section.type != this.type.value || this.section.content != this.content.value;
+		return this.section.width != this.width.value 
+			|| this.section.type != this.type.value 
+			|| this.section.content != this.content.value
+			|| this.section.background != this.background.value;
 	}
 
 	imageUrlSubmitted(url) {
@@ -198,10 +201,12 @@ export class SectionEditorComponent implements OnInit, OnDestroy {
 
 	cancel() {
 		this.eyedrop = false;
-		if (this.isFormModified) {
+		if (this.isFormModified()) {
 			if (confirm("변경사항을 저장하지 않고 편집을 끝내시겠습니까?")) {
 				this.onFinished.emit(false);
 			}
+		} else {
+			this.onFinished.emit(false);
 		}
 	}
 

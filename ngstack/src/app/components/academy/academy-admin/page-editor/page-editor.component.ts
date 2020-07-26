@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ISection, TypeSectionWidth, TypeContent } from '@app/models';
+import { ISection, TypeSectionWidth, TypeContent, IAboutUsEditorInput } from '@app/models';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PAGE_URL_TYPE } from '@app/models';
 import { DataService } from '@services/data/data.service';
@@ -14,6 +14,8 @@ export class PageEditorComponent implements OnInit {
 	pageType: string;
 	id: any;
 	contents: ISection[] = null;
+	aboutUsData: IAboutUsEditorInput;
+	loaded: boolean = false;
 
 	constructor(
 		private router: Router, 
@@ -36,7 +38,7 @@ export class PageEditorComponent implements OnInit {
 		if (this.isAboutUs()) {
 			this.dataService.getAboutUs().toPromise().then(res => {
 				if (res.status) {
-					const {pageId, contents} = res.data;
+					const {pageId, contents, name, imageId, imageUrl} = res.data;
 					this.id = pageId;
 					contents.sort((a, b)=> {
 						if (a.seq - b.seq < 0) {
@@ -47,6 +49,11 @@ export class PageEditorComponent implements OnInit {
 						}
 						return 0;
 					});
+					this.aboutUsData = {
+						name: name,
+						background: imageUrl,
+						imageId: imageId
+					};
 					this.contents = contents.map(content => {
 						const contentMap = {
 							width: content.width,
@@ -61,6 +68,7 @@ export class PageEditorComponent implements OnInit {
 						}
 						return contentMap;
 					});
+					this.loaded = true;
 				}
 			}, reject => {
 				console.log(reject);
@@ -94,6 +102,7 @@ export class PageEditorComponent implements OnInit {
 						return contentMap;
 					});
 				}
+				this.loaded = true;
 			});
 		}
 	}
@@ -154,5 +163,11 @@ export class PageEditorComponent implements OnInit {
 				alert(response.error ? response.error.message: "unknown error");
 			}
 		});
+	}
+
+	onPageInfoFinished(e) {
+		if (this.isAboutUs()) {
+			console.log(e);
+		}
 	}
 }

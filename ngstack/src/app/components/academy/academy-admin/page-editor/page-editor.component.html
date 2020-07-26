@@ -1,9 +1,15 @@
-<div class="w-100">
-    <app-about-us-editor *ngIf="isAboutUs()"></app-about-us-editor>
+<div class="p-grid-medium">
+    <h2>페이지 정보</h2>
+</div>
+<div *ngIf="loaded" class="w-100">
+    <app-about-us-editor *ngIf="isAboutUs()" [aboutUsData]="aboutUsData" (onFinish)="onPageInfoFinished($event)"></app-about-us-editor>
     <app-course-editor *ngIf="isCourse()"></app-course-editor>
     <app-notice-editor *ngIf="isNotice()"></app-notice-editor>
 </div>
-<div class="w-100">
+<div class="p-grid-medium">
+    <h2>페이지 내용</h2>
+</div>
+<div *ngIf="loaded" class="w-100">
     <ple-editor 
         [pageData]="contents" 
         (onFinished)="onFinished($event)" 

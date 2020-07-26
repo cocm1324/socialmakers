@@ -8,6 +8,8 @@ import { AdminMainComponent } from './admin-main/admin-main.component';
 import { AboutUsEditorComponent } from './page-editor/about-us-editor/about-us-editor.component';
 import { CourseEditorComponent } from './page-editor/course-editor/course-editor.component';
 import { NoticeEditorComponent } from './page-editor/notice-editor/notice-editor.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { ImageModule } from '@components/common/image/image.module';
 
 @NgModule({
     declarations: [
@@ -21,7 +23,9 @@ import { NoticeEditorComponent } from './page-editor/notice-editor/notice-editor
     imports: [
         AcademyAdminRoutingModule,
         AppCommonModule,
-        PageModule
+        PageModule,
+        ReactiveFormsModule,
+        ImageModule
     ]
 })
 export class AcademyAdminModule { }

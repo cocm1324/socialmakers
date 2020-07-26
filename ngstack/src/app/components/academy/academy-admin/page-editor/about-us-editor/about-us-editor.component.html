@@ -1,1 +1,23 @@
-<p>about-us-editor works!</p>
+<form [formGroup]="aboutUsForm">
+    <div class="p-grid-medium p-mb-3 p-p-5">
+        <div class="d-block w-100">
+            <label>페이지 이름</label>
+            <input formControlName="aboutUsName" class="w-100" pInputText> 
+        </div>
+        <div class="d-block w-100 p-mt-5">
+            <label>백그라운드 이미지 URL</label>
+            <span class="ui-inputgroup">
+                <input formControlName="aboutUsBackground" class="w-100" pInputText readonly>
+                <app-image-upload label="추가하기" (onSubmit)="imageUploaded($event)"></app-image-upload>
+            </span>
+        </div>
+    </div>
+</form>
+<!-- <div class="p-grid p-nogutter p-relative" *ngIf="!isEdit">
+    <img class="image-container" [src]="aboutUsBackground.value" style="width: 100%; height: 300px;">
+    <div class="p-absolute p-d-flex p-justify-center p-align-center w-100 h-100" style="z-index: 1000;">
+        <div class="hero-content p-p-5 p-relative">
+            <h1>{{aboutUsName.value}}</h1>
+        </div>
+    </div>
+</div> -->
