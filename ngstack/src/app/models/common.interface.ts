@@ -42,14 +42,19 @@ export interface ICreateImageReq {
     upload: Binary;
 }
 
-export interface IGetPageAboutUs extends ICommonRes {
+export interface IGetAboutUsRes extends ICommonRes {
     data: {
         pageId: number;
         name: string;
-        imageUrl: string;
         imageId: number;
+        imageUrl: string;
         contents: Array<ISection>
     };
+}
+
+export interface IUpdateAboutUsReq {
+    name: string;
+    imageId: number;
 }
 
 export interface IUpdateSectionReq {
@@ -93,28 +98,34 @@ export interface IGetCourseListRes extends ICommonRes {
 }
 
 export interface IGetCourseRes extends ICommonRes {
-    data: {
-        courseId: number;
-        courseName: string;
-        description1: string;
-        description2: string;
-        field1: string;
-        field2: string;
-        field3: string;
-        field4: string;
-        field5: string;
-        field6: string;
-        fieldTitle1: string;
-        fieldTitle2: string;
-        fieldTitle3: string;
-        fieldTitle4: string;
-        fieldTitle5: string;
-        fieldTitle6: string;
-        headerImage: string;
-        headerImageThumb: string;
-        registerUrl: string;
-        contents: Array<ISection>;
-    }
+    data: ICourseInfoWithContents;
+}
+
+export interface ICourseInfo {
+    courseName: string;
+    description1: string;
+    description2: string;
+    field1: string;
+    field2: string;
+    field3: string;
+    field4: string;
+    field5: string;
+    field6: string;
+    fieldTitle1: string;
+    fieldTitle2: string;
+    fieldTitle3: string;
+    fieldTitle4: string;
+    fieldTitle5: string;
+    fieldTitle6: string;
+    imageId: number;
+    imageUrl: string;
+    imageThumbUrl?: string;
+    registerUrl: string;
+}
+
+export interface ICourseInfoWithContents extends ICourseInfo {
+    courseId: number;
+    contents: Array<ISection>;
 }
 
 export interface IUpdateCourseSeqReq {
@@ -140,4 +151,3 @@ export interface IAboutUsEditorInput {
     background: string;
     imageId: number;
 }
-

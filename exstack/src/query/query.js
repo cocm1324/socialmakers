@@ -210,7 +210,7 @@ const query = {
                 a.page_id, a.name, a.page_type, b.seq, b.seq_base, b.description1, b.description2, 
                 b.field_title1, b.field_title2, b.field_title3, b.field_title4, b.field_title5, b.field_title6,
                 b.field1, b.field2, b.field3, b.field4, b.field5, b.field6, b.register_url,
-                d.message_digest, d.file_name, d.extension
+                d.image_id, d.message_digest, d.file_name, d.extension
             from 
                 dbibridge.page a
                 inner join dbibridge.course b on a.page_id=b.page_id

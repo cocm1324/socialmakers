@@ -355,8 +355,9 @@ router.get('/course/:pageId', (req, res) => {
             const row = rows1[0]
             const coursePage = {
                 courseId: row.page_id,
-                headerImage: `/api/static/image/${row.message_digest}.${row.extension}`,
-                headerImageThumb: `/api/static/image/thumb/${row.message_digest}.${row.extension}`,
+                imageId: row.image_id,
+                imageUrl: `/api/static/image/${row.message_digest}.${row.extension}`,
+                imageThumbUrl: `/api/static/image/thumb/${row.message_digest}.${row.extension}`,
                 courseName: row.name,
                 description1: row.description1,
                 description2: row.description2,

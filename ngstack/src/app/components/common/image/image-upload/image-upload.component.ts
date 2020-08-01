@@ -11,8 +11,9 @@ const MAX_SIZE = 1024 * 1024 * 40;
 })
 export class ImageUploadComponent implements OnInit {
 	
-	@Input() label: string = "Image Upload"
-	@Output() onSubmit = new EventEmitter()
+	@Input() label: string = "Image Upload";
+	@Input() icon: string = "pi pi-check";
+	@Output() onSubmit = new EventEmitter();
 
 	requestUrl: string = '/api/image';
 

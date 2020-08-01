@@ -1,19 +1,15 @@
-<div class="p-grid-medium">
-    <h2>페이지 정보</h2>
-</div>
 <div *ngIf="loaded" class="w-100">
-    <app-about-us-editor *ngIf="isAboutUs()" [aboutUsData]="aboutUsData" (onFinish)="onPageInfoFinished($event)"></app-about-us-editor>
-    <app-course-editor *ngIf="isCourse()"></app-course-editor>
+    <app-about-us-editor *ngIf="isAboutUs()" [disabled]="editState == 2" [aboutUsData]="aboutUsData" (onFinish)="onPageInfoFinished($event)" (onEditStateChange)="onHeaderEditStateChange($event)"></app-about-us-editor>
+    <app-course-editor *ngIf="isCourse()" [disabled]="editState == 2" [courseInfoData]="courseInfoData" (onFinish)="onPageInfoFinished($event)" (onEditStateChange)="onHeaderEditStateChange($event)"></app-course-editor>
     <app-notice-editor *ngIf="isNotice()"></app-notice-editor>
 </div>
-<div class="p-grid-medium">
-    <h2>페이지 내용</h2>
-</div>
 <div *ngIf="loaded" class="w-100">
-    <ple-editor 
+    <ple-editor
+        [disabled]="editState == 1"
         [pageData]="contents" 
         (onFinished)="onFinished($event)" 
         (onSectionFinished)="onSectionFinished($event)" 
         (onSectionDelete)="onSectionDelete($event)"
+        (onEditStateChange)="onBodyEditStateChange($event)"
     ></ple-editor>
 </div>

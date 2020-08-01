@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, OnChanges, SimpleChanges } from '@angular/core';
 import { ISection, TypeSectionWidth } from '@app/models';
 import * as _ from 'lodash';
 
@@ -7,21 +7,33 @@ import * as _ from 'lodash';
 	templateUrl: './editor.component.html',
 	styleUrls: ['./editor.component.scss']
 })
-export class EditorComponent implements OnInit {
+export class EditorComponent implements OnInit, OnChanges {
 
 	@Input() pageData: ISection[];
+	@Input() disabled: boolean;
 	@Output() onFinished: EventEmitter<any> = new EventEmitter();
 	@Output() onSectionFinished: EventEmitter<ISection> = new EventEmitter();
 	@Output() onSectionDelete: EventEmitter<ISection> = new EventEmitter();
+	@Output() onEditStateChange: EventEmitter<boolean> = new EventEmitter();
 
 	curEditSectionData = null;
 	curEdit: number = -1;
 	curEditBase: number = 1;
 	newSection: ISection = null;
+	lock: boolean = false;
 
 	constructor() { }
 
 	ngOnInit() {
+
+	}
+
+	ngOnChanges(changes: SimpleChanges) {
+		if (this.disabled != undefined && this.disabled == true) {
+			this.lock = true;
+		} else if (this.disabled != undefined && this.disabled == false) {
+			this.lock = false;
+		}
 	}
 
 	createNewSection() {
@@ -41,10 +53,11 @@ export class EditorComponent implements OnInit {
 		this.curEditSectionData = _.cloneDeep(this.newSection);
 		this.curEdit = newSeq;
 		this.curEditBase = 1;
+		this.onEditStateChange.emit(this.curEdit != -1);
 	}
 
 	isEditing() {
-		return this.curEdit != -1;
+		return this.curEdit != -1 || this.lock;
 	}
 
 	isNullData() {
@@ -56,6 +69,7 @@ export class EditorComponent implements OnInit {
 		this.curEditSectionData = _.cloneDeep(this.pageData.filter(pageDatum => pageDatum.seq==seq && pageDatum.seqBase==seqBase)[0]);
 		this.curEdit = seq;
 		this.curEditBase = seqBase;
+		this.onEditStateChange.emit(this.curEdit != -1);
 	}
 
 	closeEdit(e) {
@@ -89,6 +103,7 @@ export class EditorComponent implements OnInit {
 		this.curEditSectionData = null;
 		this.curEdit = -1;
 		this.curEditBase = 1;
+		this.onEditStateChange.emit(this.curEdit != -1);
 	}
 
 	viewerDelete(e) {

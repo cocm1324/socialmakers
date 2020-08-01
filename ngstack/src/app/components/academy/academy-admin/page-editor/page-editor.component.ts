@@ -1,5 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { ISection, TypeSectionWidth, TypeContent, IAboutUsEditorInput } from '@app/models';
+import { Component, OnInit } from '@angular/core';
+import { ISection, IAboutUsEditorInput, IUpdateAboutUsReq, ICourseInfo } from '@app/models';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PAGE_URL_TYPE } from '@app/models';
 import { DataService } from '@services/data/data.service';
@@ -15,7 +15,9 @@ export class PageEditorComponent implements OnInit {
 	id: any;
 	contents: ISection[] = null;
 	aboutUsData: IAboutUsEditorInput;
+	courseInfoData: ICourseInfo;
 	loaded: boolean = false;
+	editState = 0;
 
 	constructor(
 		private router: Router, 
@@ -87,6 +89,7 @@ export class PageEditorComponent implements OnInit {
 						}
 						return 0;
 					});
+					this.courseInfoData = res.data;
 					this.contents = contents.map(content => {
 						const contentMap = {
 							width: content.width,
@@ -167,7 +170,31 @@ export class PageEditorComponent implements OnInit {
 
 	onPageInfoFinished(e) {
 		if (this.isAboutUs()) {
-			console.log(e);
+			const request: IUpdateAboutUsReq = {
+				name: e.name,
+				imageId: e.imageId
+			};
+			this.dataService.updateAboutUs(request).toPromise().then((res) => {
+				if (res.status) {
+					this.loadPage();
+				}
+			});
+		}
+	}
+
+	onHeaderEditStateChange(e) {
+		if (e) {
+			this.editState = 1;
+		} else {
+			this.editState = 0;
+		}
+	}
+
+	onBodyEditStateChange(e) {
+		if (e) {
+			this.editState = 2;
+		} else {
+			this.editState = 0;
 		}
 	}
 }

@@ -1,1 +1,112 @@
-<p>course-editor works!</p>
+<div class="p-grid p-nogutter p-relative p-overflow-hidden item" style="background-color: black;">
+    <img class="image-container" [src]="cImageUrl.value">
+    <div class="p-absolute p-d-flex p-justify-center p-align-center w-100 h-100">
+        <div class="p-grid-narrow p-nogutter">
+            <div class="p-col-12 p-md-6 p-lg-6">
+                <div class="title-panel">
+                    <div>{{cDescription1.value}}</div>
+                    <h3>{{cCourseName.value}}</h3>
+                    <div>{{cDescription2.value}}</div>
+                </div>
+            </div>
+            <div class="p-col-12 p-md-6 p-lg-6">
+                <div class="info-panel">
+                    <table>
+                        <tr>
+                            <td class="field-title">{{cFieldTitle1.value}}</td>
+                            <td class="field">{{cField1.value}}</td>
+                        </tr>
+                        <tr>
+                            <td class="field-title">{{cFieldTitle2.value}}</td>
+                            <td class="field">{{cField2.value}}</td>
+                        </tr>
+                        <tr>
+                            <td class="field-title">{{cFieldTitle3.value}}</td>
+                            <td class="field">{{cField3.value}}</td>
+                        </tr>
+                        <tr>
+                            <td class="field-title">{{cFieldTitle4.value}}</td>
+                            <td class="field">{{cField4.value}}</td>
+                        </tr>
+                        <tr>
+                            <td class="field-title">{{cFieldTitle5.value}}</td>
+                            <td class="field">{{cField5.value}}</td>
+                        </tr>
+                        <tr>
+                            <td class="field-title">{{cFieldTitle6.value}}</td>
+                            <td class="field">{{cField6.value}}</td>
+                        </tr>
+                    </table>
+                    <button pButton label="참가신청하기"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="!isEdit && !lock" class="p-absolute overlay p-d-flex p-justify-center p-align-center w-100 h-100">
+        <button (click)="edit()" pButton type="button" label="수정하기" icon="pi pi-check" class="ui-button-primary p-mr-2"></button>
+    </div>
+</div>
+<form [formGroup]="courseInfoForm">
+    <div *ngIf="isEdit" class="p-grid-medium">
+        <p-card class="w-100 p-my-2" styleClass="ui-card-shadow">
+            <div class="p-py-3">
+                <label>Course 이름</label>
+                <span class="ui-inputgroup">
+                    <input formControlName="cCourseName" class="w-100" pInputText> 
+                </span>
+            </div>
+            <div class="p-py-3">
+                <label>썸네일 이미지</label>
+                <span class="ui-inputgroup">
+                    <input formControlName="cImageUrl" class="w-100" pInputText readonly>
+                    <app-image-upload label="수정" icon="pi pi-pencil" (onSubmit)="imageUploaded($event)"></app-image-upload>
+                </span>
+            </div>
+            <div class="p-py-3">
+                <label>백그라운드 이미지</label>
+                <span class="ui-inputgroup">
+                    <input formControlName="cImageUrl" class="w-100" pInputText readonly>
+                    <app-image-upload label="수정" icon="pi pi-pencil" (onSubmit)="imageUploaded($event)"></app-image-upload>
+                </span>
+            </div>
+            <div class="p-py-3">
+                <label>제목 위쪽 설명</label>
+                <span class="ui-inputgroup">
+                    <textarea formControlName="cDescription1" class="w-100" autoResize="false" pInputTextarea></textarea>
+                </span>
+            </div>
+            <div class="p-py-3">
+                <label>제목 아래쪽 설명</label>
+                <span class="ui-inputgroup">
+                    <textarea formControlName="cDescription2" class="w-100" autoResize="false" pInputTextarea></textarea>
+                </span>
+            </div>
+            <div class="p-py-3">
+                <label>Register URL</label>
+                <span class="ui-inputgroup">
+                    <input formControlName="cRegisterUrl" class="w-100" pInputText> 
+                </span>
+            </div>
+            <div *ngFor="let i of [1, 2, 3, 4, 5, 6]" class="p-grid">
+                <div class="p-col p-py-3">
+                    <label>정보{{i}} 제목</label>
+                    <span class="ui-inputgroup">
+                        <input [formControlName]="'cFieldTitle'+i" class="w-100" pInputText> 
+                    </span>
+                </div>
+                <div class="p-col p-py-3">
+                    <label>정보{{i}} 내용</label>
+                    <span class="ui-inputgroup">
+                        <input [formControlName]="'cField'+i" class="w-100" pInputText> 
+                    </span>
+                </div>
+            </div>
+            <p-footer>
+                <div class="p-d-flex p-justify-end w-100">
+                    <button (click)="save()" pButton type="button" label="수정하기" class="ui-button-primary p-mr-2"></button>
+                    <button (click)="cancel()" pButton type="button" label="취소하기" class="ui-button-secondary"></button>
+                </div>
+            </p-footer>
+        </p-card>
+    </div>
+</form>

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {IRunLoginReq, IRunLoginRes, IRunVerifyLoginRes, ICreateImageReq, IGetPageAboutUs, ICreateSectionReq, IUpdateSectionReq, IDeleteSectionReq, ICommonRes, IGetCourseRes, IGetCourseListRes, IUpdateCourseSeqReq, IRunEyedropReq, IRunEyedropRes} from '../../models';
+import {IRunLoginReq, IRunLoginRes, IRunVerifyLoginRes, ICreateImageReq, IGetAboutUsRes, ICreateSectionReq, IUpdateSectionReq, IDeleteSectionReq, ICommonRes, IGetCourseRes, IGetCourseListRes, IUpdateCourseSeqReq, IRunEyedropReq, IRunEyedropRes, IUpdateAboutUsReq} from '../../models';
 import { map } from 'rxjs/operators';
 
 @Injectable({
@@ -45,7 +45,11 @@ export class DataService {
 	}
 
 	getAboutUs() {
-		return this.http.get<IGetPageAboutUs>(`${this.pageUrl}/aboutUs`);
+		return this.http.get<IGetAboutUsRes>(`${this.pageUrl}/aboutUs`);
+	}
+
+	updateAboutUs(request: IUpdateAboutUsReq): Observable<ICommonRes> {
+		return this.http.put<ICommonRes>(`${this.pageUrl}/aboutUs`, request);
 	}
 
 	createSection(request: ICreateSectionReq): Observable<ICommonRes> {
