@@ -7,10 +7,11 @@ import { AdminMainComponent } from './admin-main/admin-main.component';
 @NgModule({
     imports: [
         RouterModule.forChild([
-            {path: '', component: AcademyAdminComponent, children: [
-                {path: '', component: AdminMainComponent},
-                {path: 'pageEditor/:id', component: PageEditorComponent},
-                {path: 'pageEditor/:pageType/:id', component: PageEditorComponent}
+            { path: '', component: AcademyAdminComponent, children: [
+                { path: '', component: AdminMainComponent },
+                { path: 'pageEditor/aboutUs', component: PageEditorComponent },
+                { path: 'pageEditor/course/new', component: PageEditorComponent },
+                { path: 'pageEditor/course/:id', component: PageEditorComponent }
             ]}
         ])
     ],

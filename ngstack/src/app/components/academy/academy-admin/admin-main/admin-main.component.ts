@@ -53,7 +53,7 @@ export class AdminMainComponent implements OnInit {
 
   	goToEditAboutUs(e) {
 		e.preventDefault();
-		this.router.navigate(['academy/admin/pageEditor/aboutUs/page']);
+		this.router.navigate(['academy/admin/pageEditor/aboutUs']);
 	}
 
 	onCourseSelected(e) {
@@ -108,6 +108,6 @@ export class AdminMainComponent implements OnInit {
 	}
 
 	onCreateCourse() {
-
+		this.router.navigate([`academy/admin/pageEditor/course/new`]);
 	}
 }

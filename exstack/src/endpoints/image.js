@@ -34,7 +34,7 @@ router.get('/', (req, res) => {
                     status: false,
                     error: {
                         code: 500,
-                        message: 'Internal Server Error'
+                        message: 'Internal Server Error: \n' + err
                     }
                 });
                 return;
@@ -47,26 +47,28 @@ router.get('/', (req, res) => {
                         status: false,
                         error: {
                             code: 500,
-                            message: 'Internal Server Error'
+                            message: 'Internal Server Error: \n' + err1
                         }
                     });
                     return;
                 } else {
                     const dataMap = rows.map(row => {
-                        const {image_id, message_digest, file_name, extension} = row;
+                        const {imageId, messageDigest, originalFileName, extension} = row;
                         return {
-                            imageId: image_id,
-                            fileName: `${file_name}.${extension}`,
-                            url: `/api/static/image/${message_digest}.${extension}`,
-                            thumbUrl: `/api/static/image/thumb/${message_digest}.${extension}`,
+                            imageId: imageId,
+                            fileName: `${originalFileName}.${extension}`,
+                            url: `/api/static/image/${messageDigest}.${extension}`,
+                            thumbUrl: `/api/static/image/thumb/${messageDigest}.${extension}`,
                         }
                     });
                     res.send({
                         status: true,
-                        pageNo: pageNo,
-                        pageCount: pageCount,
-                        rowCount: dataMap.length,
-                        data: dataMap
+                        data: {
+                            pageNo: pageNo,
+                            pageCount: pageCount,
+                            rowCount: dataMap.length,
+                            images: dataMap
+                        }
                     });
                 }
             });    
@@ -78,7 +80,7 @@ router.get('/', (req, res) => {
                     status: false,
                     error: {
                         code: 500,
-                        message: 'Internal Server Error'
+                        message: 'Internal Server Error: \n' + err2
                     }
                 });
                 return;
@@ -91,24 +93,26 @@ router.get('/', (req, res) => {
                         status: false,
                         error: {
                             code: 500,
-                            message: 'Internal Server Error'
+                            message: 'Internal Server Error: \n' + err3
                         }
                     });
                     return;
                 } else {
                     const dataMap = rows.map(row => {
-                        const {image_id, message_digest, file_name, extension} = row;
+                        const {imageId, messageDigest, originalFileName, extension} = row;
                         return {
-                            imageId: image_id,
-                            fileName: `${file_name}.${extension}`,
-                            url: `/api/static/image/${message_digest}.${extension}`,
-                            thumbUrl: `/api/static/image/thumb/${message_digest}.${extension}`,
+                            imageId: imageId,
+                            fileName: `${originalFileName}.${extension}`,
+                            url: `/api/static/image/${messageDigest}.${extension}`,
+                            thumbUrl: `/api/static/image/thumb/${messageDigest}.${extension}`,
                         }
                     });
                     res.send({
                         status: true,
-                        rowCount: dataMap.length,
-                        data: dataMap
+                        data: {
+                            rowCount: dataMap.length,
+                            images: dataMap
+                        }
                     });
                 }
             });    
@@ -202,7 +206,7 @@ router.post('/', (req, res) => {
             status: false,
             error: {
                 code: 500,
-                message: 'Internal Server Error'
+                message: 'Internal Server Error: \n' + err
             }
         });
         return;
@@ -219,7 +223,7 @@ router.delete('/:id', (req, res) => {
                     status: false,
                     error: {
                         code: 500,
-                        message: 'Internal Server Error'
+                        message: 'Internal Server Error: \n' + err
                     }
                 });
                 return;
@@ -232,7 +236,7 @@ router.delete('/:id', (req, res) => {
                         status: false,
                         error: {
                             code: 500,
-                            message: 'Internal Server Error'
+                            message: 'Internal Server Error: \n' + err1
                         }
                     });
                     return;
@@ -247,11 +251,11 @@ router.delete('/:id', (req, res) => {
                     });
                     return;
                 } else {
-                    const {message_digest, file_name, extension} = rows[0];
-                    const imageDir = `./assets/image/${message_digest}.${extension}`;
-                    const imageThumbDir = `./assets/image/thumb/${message_digest}.${extension}`;
+                    const {messageDigest, originalFileName, extension} = rows[0];
+                    const imageDir = `./assets/image/${messageDigest}.${extension}`;
+                    const imageThumbDir = `./assets/image/thumb/${messageDigest}.${extension}`;
 
-                    connection.query(queryStatement.deleteSingleImage(id), (err2, rows) => {
+                    connection.query(queryStatement.deleteSingleImage(id), (err2, rows2) => {
                         connection.release();
                         if (err2) {
                             res.send({
@@ -262,14 +266,13 @@ router.delete('/:id', (req, res) => {
                                 }
                             });
                             return;
-                        } else {
-                            fs.unlinkSync(imageDir);
-                            fs.unlinkSync(imageThumbDir);
-                            res.send({
-                                status: true,
-                                data: `${file_name}.${extension}`
-                            });
                         }
+                        fs.unlinkSync(imageDir);
+                        fs.unlinkSync(imageThumbDir);
+                        res.send({
+                            status: true,
+                            data: `${originalFileName}.${extension}`
+                        });
                     });
                 }
             });    
@@ -316,22 +319,30 @@ router.post('/eyedrop/:id', (req, res) => {
         connection.query(queryStatement.selectSingleImage(imageId), (err1, rows1) => {
             connection.release();
             if (err1) {
-                console.log(err1)
                 res.send({
                     status: false,
                     error: {
                         code: 500,
-                        message: 'Internal Server Error'
+                        message: 'Internal Server Error: \n'+ err1
+                    }
+                });
+                return;
+            } else if (rows1.length == 0) {
+                res.send({
+                    status: false,
+                    error: {
+                        code: 404,
+                        message: 'Not found'
                     }
                 });
                 return;
             }
             
-            const {message_digest, extension} = rows1[0];
+            const {messageDigest, extension} = rows1[0];
 
-            getPixels(`./assets/image/thumb/${message_digest}.${extension}`, (err2, pixelData) => {
+            getPixels(`./assets/image/thumb/${messageDigest}.${extension}`, (err2, pixelData) => {
                 if (err2) {
-                    getPixels(`./assets/image/${message_digest}.${extension}`, (err3, pixelDataAlternative) => {
+                    getPixels(`./assets/image/${messageDigest}.${extension}`, (err3, pixelDataAlternative) => {
                         if (err3) {
                             res.send({
                                 status: false,

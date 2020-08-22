@@ -10,7 +10,7 @@ import { IAboutUsEditorInput } from '@app/models';
 export class AboutUsEditorComponent implements OnInit, OnChanges {
 
 	@Input() aboutUsData: IAboutUsEditorInput;
-	@Input() disabled: boolean;
+	@Input() disabledByParent: boolean;
 	@Output() onEditStateChange: EventEmitter<boolean> = new EventEmitter();
 	@Output() onFinish: EventEmitter<IAboutUsEditorInput> = new EventEmitter();
 	aboutUsForm: FormGroup;
@@ -42,8 +42,8 @@ export class AboutUsEditorComponent implements OnInit, OnChanges {
 	}
 
 	ngOnChanges() {
-		if (this.disabled != null && this.disabled != undefined) {
-			if (this.disabled) {
+		if (this.disabledByParent != null && this.disabledByParent != undefined) {
+			if (this.disabledByParent) {
 				this.lock = true;
 			} else {
 				this.lock = false;

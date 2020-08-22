@@ -1,5 +1,5 @@
 import { Binary } from '@angular/compiler';
-import { PAGE_TYPE, TypeSectionWidth, TypeContent } from './common.enum';
+import { TypeSectionWidth, TypeContent } from './common.enum';
 
 export interface ISection {
     width: TypeSectionWidth;
@@ -117,15 +117,33 @@ export interface ICourseInfo {
     fieldTitle4: string;
     fieldTitle5: string;
     fieldTitle6: string;
-    imageId: number;
-    imageUrl: string;
-    imageThumbUrl?: string;
+    pageImageId: number;
+    thumbImageId: number;
+    pageImageUrl?: string;
+    thumbImageUrl?: string;
     registerUrl: string;
+}
+
+export interface ICreateCourseReq extends ICourseInfo {
+    seq: number;
+    seqBase: number;
+}
+
+export interface ICreateCourseRes extends ICommonRes {
+    data: {
+        courseId: number;
+    }
 }
 
 export interface ICourseInfoWithContents extends ICourseInfo {
     courseId: number;
+    pageImageUrl: string;
+    thumbImageUrl: string;
     contents: Array<ISection>;
+}
+
+export interface IUpdateCourseInfoReq extends ICourseInfo {
+    courseId: number;
 }
 
 export interface IUpdateCourseSeqReq {

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mysqlPool = require('../dbs/mysql');
 const queryStatement = require('../query/query');
+const seqeunce = require('../helpers/seqHelper');
 
 const widthEnum = ['NARROW', 'MEDIUM', 'WIDE'];
 const typeEnum = ['IMAGEURL', 'IMAGE', 'POST'];
@@ -33,7 +34,7 @@ router.get('/aboutUs', (req, res) => {
                     status: false,
                     error: {
                         code: 500,
-                        message: 'Internal Server Error'
+                        message: 'Internal Server Error \n' + err1
                     }
                 });
                 return;
@@ -50,26 +51,26 @@ router.get('/aboutUs', (req, res) => {
                 return;
             }
 
-            const pageId = rows1[0].page_id;
-            const name = rows1[0].name;
-            const headerImageId = rows1[0].header_image_id;
-            const headerImageUrl = `/api/static/image/${rows1[0].header_message_digest}.${rows1[0].header_extension}`;
+            const {pageId, name, bannerImageId, bannerMessageDigest, bannerExtension} = rows1[0]; 
+            const bannerImageUrl = `/api/static/image/${bannerMessageDigest}.${bannerExtension}`;
             const contents = rows1.map(row => {
+                const {contentId, seq, seqBase, width, type, background, imageId, messageDigest, extension, content} = row;
                 const rowMap = {
-                    contentId: row.content_id,
-                    seq: row.seq,
-                    seqBase: row.seq_base,
-                    width: row.width === widthEnum[0] ? 0 : row.width === widthEnum[1] ? 1 : 2,
-                    type: row.type === typeEnum[0] ? 0 : row.type === typeEnum[1] ? 1 : 2,
+                    contentId: contentId,
+                    seq: seq,
+                    seqBase: seqBase,
+                    width: width,
+                    type: type
                 };
-                if (row.background) {
-                    rowMap.background = row.background;
+                if (background) {
+                    rowMap.background = background;
                 }
-                if (rowMap.type === 1) {
-                    rowMap.content = `/api/static/image/${row.message_digest}.${row.extension}`;
-                    rowMap.imageId = row.image_id;
-                } else {
-                    rowMap.content = row.content;
+                if (content) {
+                    rowMap.content = content;
+                }
+                if (imageId) {
+                    rowMap.imageId = imageId;
+                    rowMap.imageUrl = `/api/static/image/${messageDigest}.${extension}`;
                 }
 
                 return rowMap;
@@ -81,8 +82,8 @@ router.get('/aboutUs', (req, res) => {
                 data: {
                     pageId: pageId,
                     name: name,
-                    imageId: headerImageId,
-                    imageUrl: headerImageUrl,
+                    imageId: bannerImageId,
+                    imageUrl: bannerImageUrl,
                     contents: contents
                 }
             });
@@ -110,7 +111,7 @@ router.put('/aboutus', (req, res) => {
                 status: false,
                 error: {
                     code: 500,
-                    message: 'Internal Server Error'
+                    message: 'Internal Server Error: \n' + err
                 }
             });
             return;
@@ -123,7 +124,7 @@ router.put('/aboutus', (req, res) => {
                     status: false,
                     error: {
                         code: 500,
-                        message: 'Internal Server Error'
+                        message: 'Internal Server Error: \n' + err1
                     }
                 });
                 return;
@@ -143,7 +144,7 @@ router.get('/course', (req, res) => {
                 status: false,
                 error: {
                     code: 500,
-                    message: 'Internal Server Error'
+                    message: 'Internal Server Error: \n' + err
                 }
             });
             return;
@@ -156,21 +157,21 @@ router.get('/course', (req, res) => {
                     status: false,
                     error: {
                         code: 500,
-                        message: 'Internal Server Error'
+                        message: 'Internal Server Error: \n' + err1
                     }
                 });
                 return;
             }
 
             const courses = rows1.map(row => {
+                const {pageId, pageName, seq, seqBase, imageId, messageDigest, extension} = row;
                 return {
-                    courseThumb: `/api/static/image/${row.message_digest}.${row.extension}`,
-                    courseThumbThumb: `/api/static/image/thumb/${row.message_digest}.${row.extension}`,
-                    courseThumbImageId: row.image_id,
-                    courseName: row.name,
-                    courseId: row.page_id,
-                    seq: row.seq,
-                    seqBase: row.seq_base
+                    thumbnailUrl: `/api/static/image/${messageDigest}.${extension}`,
+                    thumbnailId: imageId,
+                    courseName: pageName,
+                    courseId: pageId,
+                    seq: seq,
+                    seqBase: seqBase
                 };
             });
 
@@ -184,137 +185,117 @@ router.get('/course', (req, res) => {
 
 router.post('/course', (req, res) => {
     const {
-        name, registerUrl, seq, seqBase,
+        courseName, registerUrl,
         thumbImageId, pageImageId, 
         description1, description2, 
         fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6, 
         field1, field2, field3, field4, field5, field6
-    } = req.body
+    } = req.body;
 
-    // page -> (course -> course_image) and page_image
-
-    mysqlPool.getConnection((err, connection) => {
-        if (err) {
+    mysqlPool.getConnection((connectionErr, connection) => {
+        if (connectionErr) {
             res.send({
                 status: false,
                 error: {
                     code: 500,
-                    message: 'Internal Server Error1'
+                    message: 'Fail to Establish Connection with Database'
                 }
             });
             return;
         }
 
-        connection.beginTransaction((err1) => {
-            if (err1) {
+        connection.beginTransaction((beginTransactionErr) => {
+            if (beginTransactionErr) {
                 connection.release(); 
                 res.send({
                     status: false,
                     error: {
                         code: 500,
-                        message: 'Internal Server Error2'
+                        message: 'Internal Server Error: \n' + beginTransactionErr
                     }
                 });
                 return;
             }
-            connection.query(queryStatement.createCourseTransactionCreatePage(name), (err2, result1) => {
-                if (err2) { 
-                    connection.rollback(() => {
-                        connection.release();
-                        res.send({
-                            status: false,
-                            error: {
-                                code: 500,
-                                message: 'Internal Server Error3'
-                            }
-                        });
-                        return;
+            connection.query(queryStatement.selectCourseObjectSeqSeqBase(), (err1, result1) => {
+                if (err1) {
+                    connection.release();
+                    res.send({
+                        status: false,
+                        error: {
+                            code: 500,
+                            message: 'Internal Server Error: \n' + err1
+                        }
                     });
                 }
 
-                const pageId = result1.insertId;
-                if (!pageId) {
-                    connection.rollback(() => {
-                        connection.release();
-                        res.send({
-                            status: false,
-                            error: {
-                                code: 500,
-                                message: 'Internal Server Error4'
-                            }
-                        });
-                        return;
-                    });
-                }
+                const {seq, seqBase} = seqeunce.getNextSeq(result1);
 
-                connection.query(queryStatement.createCourseTransactionCreatePageImage(pageId, pageImageId), (err3, result2) => {
-                    if (err3) { 
+                connection.query(queryStatement.createCourseTransactionCreatePage(courseName), (err2, result2) => {
+                    if (err2) { 
                         connection.rollback(() => {
                             connection.release();
                             res.send({
                                 status: false,
                                 error: {
                                     code: 500,
-                                    message: 'Internal Server Error5'
+                                    message: 'Internal Server Error: \n' + err2
                                 }
                             });
                             return;
                         });
                     }
 
-                    connection.query(queryStatement.createCourseTransactionCreateCourse(
-                        pageId, description1, description2, seq, seqBase, registerUrl,
+                    const pageId = result2.insertId;
+                    if (!pageId) {
+                        connection.rollback(() => {
+                            connection.release();
+                            res.send({
+                                status: false,
+                                error: {
+                                    code: 500,
+                                    message: 'Internal Server Error'
+                                }
+                            });
+                            return;
+                        });
+                    }
+
+                    connection.query(queryStatement.createCourseTransactionCreateCourseInfo(
+                        pageId, thumbImageId, pageImageId, description1, description2, seq, seqBase, registerUrl,
                         fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6,
-                        field1, field2, field3, field4, field5, field6), (err4, result3) => {
-                        if (err4) { 
-                            console.log(err4)
+                        field1, field2, field3, field4, field5, field6), (err3, result3) => {
+                        if (err3) { 
                             connection.rollback(() => {
                                 connection.release();
                                 res.send({
                                     status: false,
                                     error: {
                                         code: 500,
-                                        message: 'Internal Server Error6'
+                                        message: 'Internal Server Error: \n' + err3
                                     }
                                 });
                                 return;
                             });
                         }
-                        
-                        connection.query(queryStatement.createCourseTransactionCreateCourseImage(pageId, thumbImageId), (err5, result4) => {
-                            if (err5) { 
+                    
+                        connection.commit(null, (err4) => {
+                            if (err4) { 
                                 connection.rollback(() => {
                                     connection.release();
                                     res.send({
                                         status: false,
                                         error: {
                                             code: 500,
-                                            message: 'Internal Server Error7'
+                                            message: 'Internal Server Error: \n' + err4
                                         }
                                     });
                                     return;
                                 });
                             }
 
-                            connection.commit(null, (err6) => {
-                                if (err6) { 
-                                    connection.rollback(() => {
-                                        connection.release();
-                                        res.send({
-                                            status: false,
-                                            error: {
-                                                code: 500,
-                                                message: 'Internal Server Error8'
-                                            }
-                                        });
-                                        return;
-                                    });
-                                }
-
-                                connection.release();
-                                res.status(200).send({
-                                    status: true,
-                                });
+                            connection.release();
+                            res.status(200).send({
+                                status: true
                             });
                         });
                     });
@@ -327,13 +308,13 @@ router.post('/course', (req, res) => {
 router.get('/course/:pageId', (req, res) => {
     const {pageId} = req.params;
 
-    mysqlPool.getConnection((err, connection) => {
-        if (err) {
+    mysqlPool.getConnection((connectionErr, connection) => {
+        if (connectionErr) {
             res.send({
                 status: false,
                 error: {
                     code: 500,
-                    message: 'Internal Server Error'
+                    message: 'Fail to Establish Connection with Database'
                 }
             });
             return;
@@ -346,34 +327,35 @@ router.get('/course/:pageId', (req, res) => {
                     status: false,
                     error: {
                         code: 500,
-                        message: 'Internal Server Error'
+                        message: 'Internal Server Error: \n' + err1
                     }
                 });
                 return;
             }
 
-            const row = rows1[0]
+            const row = rows1[0];
             const coursePage = {
-                courseId: row.page_id,
-                imageId: row.image_id,
-                imageUrl: `/api/static/image/${row.message_digest}.${row.extension}`,
-                imageThumbUrl: `/api/static/image/thumb/${row.message_digest}.${row.extension}`,
-                courseName: row.name,
+                courseId: row.courseId,
+                pageImageId: row.bannerImageId,
+                pageImageUrl: `/api/static/image/${row.bannerMessageDigest}.${row.bannerExtension}`,
+                thumbImageId: row.thumbnailImageId,
+                thumbImageUrl: `/api/static/image/${row.thumbnailMessageDigest}.${row.thumbnailExtension}`,
+                courseName: row.courseName,
                 description1: row.description1,
                 description2: row.description2,
-                fieldTitle1: row.field_title1,
-                fieldTitle2: row.field_title2,
-                fieldTitle3: row.field_title3,
-                fieldTitle4: row.field_title4,
-                fieldTitle5: row.field_title5,
-                fieldTitle6: row.field_title6,
+                fieldTitle1: row.fieldTitle1,
+                fieldTitle2: row.fieldTitle2,
+                fieldTitle3: row.fieldTitle3,
+                fieldTitle4: row.fieldTitle4,
+                fieldTitle5: row.fieldTitle5,
+                fieldTitle6: row.fieldTitle6,
                 field1: row.field1,
                 field2: row.field2,
                 field3: row.field3,
                 field4: row.field4,
                 field5: row.field5,
                 field6: row.field6,
-                registerUrl: row.register_url
+                registerUrl: row.registerUrl
             }
 
             connection.query(queryStatement.selectPageContent(pageId), (err2, rows2) => {
@@ -383,7 +365,7 @@ router.get('/course/:pageId', (req, res) => {
                         status: false,
                         error: {
                             code: 500,
-                            message: 'Internal Server Error'
+                            message: 'Internal Server Error: \n' + err2
                         }
                     });
                     return;
@@ -391,18 +373,18 @@ router.get('/course/:pageId', (req, res) => {
 
                 const contents = rows2.map(row2 => {
                     const rowMap = {
-                        contentId: row2.content_id,
+                        contentId: row2.contentId,
                         seq: row2.seq,
-                        seqBase: row2.seq_base,
-                        width: row2.width === widthEnum[0] ? 0 : row2.width === widthEnum[1] ? 1 : 2,
-                        type: row2.type === typeEnum[0] ? 0 : row2.type === typeEnum[1] ? 1 : 2,
+                        seqBase: row2.seqBase,
+                        width: row2.width,
+                        type: row2.type,
                     };
                     if (row2.background) {
                         rowMap.background = row2.background;
                     }
                     if (rowMap.type === 1) {
-                        rowMap.content = `/api/static/image/${row2.message_digest}.${row2.extension}`;
-                        rowMap.imageId = row2.image_id;
+                        rowMap.content = `/api/static/image/${row2.messageDigest}.${row2.extension}`;
+                        rowMap.imageId = row2.imageId;
                     } else {
                         rowMap.content = row2.content;
                     }
@@ -423,14 +405,14 @@ router.get('/course/:pageId', (req, res) => {
 router.put('/course/:pageId', (req, res) => {
     const {pageId} = req.params;
     const {
-        name, registerUrl, seq, seqBase,
+        courseName, registerUrl,
         thumbImageId, pageImageId, 
         description1, description2, 
         fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6, 
         field1, field2, field3, field4, field5, field6
     } = req.body;
 
-    if (req.body.pageId != pageId) {
+    if (req.body.courseId != pageId) {
         res.send({
             status: false,
             error: {
@@ -441,29 +423,30 @@ router.put('/course/:pageId', (req, res) => {
         return;
     }
 
-    mysqlPool.getConnection((err, connection) => {
-        if (err) {
+    mysqlPool.getConnection((connectionErr, connection) => {
+        if (connectionErr) {
             res.send({
                 status: false,
                 error: {
                     code: 500,
-                    message: 'Internal Server Error'
+                    message: 'Fail to Establish Connection with Database'
                 }
             });
             return;
         }
 
         connection.query(queryStatement.updateCourse(
-            pageId, name, description1, description2, seq, seqBase, registerUrl, 
+            pageId, courseName, description1, description2, registerUrl, 
             fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6, 
             field1, field2, field3, field4, field5, field6, pageImageId, thumbImageId), (err1, rows1) => {
             connection.release();
+
             if (err1) {
                 res.send({
                     status: false,
                     error: {
                         code: 500,
-                        message: 'Internal Server Error'
+                        message: err1
                     }
                 });
                 return;
@@ -480,13 +463,13 @@ router.put('/course/:pageId', (req, res) => {
 router.delete('/course/:pageId', (req, res) => {
     const {pageId} = req.params;
 
-    mysqlPool.getConnection((err, connection) => {
-        if (err) {
+    mysqlPool.getConnection((connectionErr, connection) => {
+        if (connectionErr) {
             rres.send({
                 status: false,
                 error: {
                     code: 500,
-                    message: 'Internal Server Error'
+                    message: 'Fail to Establish Connection with Database'
                 }
             });
             return;
@@ -499,7 +482,7 @@ router.delete('/course/:pageId', (req, res) => {
                     status: false,
                     error: {
                         code: 500,
-                        message: 'Internal Server Error'
+                        message: 'Internal Server Error: \n' + err1
                     }
                 });
                 return;
@@ -512,9 +495,9 @@ router.delete('/course/:pageId', (req, res) => {
     });
 });
 
-router.put('/course/updateSeq/:pageId', (req, res) => {
+router.put('/course/upSeq/:pageId', (req, res) => {
     const {pageId} = req.params;
-    const {courseId, seq, seqBase} = req.body;
+    const {courseId} = req.body;
 
     if (courseId != pageId) {
         res.send({
@@ -539,9 +522,9 @@ router.put('/course/updateSeq/:pageId', (req, res) => {
             return;
         }
 
-        connection.query(queryStatement.updateCourseSeq(pageId, seq, seqBase), (err1, rows1) => {
-            connection.release();
+        connection.query(queryStatement.selectCourseObjectIdSeqSeqBase(), (err1, rows1) => {
             if (err1) {
+                connection.release();
                 res.send({
                     status: false,
                     error: {
@@ -552,8 +535,103 @@ router.put('/course/updateSeq/:pageId', (req, res) => {
                 return;
             }
 
-            res.status(200).send({
-                status: true,
+            const {seq, seqBase} = seqeunce.incrementSeq(courseId, rows1);
+
+            if (seq == undefined || seqBase == undefined) {
+                connection.release();
+                res.status(200).send({
+                    status: true,
+                });
+                return;
+            }
+
+            connection.query(queryStatement.updateCourseSeq(pageId, seq, seqBase), (err2, rows2) => {
+                connection.release();
+                if (err2) {
+                    res.send({
+                        status: false,
+                        error: {
+                            code: 500,
+                            message: 'Internal Server Error'
+                        }
+                    });
+                    return;
+                }
+    
+                res.status(200).send({
+                    status: true,
+                });
+            });
+        });
+    });
+});
+
+router.put('/course/downSeq/:pageId', (req, res) => {
+    const {pageId} = req.params;
+    const {courseId} = req.body;
+
+    if (courseId != pageId) {
+        res.send({
+            status: false,
+            error: {
+                code:403,
+                message: 'Invalid Request'
+            }
+        });
+        return;
+    }
+
+    mysqlPool.getConnection((connectionErr, connection) => {
+        if (connectionErr) {
+            rres.send({
+                status: false,
+                error: {
+                    code: 500,
+                    message: 'Fail to Establish Connection with Database'
+                }
+            });
+            return;
+        }
+
+        connection.query(queryStatement.selectCourseObjectIdSeqSeqBase(), (err1, rows1) => {
+            if (err1) {
+                connection.release();
+                res.send({
+                    status: false,
+                    error: {
+                        code: 500,
+                        message: 'Internal Server Error'
+                    }
+                });
+                return;
+            }
+
+            const {seq, seqBase} = seqeunce.decrementSeq(courseId, rows1);
+
+            if (seq == undefined || seqBase == undefined) {
+                connection.release();
+                res.status(200).send({
+                    status: true,
+                });
+                return;
+            }
+
+            connection.query(queryStatement.updateCourseSeq(pageId, seq, seqBase), (err2, rows2) => {
+                connection.release();
+                if (err2) {
+                    res.send({
+                        status: false,
+                        error: {
+                            code: 500,
+                            message: 'Internal Server Error: \n' + err2
+                        }
+                    });
+                    return;
+                }
+    
+                res.status(200).send({
+                    status: true,
+                });
             });
         });
     });
@@ -567,12 +645,9 @@ router.post('/notice', (req, res) => {
 
 });
 
-router.post('/:pageId/:seq/:seqBase', (req, res) => {
-    const {pageId, seq, seqBase} = req.params;
+router.post('/:pageId', (req, res) => {
+    const {pageId} = req.params;
     const {type, width, content, imageId, background} = req.body;
-
-    const typeStr = typeEnum[type];
-    const widthStr = widthEnum[width];
 
     if (req.body.pageId != pageId || req.body.seq != seq || req.body.seqBase != seqBase) {
         res.send({
@@ -585,149 +660,59 @@ router.post('/:pageId/:seq/:seqBase', (req, res) => {
         return;
     }
 
-    mysqlPool.getConnection((err, connection) => {
-        if (err) {
+    mysqlPool.getConnection((connectionErr, connection) => {
+        if (connectionErr) {
             res.send({
                 status: false,
                 error: {
                     code: 500,
-                    message: 'Internal Server Error'
+                    message: 'Fail to Establish Connection with Database'
                 }
             });
             return;
         }
 
-        connection.beginTransaction((err1) => {
+        connection.query(queryStatement.selectPageContentObjectIdSeqSeqBase(pageId), (err1, rows1) => {
             if (err1) {
-                connection.release(); 
+                connection.release();
                 res.send({
                     status: false,
                     error: {
                         code: 500,
-                        message: 'Internal Server Error'
+                        message: 'Internal Server Error: \n' + err1
                     }
                 });
                 return;
             }
-            connection.query(queryStatement.createPageContentTransactionCreateContent(seq, seqBase, widthStr, typeStr, content, background), (err2, result1) => {
-                if (err2) { 
-                    connection.rollback(() => {
-                        connection.release();
-                        res.send({
-                            status: false,
-                            error: {
-                                code: 500,
-                                message: 'Internal Server Error'
-                            }
-                        });
-                        return;
+
+            const {seq, seqBase} = seqeunce.getNextSeq(rows1);
+
+            connection.query(queryStatement.createPageContent(pageId, seq, seqBase, width, type, content, background, imageId), (err2, rows2) => {
+                connection.release();
+                if (err2) {
+                    res.send({
+                        status: false,
+                        error: {
+                            code: 500,
+                            message: 'Internal Server Error: \n' + err2
+                        }
                     });
+                    return;
                 }
-
-
-                const contentId = result1.insertId;
-                if (!contentId) {
-                    connection.rollback(() => {
-                        connection.release();
-                        res.send({
-                            status: false,
-                            error: {
-                                code: 500,
-                                message: 'Internal Server Error'
-                            }
-                        });
-                        return;
-                    });
-                }
-          
-                connection.query(queryStatement.createPageContentTransactionCreatePageContent(pageId, contentId), (err3, result2) => {
-                    if (err3) { 
-                        connection.rollback(() => {
-                            connection.release();
-                            res.send({
-                                status: false,
-                                error: {
-                                    code: 500,
-                                    message: 'Internal Server Error'
-                                }
-                            });
-                            return;
-                        });
-                    }
-
-                    if (imageId && type==1) {
-                        connection.query(queryStatement.createPageContentTransactionCreateImageContent(imageId, contentId), (err4, result3) => {
-                            if (err4) { 
-                                connection.rollback(() => {
-                                    connection.release();
-                                    res.send({
-                                        status: false,
-                                        error: {
-                                            code: 500,
-                                            message: 'Internal Server Error'
-                                        }
-                                    });
-                                    return;
-                                });
-                            }
-
-                            connection.commit(null, (err5) => {
-                                if (err5) { 
-                                    connection.rollback(() => {
-                                        connection.release();
-                                        res.send({
-                                            status: false,
-                                            error: {
-                                                code: 500,
-                                                message: 'Internal Server Error'
-                                            }
-                                        });
-                                        return;
-                                    });
-                                }
-
-                                connection.release();
-                                res.status(200).send({
-                                    status: true,
-                                });
-                            });
-                        });
-                    } else {
-                        connection.commit(null, (err5) => {
-                            if (err5) { 
-                                connection.rollback(() => {
-                                    connection.release();
-                                    res.send({
-                                        status: false,
-                                        error: {
-                                            code: 500,
-                                            message: 'Internal Server Error'
-                                        }
-                                    });
-                                    return;
-                                });
-                            }
-
-                            connection.release();
-                            res.status(200).send({
-                                status: true,
-                            });
-                        });
-                    }
+    
+                res.status(200).send({
+                    status: true,
                 });
             });
         });
     });
 });
 
-router.put('/:pageId/:seq/:seqBase', (req, res) => {
-    const {pageId, seq, seqBase} = req.params;
+router.put('/:pageId/:contentId', (req, res) => {
+    const {pageId, contentId} = req.params;
     const {type, width, content, imageId, background} = req.body;
 
-    const typeStr = typeEnum[type];
-    const widthStr = widthEnum[width];
-
-    if (req.body.pageId != pageId || req.body.seq != seq || req.body.seqBase != seqBase) {
+    if (req.body.pageId != pageId || req.body.contentId != contentId) {
         res.send({
             status: false,
             error: {
@@ -738,26 +723,26 @@ router.put('/:pageId/:seq/:seqBase', (req, res) => {
         return;
     }
 
-    mysqlPool.getConnection((err, connection) => {
-        if (err) {
+    mysqlPool.getConnection((connectionErr, connection) => {
+        if (connectionErr) {
             res.send({
                 status: false,
                 error: {
                     code: 500,
-                    message: 'Internal Server Error'
+                    message: 'Fail to Establish Connection with Database'
                 }
             });
             return;
         }
 
-        connection.query(queryStatement.updatePageContent(pageId, seq, seqBase, typeStr, widthStr, content, imageId, background), (err1, rows1) => {
+        connection.query(queryStatement.updatePageContent(pageId, contentId, type, width, content, imageId, background), (err1, rows1) => {
             connection.release();
             if (err1) {
                 res.send({
                     status: false,
                     error: {
                         code: 500,
-                        message: 'Internal Server Error'
+                        message: 'Internal Server Error: \n' + err1
                     }
                 });
                 return;
@@ -770,22 +755,22 @@ router.put('/:pageId/:seq/:seqBase', (req, res) => {
     });
 }); 
 
-router.delete('/:pageId/:seq/:seqBase', (req, res) => {
-    const {pageId, seq, seqBase} = req.params;
+router.delete('/:pageId/:contentId', (req, res) => {
+    const {pageId, contentId} = req.params;
 
-    mysqlPool.getConnection((err, connection) => {
-        if (err) {
+    mysqlPool.getConnection((connectionErr, connection) => {
+        if (connectionErr) {
             rres.send({
                 status: false,
                 error: {
                     code: 500,
-                    message: 'Internal Server Error'
+                    message: 'Fail to Establish Connection with Database'
                 }
             });
             return;
         }
 
-        connection.query(queryStatement.deletePageContent(pageId, seq, seqBase), (err1, rows1) => {
+        connection.query(queryStatement.deletePageContent(pageId, contentId), (err1, rows1) => {
             connection.release();
             if (err1) {
                 res.send({
@@ -800,6 +785,146 @@ router.delete('/:pageId/:seq/:seqBase', (req, res) => {
 
             res.status(200).send({
                 status: true,
+            });
+        });
+    });
+});
+
+router.put('/:pageId/:contentId/downSeq', (req, res) => {
+    const {pageId, contentId} = req.params;
+
+    if (req.body.pageId != pageId || req.body.contentId != contentId) {
+        res.send({
+            status: false,
+            error: {
+                code:403,
+                message: 'Invalid Request'
+            }
+        });
+        return;
+    }
+
+    mysqlPool.getConnection((connectionErr, connection) => {
+        if (connectionErr) {
+            rres.send({
+                status: false,
+                error: {
+                    code: 500,
+                    message: 'Fail to Establish Connection with Database'
+                }
+            });
+            return;
+        }
+
+        connection.query(queryStatement.selectPageContentObjectIdSeqSeqBase(pageId), (err1, rows1) => {
+            if (err1) {
+                connection.release();
+                res.send({
+                    status: false,
+                    error: {
+                        code: 500,
+                        message: 'Internal Server Error: \n' + err1
+                    }
+                });
+                return;
+            }
+
+            const {seq, seqBase} = seqeunce.decrementSeq(contentId, rows1);
+
+            if (seq == undefined || seqBase == undefined) {
+                connection.release();
+                res.status(200).send({
+                    status: true,
+                });
+                return;
+            }
+
+            connection.query(queryStatement.updatePageContentSeq(pageId, contentId, seq, seqBase), (err2, rows2) => {
+                connection.release();
+                if (err2) {
+                    res.send({
+                        status: false,
+                        error: {
+                            code: 500,
+                            message: 'Internal Server Error: \n' + err2
+                        }
+                    });
+                    return;
+                }
+    
+                res.status(200).send({
+                    status: true,
+                });
+            });
+        });
+    });
+});
+
+router.put('/:pageId/:contentId/upSeq', (req, res) => {
+    const {pageId, contentId} = req.params;
+
+    if (req.body.pageId != pageId || req.body.contentId != contentId) {
+        res.send({
+            status: false,
+            error: {
+                code:403,
+                message: 'Invalid Request'
+            }
+        });
+        return;
+    }
+
+    mysqlPool.getConnection((connectionErr, connection) => {
+        if (connectionErr) {
+            rres.send({
+                status: false,
+                error: {
+                    code: 500,
+                    message: 'Fail to Establish Connection with Database'
+                }
+            });
+            return;
+        }
+
+        connection.query(queryStatement.selectPageContentObjectIdSeqSeqBase(pageId), (err1, rows1) => {
+            if (err1) {
+                connection.release();
+                res.send({
+                    status: false,
+                    error: {
+                        code: 500,
+                        message: 'Internal Server Error: \n' + err1
+                    }
+                });
+                return;
+            }
+
+            const {seq, seqBase} = seqeunce.incrementSeq(contentId, rows1);
+
+            if (seq == undefined || seqBase == undefined) {
+                connection.release();
+                res.status(200).send({
+                    status: true,
+                });
+                return;
+            }
+
+            connection.query(queryStatement.updatePageContentSeq(pageId, contentId, seq, seqBase), (err2, rows2) => {
+                connection.release();
+                if (err2) {
+                    res.send({
+                        status: false,
+                        error: {
+                            code: 500,
+                            message: 'Internal Server Error: \n' + err2
+                        }
+                    });
+                    return;
+                }
+    
+                res.status(200).send({
+                    status: true,
+                });
             });
         });
     });

@@ -1,12 +1,12 @@
 <div class="p-grid p-nogutter p-relative p-overflow-hidden item" style="background-color: black;">
-    <img class="image-container" [src]="cImageUrl.value">
+    <img class="image-container" [src]="cPageImageUrl.value" onerror="this.src='./assets/img/notfound.jpg';">
     <div class="p-absolute p-d-flex p-justify-center p-align-center w-100 h-100">
         <div class="p-grid-narrow p-nogutter">
             <div class="p-col-12 p-md-6 p-lg-6">
                 <div class="title-panel">
-                    <div>{{cDescription1.value}}</div>
-                    <h3>{{cCourseName.value}}</h3>
-                    <div>{{cDescription2.value}}</div>
+                    <div class="p-pre-wrap">{{cDescription1.value}}</div>
+                    <h1>{{cCourseName.value}}</h1>
+                    <div class="p-pre-wrap">{{cDescription2.value}}</div>
                 </div>
             </div>
             <div class="p-col-12 p-md-6 p-lg-6">
@@ -58,15 +58,15 @@
             <div class="p-py-3">
                 <label>썸네일 이미지</label>
                 <span class="ui-inputgroup">
-                    <input formControlName="cImageUrl" class="w-100" pInputText readonly>
-                    <app-image-upload label="수정" icon="pi pi-pencil" (onSubmit)="imageUploaded($event)"></app-image-upload>
+                    <input formControlName="cThumbImageUrl" class="w-100" pInputText readonly>
+                    <app-image-upload label="수정" icon="pi pi-pencil" (onSubmit)="thumbImageUploaded($event)"></app-image-upload>
                 </span>
             </div>
             <div class="p-py-3">
                 <label>백그라운드 이미지</label>
                 <span class="ui-inputgroup">
-                    <input formControlName="cImageUrl" class="w-100" pInputText readonly>
-                    <app-image-upload label="수정" icon="pi pi-pencil" (onSubmit)="imageUploaded($event)"></app-image-upload>
+                    <input formControlName="cPageImageUrl" class="w-100" pInputText readonly>
+                    <app-image-upload label="수정" icon="pi pi-pencil" (onSubmit)="pageImageUploaded($event)"></app-image-upload>
                 </span>
             </div>
             <div class="p-py-3">
@@ -103,7 +103,7 @@
             </div>
             <p-footer>
                 <div class="p-d-flex p-justify-end w-100">
-                    <button (click)="save()" pButton type="button" label="수정하기" class="ui-button-primary p-mr-2"></button>
+                    <button (click)="save()" pButton type="button" [label]="isNewPage ? '새로 만들기': '수정하기'" class="ui-button-primary p-mr-2" [disabled]="courseInfoForm.invalid"></button>
                     <button (click)="cancel()" pButton type="button" label="취소하기" class="ui-button-secondary"></button>
                 </div>
             </p-footer>

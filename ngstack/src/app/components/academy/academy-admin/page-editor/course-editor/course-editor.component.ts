@@ -10,11 +10,12 @@ import { IAboutUsEditorInput, ICourseInfo } from '@app/models/';
 export class CourseEditorComponent implements OnInit {
 
 	@Input() courseInfoData: ICourseInfo;
-	@Input() disabled: boolean;
+	@Input() disabledByParent: boolean;
+	@Input() isNewPage: boolean = false;
 	@Output() onEditStateChange: EventEmitter<boolean> = new EventEmitter();
 	@Output() onFinish: EventEmitter<ICourseInfo> = new EventEmitter();
 	courseInfoForm: FormGroup;
-	isEdit: boolean;
+	isEdit: boolean = false;
 	lock: boolean = false;
 
 	get cCourseName() {return this.courseInfoForm.get('cCourseName');}
@@ -32,15 +33,15 @@ export class CourseEditorComponent implements OnInit {
 	get cField4() {return this.courseInfoForm.get('cField4');}
 	get cField5() {return this.courseInfoForm.get('cField5');}
 	get cField6() {return this.courseInfoForm.get('cField6');}
-	get cImageId() {return this.courseInfoForm.get('cImageId');}
-	get cImageUrl() {return this.courseInfoForm.get('cImageUrl');}
+	get cPageImageId() {return this.courseInfoForm.get('cPageImageId');}
+	get cPageImageUrl() {return this.courseInfoForm.get('cPageImageUrl');}
+	get cThumbImageId() {return this.courseInfoForm.get('cThumbImageId');}
+	get cThumbImageUrl() {return this.courseInfoForm.get('cThumbImageUrl');}
 	get cRegisterUrl() {return this.courseInfoForm.get('cRegisterUrl');}
 
 	constructor(private fb: FormBuilder) { }
 
 	ngOnInit() {
-		this.isEdit = false;
-		this.onEditStateChange.emit(this.isEdit);
 		this.courseInfoForm = this.fb.group({
 			cCourseName: ["", Validators.required],
 			cDescription1: ["", Validators.required],
@@ -57,17 +58,24 @@ export class CourseEditorComponent implements OnInit {
 			cField4: ["", Validators.required],
 			cField5: ["", Validators.required],
 			cField6: ["", Validators.required],
-			cImageId: [null, Validators.required],
-			cImageUrl: ["", Validators.required],
+			cPageImageId: [null, Validators.required],
+			cPageImageUrl: ["", Validators.required],
+			cThumbImageId: [null, Validators.required],
+			cThumbImageUrl: ["", Validators.required],
 			cRegisterUrl: ["", Validators.required]
 		});
 
-		this.mapFormControls();
+		if (this.isNewPage) {
+			this.isEdit = true;
+		} else {
+			this.mapFormControls();
+		}
+		this.onEditStateChange.emit(this.isEdit);
 	}
 
 	ngOnChanges() {
-		if (this.disabled != null && this.disabled != undefined) {
-			if (this.disabled) {
+		if (this.disabledByParent != null && this.disabledByParent != undefined) {
+			if (this.disabledByParent) {
 				this.lock = true;
 			} else {
 				this.lock = false;
@@ -75,12 +83,21 @@ export class CourseEditorComponent implements OnInit {
 		}
 	}
 	
-	imageUploaded(e) {
+	pageImageUploaded(e) {
 		const {url, imageId} = e;
 		
 		if (url && imageId) {
-			this.cImageUrl.patchValue(url);
-			this.cImageId.patchValue(imageId);
+			this.cPageImageUrl.patchValue(url);
+			this.cPageImageId.patchValue(imageId);
+		}
+	}
+
+	thumbImageUploaded(e) {
+		const {url, imageId} = e;
+		
+		if (url && imageId) {
+			this.cThumbImageUrl.patchValue(url);
+			this.cThumbImageId.patchValue(imageId);
 		}
 	}
 
@@ -101,8 +118,10 @@ export class CourseEditorComponent implements OnInit {
 			cField4,
 			cField5,
 			cField6,
-			cImageId,
-			cImageUrl,
+			cPageImageId,
+			cPageImageUrl,
+			cThumbImageId,
+			cThumbImageUrl,
 			cRegisterUrl
 		} = this.courseInfoForm.getRawValue();
 		return cCourseName !== this.courseInfoData.courseName 
@@ -120,8 +139,10 @@ export class CourseEditorComponent implements OnInit {
 			|| cField4 !== this.courseInfoData.field4
 			|| cField5 !== this.courseInfoData.field5
 			|| cField6 !== this.courseInfoData.field6
-			|| cImageId !== this.courseInfoData.imageId
-			|| cImageUrl !== this.courseInfoData.imageUrl
+			|| cPageImageId !== this.courseInfoData.pageImageId
+			|| cPageImageUrl !== this.courseInfoData.pageImageUrl
+			|| cThumbImageId !== this.courseInfoData.thumbImageId
+			|| cThumbImageUrl !== this.courseInfoData.thumbImageUrl
 			|| cRegisterUrl !== this.courseInfoData.registerUrl;
 	}
 
@@ -143,8 +164,10 @@ export class CourseEditorComponent implements OnInit {
 				cField4: this.courseInfoData.field4,
 				cField5: this.courseInfoData.field5,
 				cField6: this.courseInfoData.field6,
-				cImageId: this.courseInfoData.imageId,
-				cImageUrl: this.courseInfoData.imageUrl,
+				cPageImageId: this.courseInfoData.pageImageId,
+				cPageImageUrl: this.courseInfoData.pageImageUrl,
+				cThumbImageId: this.courseInfoData.thumbImageId,
+				cThumbImageUrl: this.courseInfoData.thumbImageUrl,
 				cRegisterUrl: this.courseInfoData.registerUrl
 			});
 		}
@@ -173,8 +196,10 @@ export class CourseEditorComponent implements OnInit {
 				fieldTitle4: this.cFieldTitle4.value,
 				fieldTitle5: this.cFieldTitle5.value,
 				fieldTitle6: this.cFieldTitle6.value,
-				imageId: this.cImageId.value,
-				imageUrl: this.cImageUrl.value,
+				pageImageId: this.cPageImageId.value,
+				pageImageUrl: this.cPageImageUrl.value,
+				thumbImageId: this.cThumbImageId.value,
+				thumbImageUrl: this.cThumbImageUrl.value,
 				registerUrl: this.cRegisterUrl.value
 			};
 			this.onFinish.emit(formData);

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ISection, IAboutUsEditorInput, IUpdateAboutUsReq, ICourseInfo } from '@app/models';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ISection, IAboutUsEditorInput, IUpdateAboutUsReq, ICourseInfo, IUpdateCourseInfoReq, ICreateCourseReq } from '@app/models';
+import { Router } from '@angular/router';
 import { PAGE_URL_TYPE } from '@app/models';
 import { DataService } from '@services/data/data.service';
 
@@ -12,28 +12,41 @@ import { DataService } from '@services/data/data.service';
 export class PageEditorComponent implements OnInit {
 
 	pageType: string;
-	id: any;
+	id: number;
 	contents: ISection[] = null;
 	aboutUsData: IAboutUsEditorInput;
 	courseInfoData: ICourseInfo;
+	
 	loaded: boolean = false;
-	editState = 0;
+	childComponentEditState = 0;
+
+	isNewPage = false;
 
 	constructor(
-		private router: Router, 
-		private route: ActivatedRoute, 
+		private router: Router,
 		private dataService: DataService
 	) { }
 
 	ngOnInit() {
-		this.route.params.subscribe(params => {
-			const {pageType, id} = params;
-			this.pageType = pageType;
-			if (id) {
-				this.id = id;
+		const parsedUrl = this.router.url.split('/');
+
+		if (parsedUrl[parsedUrl.length - 1] == PAGE_URL_TYPE.ABOUT_US) {
+			this.pageType = PAGE_URL_TYPE.ABOUT_US;
+		} else {
+			if (parsedUrl[parsedUrl.length - 1] == PAGE_URL_TYPE.NEW) {
+				this.isNewPage = true;
+			} else {
+				this.id = parseInt(parsedUrl[parsedUrl.length - 1]);
 			}
-			this.loadPage();
-		});
+
+			if (parsedUrl[parsedUrl.length - 2] == PAGE_URL_TYPE.COURSE) {
+				this.pageType = PAGE_URL_TYPE.COURSE;
+			} else if (parsedUrl[parsedUrl.length - 2] == PAGE_URL_TYPE.NOTICE) {
+				this.pageType = PAGE_URL_TYPE.NOTICE;
+			}
+		}
+
+		this.loadPage();
 	}
 
 	loadPage() {
@@ -179,22 +192,40 @@ export class PageEditorComponent implements OnInit {
 					this.loadPage();
 				}
 			});
+		} else if (this.isCourse()) {
+			if (this.isNewPage) {
+				const request: ICreateCourseReq = {
+					seq: 1,
+					seqBase: 1,
+					...e
+				}
+			} else {
+				const request: IUpdateCourseInfoReq = {
+					courseId: this.id,
+					...e
+				};
+				this.dataService.updateCourseInfo(request).toPromise().then((res) => {
+					if (res.status) {
+						this.loadPage();
+					}
+				});
+			}
 		}
 	}
 
 	onHeaderEditStateChange(e) {
 		if (e) {
-			this.editState = 1;
+			this.childComponentEditState = 1;
 		} else {
-			this.editState = 0;
+			this.childComponentEditState = 0;
 		}
 	}
 
 	onBodyEditStateChange(e) {
 		if (e) {
-			this.editState = 2;
+			this.childComponentEditState = 2;
 		} else {
-			this.editState = 0;
+			this.childComponentEditState = 0;
 		}
 	}
 }

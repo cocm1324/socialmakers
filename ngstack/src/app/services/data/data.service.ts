@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {IRunLoginReq, IRunLoginRes, IRunVerifyLoginRes, ICreateImageReq, IGetAboutUsRes, ICreateSectionReq, IUpdateSectionReq, IDeleteSectionReq, ICommonRes, IGetCourseRes, IGetCourseListRes, IUpdateCourseSeqReq, IRunEyedropReq, IRunEyedropRes, IUpdateAboutUsReq} from '../../models';
+import {IRunLoginReq, IRunLoginRes, IRunVerifyLoginRes, ICreateImageReq, IGetAboutUsRes, ICreateSectionReq, IUpdateSectionReq, IDeleteSectionReq, ICommonRes, IGetCourseRes, IGetCourseListRes, IUpdateCourseSeqReq, IRunEyedropReq, IRunEyedropRes, IUpdateAboutUsReq, IUpdateCourseInfoReq, ICreateCourseReq, ICreateCourseRes} from '../../models';
 import { map } from 'rxjs/operators';
 
 @Injectable({
@@ -75,11 +75,19 @@ export class DataService {
 		return this.http.get<IGetCourseRes>(`${this.pageUrl}/course/${id}`);
 	}
 
+	createCourse(request: ICreateCourseReq): Observable<ICreateCourseRes> {
+		return this.http.post<ICreateCourseRes>(`${this.pageUrl}/course`, request);
+	}
+
 	updateCourseSeq(request: IUpdateCourseSeqReq): Observable<ICommonRes> {
 		return this.http.put<ICommonRes>(`${this.pageUrl}/course/updateSeq/${request.courseId}`, request);
 	}
 
 	deleteCourse(id: number): Observable<ICommonRes> {
 		return this.http.delete<ICommonRes>(`${this.pageUrl}/course/${id}`);
+	}
+
+	updateCourseInfo(request: IUpdateCourseInfoReq): Observable<ICommonRes> {
+		return this.http.put<ICommonRes>(`${this.pageUrl}/course/${request.courseId}`, request);
 	}
 }

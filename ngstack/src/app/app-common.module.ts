@@ -13,6 +13,7 @@ import {AccordionModule} from 'primeng/accordion';
 import {ColorPickerModule} from 'primeng/colorpicker';
 import {OrderListModule} from 'primeng/orderlist';
 import {InputTextareaModule} from 'primeng/inputtextarea';
+import {TableModule} from 'primeng/table';
 
 @NgModule({
     imports: [
@@ -30,7 +31,8 @@ import {InputTextareaModule} from 'primeng/inputtextarea';
         AccordionModule,
         ColorPickerModule,
         OrderListModule,
-        InputTextareaModule
+        InputTextareaModule,
+        TableModule
     ],
     exports: [
         FormsModule,
@@ -47,7 +49,8 @@ import {InputTextareaModule} from 'primeng/inputtextarea';
         AccordionModule,
         ColorPickerModule,
         OrderListModule,
-        InputTextareaModule
+        InputTextareaModule,
+        TableModule
     ]
 })
 export class AppCommonModule {}

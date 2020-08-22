@@ -10,7 +10,7 @@ import * as _ from 'lodash';
 export class EditorComponent implements OnInit, OnChanges {
 
 	@Input() pageData: ISection[];
-	@Input() disabled: boolean;
+	@Input() disabledByParent: boolean;
 	@Output() onFinished: EventEmitter<any> = new EventEmitter();
 	@Output() onSectionFinished: EventEmitter<ISection> = new EventEmitter();
 	@Output() onSectionDelete: EventEmitter<ISection> = new EventEmitter();
@@ -29,9 +29,9 @@ export class EditorComponent implements OnInit, OnChanges {
 	}
 
 	ngOnChanges(changes: SimpleChanges) {
-		if (this.disabled != undefined && this.disabled == true) {
+		if (this.disabledByParent != undefined && this.disabledByParent == true) {
 			this.lock = true;
-		} else if (this.disabled != undefined && this.disabled == false) {
+		} else if (this.disabledByParent != undefined && this.disabledByParent == false) {
 			this.lock = false;
 		}
 	}

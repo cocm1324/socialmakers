@@ -31,5 +31,6 @@ export enum PAGE_TYPE {
 export enum PAGE_URL_TYPE {
     COURSE = "course",
     ABOUT_US = "aboutUs",
-    NOTICE = "notice"
+    NOTICE = "notice",
+    NEW = "new"
 }

@@ -36,7 +36,7 @@ router.post('/register', (req, res) => {
                     status: false,
                     error: {
                         code: 500,
-                        message: 'Internal Server Error'   
+                        message: 'Internal Server Error: \n' + err1  
                     }
                 });
                 return;
@@ -55,15 +55,16 @@ router.post('/register', (req, res) => {
             }
 
             const passwordHash = sha256.sha256(password);
-            
-            connection.query(queryStatement.createUser(login, passwordHash, 'ADMIN'), (err2, rows) => {
+            const admin = 0;
+
+            connection.query(queryStatement.createUser(login, passwordHash, admin), (err2, rows1) => {
                 connection.release();
                 if (err2) {
                     res.status(200).send({
                         status: false,
                         error: {
                             code: 500,
-                            message: 'Internal Server Error'   
+                            message: 'Internal Server Error: \n' + err2
                         }
                     });
                     return;
@@ -169,7 +170,7 @@ router.post('/login', (req, res) => {
                 status: false,
                 error: {
                     code: 500,
-                    message: 'Internal Server Error'   
+                    message: 'Internal Server Error: \n'+ err   
                 }
             });
             return;
@@ -181,7 +182,7 @@ router.post('/login', (req, res) => {
                     status: false,
                     error: {
                         code: 500,
-                        message: 'Internal Server Error'   
+                        message: 'Internal Server Error: \n' + err1
                     }
                 });
                 return;
