@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {IRunLoginReq, IRunLoginRes, IRunVerifyLoginRes, ICreateImageReq, IGetAboutUsRes, ICreateSectionReq, IUpdateSectionReq, IDeleteSectionReq, ICommonRes, IGetCourseRes, IGetCourseListRes, IUpdateCourseSeqReq, IRunEyedropReq, IRunEyedropRes, IUpdateAboutUsReq, IUpdateCourseInfoReq, ICreateCourseReq, ICreateCourseRes} from '../../models';
+import {IRunLoginReq, IRunLoginRes, IRunVerifyLoginRes, ICreateImageReq, IGetAboutUsRes, ICreateSectionReq, IUpdateSectionReq, IDeleteSectionReq, ICommonRes, IGetCourseRes, IGetCourseListRes, IUpdateCourseSeqReq, IRunEyedropReq, IRunEyedropRes, IUpdateAboutUsReq, IUpdateCourseInfoReq, ICreateCourseReq, ICreateCourseRes, IUpdateSectionSeqReq} from '../../models';
 import { map } from 'rxjs/operators';
 
 @Injectable({
@@ -53,41 +53,58 @@ export class DataService {
 	}
 
 	createSection(request: ICreateSectionReq): Observable<ICommonRes> {
-		const {pageId, seq, seqBase} = request;
-		return this.http.post<ICommonRes>(`${this.pageUrl}/${pageId}/${seq}/${seqBase}`, request);
+		const {pageId} = request;
+		return this.http.post<ICommonRes>(`${this.pageUrl}/${pageId}`, request);
 	}
 
 	updateSection(request: IUpdateSectionReq): Observable<ICommonRes> {
-		const {pageId, seq, seqBase} = request;
-		return this.http.put<ICommonRes>(`${this.pageUrl}/${pageId}/${seq}/${seqBase}`, request);
+		const {pageId, contentId} = request;
+		return this.http.put<ICommonRes>(`${this.pageUrl}/${pageId}/${contentId}`, request);
 	}
 
 	deleteSection(request: IDeleteSectionReq): Observable<ICommonRes> {
-		const {pageId, seq, seqBase} = request;
-		return this.http.delete<ICommonRes>(`${this.pageUrl}/${pageId}/${seq}/${seqBase}`);
+		const {pageId, contentId} = request;
+		return this.http.delete<ICommonRes>(`${this.pageUrl}/${pageId}/${contentId}`);
+	}
+
+	updateSectionSeqUp(request: IUpdateSectionSeqReq): Observable<ICommonRes> {
+		const {pageId, contentId} = request;
+		return this.http.put<ICommonRes>(`${this.pageUrl}/${pageId}/${contentId}`, request);
+	}
+
+	updateSectionSeqDown(request): Observable<ICommonRes> {
+		const {pageId, contentId} = request;
+		return this.http.put<ICommonRes>(`${this.pageUrl}/${pageId}/${contentId}`, request);
 	}
 
 	getCourseList(): Observable<IGetCourseListRes> {
 		return this.http.get<IGetCourseListRes>(`${this.pageUrl}/course`);
 	}
 
-	getCourse(id: number): Observable<IGetCourseRes> {
-		return this.http.get<IGetCourseRes>(`${this.pageUrl}/course/${id}`);
+	getCourse(courseId: number): Observable<IGetCourseRes> {
+		return this.http.get<IGetCourseRes>(`${this.pageUrl}/course/${courseId}`);
 	}
 
 	createCourse(request: ICreateCourseReq): Observable<ICreateCourseRes> {
 		return this.http.post<ICreateCourseRes>(`${this.pageUrl}/course`, request);
 	}
 
-	updateCourseSeq(request: IUpdateCourseSeqReq): Observable<ICommonRes> {
-		return this.http.put<ICommonRes>(`${this.pageUrl}/course/updateSeq/${request.courseId}`, request);
+	deleteCourse(courseId: number): Observable<ICommonRes> {
+		return this.http.delete<ICommonRes>(`${this.pageUrl}/course/${courseId}`);
 	}
 
-	deleteCourse(id: number): Observable<ICommonRes> {
-		return this.http.delete<ICommonRes>(`${this.pageUrl}/course/${id}`);
+	updateCourseSeqUp(request: IUpdateCourseSeqReq): Observable<ICommonRes> {
+		const {courseId} = request;
+		return this.http.put<ICommonRes>(`${this.pageUrl}/course/upSeq/${courseId}`, request);
+	}
+
+	updateCourseSeqDown(request: IUpdateCourseSeqReq): Observable<ICommonRes> {
+		const {courseId} = request;
+		return this.http.put<ICommonRes>(`${this.pageUrl}/course/downSeq/${courseId}`, request);
 	}
 
 	updateCourseInfo(request: IUpdateCourseInfoReq): Observable<ICommonRes> {
-		return this.http.put<ICommonRes>(`${this.pageUrl}/course/${request.courseId}`, request);
+		const {courseId} = request;
+		return this.http.put<ICommonRes>(`${this.pageUrl}/course/${courseId}`, request);
 	}
 }

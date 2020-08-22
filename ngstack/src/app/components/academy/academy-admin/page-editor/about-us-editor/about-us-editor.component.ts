@@ -17,9 +17,9 @@ export class AboutUsEditorComponent implements OnInit, OnChanges {
 	isEdit: boolean;
 	lock: boolean = false;
 
-	get aboutUsName() {return this.aboutUsForm.get('aboutUsName');}
-	get aboutUsBackground() {return this.aboutUsForm.get('aboutUsBackground');}
-	get aboutUsImageId() {return this.aboutUsForm.get('aboutUsImageId');}
+	get pageName() {return this.aboutUsForm.get('pageName');}
+	get bannerImageId() {return this.aboutUsForm.get('bannerImageId');}
+	get bannerImageUrl() {return this.aboutUsForm.get('bannerImageUrl');}
 
 	constructor(private fb: FormBuilder) { }
 
@@ -27,16 +27,16 @@ export class AboutUsEditorComponent implements OnInit, OnChanges {
 		this.isEdit = false;
 		this.onEditStateChange.emit(this.isEdit);
 		this.aboutUsForm = this.fb.group({
-			aboutUsName: ["", Validators.required],
-			aboutUsBackground: ["", Validators.required],
-			aboutUsImageId: [null, Validators.required]
+			pageName: ["", Validators.required],
+			bannerImageId: [null, Validators.required],
+			bannerImageUrl: ["", Validators.required]
 		});
 
 		if (this.aboutUsData) {
 			this.aboutUsForm.patchValue({
-				aboutUsName: this.aboutUsData.name,
-				aboutUsBackground: this.aboutUsData.background,
-				aboutUsImageId: this.aboutUsData.imageId
+				aboutUsName: this.aboutUsData.pageName,
+				aboutUsImageId: this.aboutUsData.bannerImageId,
+				aboutUsBackground: this.aboutUsData.bannerImageUrl
 			});
 		}
 	}
@@ -55,14 +55,14 @@ export class AboutUsEditorComponent implements OnInit, OnChanges {
 		const {url, imageId} = e;
 		
 		if (url && imageId) {
-			this.aboutUsBackground.patchValue(url);
-			this.aboutUsImageId.patchValue(imageId);
+			this.bannerImageId.patchValue(imageId);
+			this.bannerImageUrl.patchValue(url);
 		}
 	}
 
 	isChanged() {
-		const {aboutUsName, aboutUsBackground, aboutUsImageId} = this.aboutUsForm.getRawValue();
-		return aboutUsName !== this.aboutUsData.name || aboutUsBackground !== this.aboutUsData.background || aboutUsImageId != this.aboutUsData.imageId;
+		const {pageName, bannerImageId, bannerImageUrl} = this.aboutUsForm.getRawValue();
+		return pageName !== this.aboutUsData.pageName || bannerImageId !== this.aboutUsData.bannerImageId || bannerImageUrl != this.aboutUsData.bannerImageUrl;
 	}
 
 	edit() {
@@ -73,9 +73,9 @@ export class AboutUsEditorComponent implements OnInit, OnChanges {
 	save() {
 		if (this.isChanged()) {
 			const formData: IAboutUsEditorInput = {
-				name: this.aboutUsName.value,
-				background: this.aboutUsBackground.value,
-				imageId: this.aboutUsImageId.value
+				pageName: this.pageName.value,
+				bannerImageId: this.bannerImageId.value,
+				bannerImageUrl: this.bannerImageUrl.value
 			};
 			this.onFinish.emit(formData);
 			this.isEdit = false;
@@ -90,9 +90,9 @@ export class AboutUsEditorComponent implements OnInit, OnChanges {
 		if (this.isChanged()) {
 			if (confirm("변경사항을 저장하지 않고 수정을 끝내시겠습니까?")) {
 				this.aboutUsForm.patchValue({
-					aboutUsName: this.aboutUsData.name,
-					aboutUsBackground: this.aboutUsData.background,
-					aboutUsImageId: this.aboutUsData.imageId
+					pageName: this.aboutUsData.pageName,
+					bannerImageId: this.aboutUsData.bannerImageId,
+					bannerImageUrl: this.aboutUsData.bannerImageUrl
 				});
 				this.isEdit = false;
 				this.onEditStateChange.emit(this.isEdit);

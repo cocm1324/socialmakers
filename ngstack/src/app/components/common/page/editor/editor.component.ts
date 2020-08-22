@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, EventEmitter, Output, OnChanges, SimpleChanges } from '@angular/core';
-import { ISection, TypeSectionWidth } from '@app/models';
+import { ISection, TypeSectionWidth, ISectionWithContentId } from '@app/models';
 import * as _ from 'lodash';
 
 @Component({
@@ -9,7 +9,7 @@ import * as _ from 'lodash';
 })
 export class EditorComponent implements OnInit, OnChanges {
 
-	@Input() pageData: ISection[];
+	@Input() pageData: ISectionWithContentId[];
 	@Input() disabledByParent: boolean;
 	@Output() onFinished: EventEmitter<any> = new EventEmitter();
 	@Output() onSectionFinished: EventEmitter<ISection> = new EventEmitter();
@@ -107,14 +107,14 @@ export class EditorComponent implements OnInit, OnChanges {
 	}
 
 	viewerDelete(e) {
-		const {seq, seqBase} = e;
+		const {contentId} = e;
 		let index = -1;
-		this.pageData.map((section, i) => {
-			if (seq == section.seq && seqBase == section.seqBase) {
+		for (let i = 0; i < this.pageData.length; i++) {
+			if (this.pageData[i].contentId == contentId) {
 				index = i;
-				return true;
+				break;
 			}
-		});
+		}
 		this.pageData.splice(index, 1);
 		this.onSectionDelete.emit(e);
 	}

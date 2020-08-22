@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ISection, IAboutUsEditorInput, IUpdateAboutUsReq, ICourseInfo, IUpdateCourseInfoReq, ICreateCourseReq } from '@app/models';
+import { ISection, IAboutUsEditorInput, IUpdateAboutUsReq, ICourseInfo, IUpdateCourseInfoReq, ICreateCourseReq, ISectionWithContentId } from '@app/models';
 import { Router } from '@angular/router';
 import { PAGE_URL_TYPE } from '@app/models';
 import { DataService } from '@services/data/data.service';
@@ -12,8 +12,8 @@ import { DataService } from '@services/data/data.service';
 export class PageEditorComponent implements OnInit {
 
 	pageType: string;
-	id: number;
-	contents: ISection[] = null;
+	pageId: number;
+	contents: ISectionWithContentId[] = null;
 	aboutUsData: IAboutUsEditorInput;
 	courseInfoData: ICourseInfo;
 	
@@ -36,7 +36,7 @@ export class PageEditorComponent implements OnInit {
 			if (parsedUrl[parsedUrl.length - 1] == PAGE_URL_TYPE.NEW) {
 				this.isNewPage = true;
 			} else {
-				this.id = parseInt(parsedUrl[parsedUrl.length - 1]);
+				this.pageId = parseInt(parsedUrl[parsedUrl.length - 1]);
 			}
 
 			if (parsedUrl[parsedUrl.length - 2] == PAGE_URL_TYPE.COURSE) {
@@ -53,8 +53,8 @@ export class PageEditorComponent implements OnInit {
 		if (this.isAboutUs()) {
 			this.dataService.getAboutUs().toPromise().then(res => {
 				if (res.status) {
-					const {pageId, contents, name, imageId, imageUrl} = res.data;
-					this.id = pageId;
+					const {pageId, contents, pageName, bannerImageId, bannerImageUrl} = res.data;
+					this.pageId = pageId;
 					contents.sort((a, b)=> {
 						if (a.seq - b.seq < 0) {
 							return -1;
@@ -65,12 +65,13 @@ export class PageEditorComponent implements OnInit {
 						return 0;
 					});
 					this.aboutUsData = {
-						name: name,
-						background: imageUrl,
-						imageId: imageId
+						pageName: pageName,
+						bannerImageId: bannerImageId,
+						bannerImageUrl: bannerImageUrl,
 					};
 					this.contents = contents.map(content => {
 						const contentMap = {
+							contentId: content.contentId,
 							width: content.width,
 							type: content.type,
 							content: content.content,
@@ -80,6 +81,7 @@ export class PageEditorComponent implements OnInit {
 						};
 						if (content.imageId) {
 							contentMap['imageId'] = content.imageId;
+							contentMap['imageUrl'] = content.imageUrl;
 						}
 						return contentMap;
 					});
@@ -89,10 +91,10 @@ export class PageEditorComponent implements OnInit {
 				console.log(reject);
 			});
 		} else if (this.isCourse()) {
-			this.dataService.getCourse(this.id).toPromise().then(res => {
+			this.dataService.getCourse(this.pageId).toPromise().then(res => {
 				if (res.status) {
 					const {courseId, contents} = res.data;
-					this.id = courseId;
+					this.pageId = courseId;
 					contents.sort((a, b)=> {
 						if (a.seq - b.seq < 0) {
 							return -1;
@@ -105,6 +107,7 @@ export class PageEditorComponent implements OnInit {
 					this.courseInfoData = res.data;
 					this.contents = contents.map(content => {
 						const contentMap = {
+							contentId: content.contentId,
 							width: content.width,
 							type: content.type,
 							content: content.content,
@@ -141,7 +144,7 @@ export class PageEditorComponent implements OnInit {
 
 	onSectionFinished(e) {
 		const request = {
-			pageId: this.id,
+			pageId: this.pageId,
 			...e
 		};
 
@@ -165,11 +168,10 @@ export class PageEditorComponent implements OnInit {
 	}
 
 	onSectionDelete(e) {
-		const {seq, seqBase} = e;
+		const {contentId} = e;
 		const request = {
-			pageId: this.id,
-			seq: seq,
-			seqBase: seqBase
+			pageId: this.pageId,
+			contentId: contentId
 		}
 
 		this.dataService.deleteSection(request).toPromise().then((response) => {
@@ -184,8 +186,8 @@ export class PageEditorComponent implements OnInit {
 	onPageInfoFinished(e) {
 		if (this.isAboutUs()) {
 			const request: IUpdateAboutUsReq = {
-				name: e.name,
-				imageId: e.imageId
+				pageName: e.pageName,
+				bannerImageId: e.bannerImageId
 			};
 			this.dataService.updateAboutUs(request).toPromise().then((res) => {
 				if (res.status) {
@@ -201,7 +203,7 @@ export class PageEditorComponent implements OnInit {
 				}
 			} else {
 				const request: IUpdateCourseInfoReq = {
-					courseId: this.id,
+					courseId: this.pageId,
 					...e
 				};
 				this.dataService.updateCourseInfo(request).toPromise().then((res) => {

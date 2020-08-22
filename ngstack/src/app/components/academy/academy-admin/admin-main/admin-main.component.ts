@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { DataService } from '@services/data/data.service';
 import * as _ from 'lodash';
 import { FormBuilder } from '@angular/forms';
+import { UtilService } from '@services/util/util.service';
 
 @Component({
 	selector: 'app-main',
@@ -17,6 +18,7 @@ export class AdminMainComponent implements OnInit {
   	constructor(
 		private router: Router, 
 		private dataService: DataService,
+		private utilService: UtilService,
 		private fb: FormBuilder
 	) { }
 
@@ -27,7 +29,13 @@ export class AdminMainComponent implements OnInit {
 	loadCourse() {
 		this.dataService.getCourseList().toPromise().then((res) => {
 			if (res.status) {
-				this.courses = res.data;
+				this.courses = res.data.map(course => {
+					const mappedCourse = {
+						...course,
+						thumbImageUrl: this.utilService.smallImage(course.thumbImageUrl)
+					}
+					return mappedCourse;
+				});
 				this.courses.sort((a, b)=> {
 					const aVal = a.seq / a.seqBase;
 					const bVal = b.seq / b.seqBase;
@@ -54,41 +62,6 @@ export class AdminMainComponent implements OnInit {
   	goToEditAboutUs(e) {
 		e.preventDefault();
 		this.router.navigate(['academy/admin/pageEditor/aboutUs']);
-	}
-
-	onCourseSelected(e) {
-		e.originalEvent ? e.originalEvent.preventDefault(): null;
-		this.selectedCourseId = e.value[0].courseId;
-	}
-
-	onCourseOrdered(e) {
-		if (this.courses && this.courses.length > 1) {
-			const index = this.courses.map(elem => elem.courseId).indexOf(this.selectedCourseId);
-
-			const request = {
-				courseId: this.selectedCourseId,
-				seq: -1,
-				seqBase: -1
-			}
-
-			if (index == 0 && this.courses.length > 1) {
-				request.seq = this.courses[1].seq;
-				request.seqBase = this.courses[1].seqBase + 1;
-			} else if (this.courses.length > 1 && index == this.courses.length - 1) {
-				request.seq = Math.floor(this.courses[index - 1].seq / this.courses[index - 1].seqBase) + 1;
-				request.seqBase = 1;
-			} else {
-				request.seq = this.courses[index - 1].seq + this.courses[index + 1].seq;
-				request.seqBase = this.courses[index - 1].seqBase + this.courses[index + 1].seqBase;
-			}
-
-			this.dataService.updateCourseSeq(request).toPromise().then((response) => {
-				if (response.status) {
-					this.selectedCourseId = -1;
-					this.loadCourse();
-				}
-			});
-		}
 	}
 
 	onCourseDelete() {

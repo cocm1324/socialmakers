@@ -1,6 +1,6 @@
 import {Component, OnInit, Input, Output, EventEmitter, OnDestroy, ViewChild, AfterViewInit, ElementRef} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {ISection, TypeSectionWidth, TypeContent} from '@app/models';
+import {ISection, TypeSectionWidth, TypeContent, ISectionWithContentId} from '@app/models';
 import {Subscription} from 'rxjs';
 import { DataService } from '@services/data/data.service';
 
@@ -11,7 +11,7 @@ import { DataService } from '@services/data/data.service';
 })
 export class SectionEditorComponent implements OnInit, OnDestroy {
 
-	@Input() section: ISection;
+	@Input() section: ISectionWithContentId;
 	@Output() onFinished: EventEmitter<any> = new EventEmitter();
 	@ViewChild('image', {static: false}) image: ElementRef;
 	sectionForm: FormGroup;

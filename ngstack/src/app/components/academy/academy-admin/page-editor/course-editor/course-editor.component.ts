@@ -33,8 +33,8 @@ export class CourseEditorComponent implements OnInit {
 	get cField4() {return this.courseInfoForm.get('cField4');}
 	get cField5() {return this.courseInfoForm.get('cField5');}
 	get cField6() {return this.courseInfoForm.get('cField6');}
-	get cPageImageId() {return this.courseInfoForm.get('cPageImageId');}
-	get cPageImageUrl() {return this.courseInfoForm.get('cPageImageUrl');}
+	get cBannerImageId() {return this.courseInfoForm.get('cBannerImageId');}
+	get cBannerImageUrl() {return this.courseInfoForm.get('cBannerImageUrl');}
 	get cThumbImageId() {return this.courseInfoForm.get('cThumbImageId');}
 	get cThumbImageUrl() {return this.courseInfoForm.get('cThumbImageUrl');}
 	get cRegisterUrl() {return this.courseInfoForm.get('cRegisterUrl');}
@@ -58,8 +58,8 @@ export class CourseEditorComponent implements OnInit {
 			cField4: ["", Validators.required],
 			cField5: ["", Validators.required],
 			cField6: ["", Validators.required],
-			cPageImageId: [null, Validators.required],
-			cPageImageUrl: ["", Validators.required],
+			cBannerImageId: [null, Validators.required],
+			cBannerImageUrl: ["", Validators.required],
 			cThumbImageId: [null, Validators.required],
 			cThumbImageUrl: ["", Validators.required],
 			cRegisterUrl: ["", Validators.required]
@@ -87,8 +87,8 @@ export class CourseEditorComponent implements OnInit {
 		const {url, imageId} = e;
 		
 		if (url && imageId) {
-			this.cPageImageUrl.patchValue(url);
-			this.cPageImageId.patchValue(imageId);
+			this.cBannerImageUrl.patchValue(url);
+			this.cBannerImageId.patchValue(imageId);
 		}
 	}
 
@@ -139,8 +139,8 @@ export class CourseEditorComponent implements OnInit {
 			|| cField4 !== this.courseInfoData.field4
 			|| cField5 !== this.courseInfoData.field5
 			|| cField6 !== this.courseInfoData.field6
-			|| cPageImageId !== this.courseInfoData.pageImageId
-			|| cPageImageUrl !== this.courseInfoData.pageImageUrl
+			|| cPageImageId !== this.courseInfoData.bannerImageId
+			|| cPageImageUrl !== this.courseInfoData.bannerImageUrl
 			|| cThumbImageId !== this.courseInfoData.thumbImageId
 			|| cThumbImageUrl !== this.courseInfoData.thumbImageUrl
 			|| cRegisterUrl !== this.courseInfoData.registerUrl;
@@ -164,8 +164,8 @@ export class CourseEditorComponent implements OnInit {
 				cField4: this.courseInfoData.field4,
 				cField5: this.courseInfoData.field5,
 				cField6: this.courseInfoData.field6,
-				cPageImageId: this.courseInfoData.pageImageId,
-				cPageImageUrl: this.courseInfoData.pageImageUrl,
+				cPageImageId: this.courseInfoData.bannerImageId,
+				cPageImageUrl: this.courseInfoData.bannerImageUrl,
 				cThumbImageId: this.courseInfoData.thumbImageId,
 				cThumbImageUrl: this.courseInfoData.thumbImageUrl,
 				cRegisterUrl: this.courseInfoData.registerUrl
@@ -196,8 +196,8 @@ export class CourseEditorComponent implements OnInit {
 				fieldTitle4: this.cFieldTitle4.value,
 				fieldTitle5: this.cFieldTitle5.value,
 				fieldTitle6: this.cFieldTitle6.value,
-				pageImageId: this.cPageImageId.value,
-				pageImageUrl: this.cPageImageUrl.value,
+				bannerImageId: this.cBannerImageId.value,
+				bannerImageUrl: this.cBannerImageUrl.value,
 				thumbImageId: this.cThumbImageId.value,
 				thumbImageUrl: this.cThumbImageUrl.value,
 				registerUrl: this.cRegisterUrl.value

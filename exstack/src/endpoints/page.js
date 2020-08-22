@@ -4,13 +4,10 @@ const mysqlPool = require('../dbs/mysql');
 const queryStatement = require('../query/query');
 const seqeunce = require('../helpers/seqHelper');
 
-const widthEnum = ['NARROW', 'MEDIUM', 'WIDE'];
-const typeEnum = ['IMAGEURL', 'IMAGE', 'POST'];
-
 router.get('/', (req, res) => {
     res.send({
         status: true,
-        message: "hello from post"
+        message: "Hello from Page"
     });
 });
 
@@ -51,7 +48,7 @@ router.get('/aboutUs', (req, res) => {
                 return;
             }
 
-            const {pageId, name, bannerImageId, bannerMessageDigest, bannerExtension} = rows1[0]; 
+            const {pageId, pageName, bannerImageId, bannerMessageDigest, bannerExtension} = rows1[0]; 
             const bannerImageUrl = `/api/static/image/${bannerMessageDigest}.${bannerExtension}`;
             const contents = rows1.map(row => {
                 const {contentId, seq, seqBase, width, type, background, imageId, messageDigest, extension, content} = row;
@@ -81,9 +78,9 @@ router.get('/aboutUs', (req, res) => {
                 status: true,
                 data: {
                     pageId: pageId,
-                    name: name,
-                    imageId: bannerImageId,
-                    imageUrl: bannerImageUrl,
+                    pageName: pageName,
+                    bannerImageId: bannerImageId,
+                    bannerImageUrl: bannerImageUrl,
                     contents: contents
                 }
             });
@@ -92,9 +89,9 @@ router.get('/aboutUs', (req, res) => {
 });
 
 router.put('/aboutus', (req, res) => {
-    const {name, imageId} = req.body;
+    const {pageName, bannerImageId} = req.body;
 
-    if (!name || !imageId) {
+    if (!pageName || !bannerImageId) {
         res.send({
             status: false,
             error: {
@@ -117,7 +114,7 @@ router.put('/aboutus', (req, res) => {
             return;
         }
 
-        connection.query(queryStatement.updatePageAboutUs(name, imageId), (err1, rows1) => {
+        connection.query(queryStatement.updatePageAboutUs(pageName, bannerImageId), (err1, rows1) => {
             connection.release();
             if (err1) {
                 res.send({
@@ -166,8 +163,8 @@ router.get('/course', (req, res) => {
             const courses = rows1.map(row => {
                 const {pageId, pageName, seq, seqBase, imageId, messageDigest, extension} = row;
                 return {
-                    thumbnailUrl: `/api/static/image/${messageDigest}.${extension}`,
-                    thumbnailId: imageId,
+                    thumbImageUrl: `/api/static/image/${messageDigest}.${extension}`,
+                    thumbImageId: imageId,
                     courseName: pageName,
                     courseId: pageId,
                     seq: seq,
@@ -186,7 +183,7 @@ router.get('/course', (req, res) => {
 router.post('/course', (req, res) => {
     const {
         courseName, registerUrl,
-        thumbImageId, pageImageId, 
+        thumbImageId, bannerImageId, 
         description1, description2, 
         fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6, 
         field1, field2, field3, field4, field5, field6
@@ -261,7 +258,7 @@ router.post('/course', (req, res) => {
                     }
 
                     connection.query(queryStatement.createCourseTransactionCreateCourseInfo(
-                        pageId, thumbImageId, pageImageId, description1, description2, seq, seqBase, registerUrl,
+                        pageId, thumbImageId, bannerImageId, description1, description2, seq, seqBase, registerUrl,
                         fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6,
                         field1, field2, field3, field4, field5, field6), (err3, result3) => {
                         if (err3) { 
@@ -336,8 +333,8 @@ router.get('/course/:pageId', (req, res) => {
             const row = rows1[0];
             const coursePage = {
                 courseId: row.courseId,
-                pageImageId: row.bannerImageId,
-                pageImageUrl: `/api/static/image/${row.bannerMessageDigest}.${row.bannerExtension}`,
+                bannerImageId: row.bannerImageId,
+                bannerImageUrl: `/api/static/image/${row.bannerMessageDigest}.${row.bannerExtension}`,
                 thumbImageId: row.thumbnailImageId,
                 thumbImageUrl: `/api/static/image/${row.thumbnailMessageDigest}.${row.thumbnailExtension}`,
                 courseName: row.courseName,
@@ -383,7 +380,7 @@ router.get('/course/:pageId', (req, res) => {
                         rowMap.background = row2.background;
                     }
                     if (rowMap.type === 1) {
-                        rowMap.content = `/api/static/image/${row2.messageDigest}.${row2.extension}`;
+                        rowMap.imageUrl = `/api/static/image/${row2.messageDigest}.${row2.extension}`;
                         rowMap.imageId = row2.imageId;
                     } else {
                         rowMap.content = row2.content;
@@ -406,7 +403,7 @@ router.put('/course/:pageId', (req, res) => {
     const {pageId} = req.params;
     const {
         courseName, registerUrl,
-        thumbImageId, pageImageId, 
+        thumbImageId, bannerImageId, 
         description1, description2, 
         fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6, 
         field1, field2, field3, field4, field5, field6
@@ -438,7 +435,7 @@ router.put('/course/:pageId', (req, res) => {
         connection.query(queryStatement.updateCourse(
             pageId, courseName, description1, description2, registerUrl, 
             fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6, 
-            field1, field2, field3, field4, field5, field6, pageImageId, thumbImageId), (err1, rows1) => {
+            field1, field2, field3, field4, field5, field6, bannerImageId, thumbImageId), (err1, rows1) => {
             connection.release();
 
             if (err1) {
@@ -460,8 +457,8 @@ router.put('/course/:pageId', (req, res) => {
     });
 });
 
-router.delete('/course/:pageId', (req, res) => {
-    const {pageId} = req.params;
+router.delete('/course/:courseId', (req, res) => {
+    const {courseId} = req.params;
 
     mysqlPool.getConnection((connectionErr, connection) => {
         if (connectionErr) {
@@ -475,7 +472,7 @@ router.delete('/course/:pageId', (req, res) => {
             return;
         }
 
-        connection.query(queryStatement.deleteCourse(pageId), (err1, rows1) => {
+        connection.query(queryStatement.deleteCourse(courseId), (err1, rows1) => {
             connection.release();
             if (err1) {
                 res.send({
@@ -495,11 +492,10 @@ router.delete('/course/:pageId', (req, res) => {
     });
 });
 
-router.put('/course/upSeq/:pageId', (req, res) => {
-    const {pageId} = req.params;
-    const {courseId} = req.body;
+router.put('/course/upSeq/:courseId', (req, res) => {
+    const {courseId} = req.params;
 
-    if (courseId != pageId) {
+    if (courseId != req.body.courseId) {
         res.send({
             status: false,
             error: {
@@ -545,7 +541,7 @@ router.put('/course/upSeq/:pageId', (req, res) => {
                 return;
             }
 
-            connection.query(queryStatement.updateCourseSeq(pageId, seq, seqBase), (err2, rows2) => {
+            connection.query(queryStatement.updateCourseSeq(courseId, seq, seqBase), (err2, rows2) => {
                 connection.release();
                 if (err2) {
                     res.send({
@@ -649,7 +645,7 @@ router.post('/:pageId', (req, res) => {
     const {pageId} = req.params;
     const {type, width, content, imageId, background} = req.body;
 
-    if (req.body.pageId != pageId || req.body.seq != seq || req.body.seqBase != seqBase) {
+    if (req.body.pageId != pageId) {
         res.send({
             status: false,
             error: {

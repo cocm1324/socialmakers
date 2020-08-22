@@ -1,5 +1,5 @@
 import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
-import {ISection, TypeSectionWidth, TypeContent} from '@app/models';
+import {ISection, TypeSectionWidth, TypeContent, ISectionWithContentId} from '@app/models';
 
 @Component({
 	selector: 'app-section-viewer',
@@ -8,7 +8,7 @@ import {ISection, TypeSectionWidth, TypeContent} from '@app/models';
 })
 export class SectionViewerComponent implements OnInit {
 
-	@Input() section: ISection;
+	@Input() section: ISectionWithContentId;
 	@Input() editable: boolean = false;
 	@Input() seq: number;
 	@Input() seqBase: number;
@@ -35,8 +35,7 @@ export class SectionViewerComponent implements OnInit {
 
 	edit() {
 		this.onEdit.emit({
-			seq: this.seq,
-			seqBase: this.seqBase
+			contentId: this.section.contentId
 		});
 	}
 

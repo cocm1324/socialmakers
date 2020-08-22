@@ -21,13 +21,11 @@
                 [listStyle]="{'height':'168px'}" 
                 filter="filter" 
                 filterBy="courseName" 
-                filterPlaceholder="Course 이름으로 검색" 
-                (onReorder)="onCourseOrdered($event)"
-                (onSelectionChange)="onCourseSelected($event)"
+                filterPlaceholder="Course 이름으로 검색"
             >
                 <ng-template let-course pTemplate="item">
                     <div class="ui-helper-clearfix w-100 p-d-flex p-justify-between">
-                        <img [src]="course.courseThumbThumb" class="p-d-inline-block" width="72">
+                        <img [src]="course.thumbImageUrl" class="p-d-inline-block" width="72">
                         <div style="width: 70%;">{{course.courseName}}</div>
                     </div>
                 </ng-template>

@@ -6,9 +6,14 @@ export interface ISection {
     type: TypeContent;
     content: string;
     imageId?: number;
+    imageUrl?: string;
     seq: number;
     seqBase: number;
     background: string;
+}
+
+export interface ISectionWithContentId extends ISection {
+    contentId: number;
 }
 
 export interface ICommonRes {
@@ -45,34 +50,31 @@ export interface ICreateImageReq {
 export interface IGetAboutUsRes extends ICommonRes {
     data: {
         pageId: number;
-        name: string;
-        imageId: number;
-        imageUrl: string;
-        contents: Array<ISection>
+        pageName: string;
+        bannerImageId: number;
+        bannerImageUrl: string;
+        contents: Array<ISectionWithContentId>
     };
 }
 
 export interface IUpdateAboutUsReq {
-    name: string;
-    imageId: number;
+    pageName: string;
+    bannerImageId: number;
 }
 
-export interface IUpdateSectionReq {
+export interface ICreateSectionReq {
     content: string;
     pageId: number;
-    seq: number;
-    seqBase: number;
     type: TypeContent;
     width: TypeSectionWidth;
     imageId?: number;
     background: string;
 }
 
-export interface ICreateSectionReq {
+export interface IUpdateSectionReq {
     content: string;
     pageId: number;
-    seq: number;
-    seqBase: number;
+    contentId: number;
     type: TypeContent;
     width: TypeSectionWidth;
     imageId?: number;
@@ -81,17 +83,20 @@ export interface ICreateSectionReq {
 
 export interface IDeleteSectionReq {
     pageId: number;
-    seq: number;
-    seqBase: number;
+    contentId: number;
+}
+
+export interface IUpdateSectionSeqReq {
+    pageId: number;
+    contentId: number;
 }
 
 export interface IGetCourseListRes extends ICommonRes {
     data: Array<{
         courseId: number;
         courseName: string;
-        courseThumb: string;
-        courseThumbThumb: string;
-        courseThumbImageId: number;
+        thumbImageId: number;
+        thumbImageUrl: string;
         seq: number;
         seqBase: number;
     }>;
@@ -117,16 +122,16 @@ export interface ICourseInfo {
     fieldTitle4: string;
     fieldTitle5: string;
     fieldTitle6: string;
-    pageImageId: number;
-    thumbImageId: number;
-    pageImageUrl?: string;
+    bannerImageId?: number;
+    bannerImageUrl?: string;
+    thumbImageId?: number;
     thumbImageUrl?: string;
     registerUrl: string;
 }
 
 export interface ICreateCourseReq extends ICourseInfo {
-    seq: number;
-    seqBase: number;
+    bannerImageId: number;
+    thumbImageId: number;
 }
 
 export interface ICreateCourseRes extends ICommonRes {
@@ -137,19 +142,21 @@ export interface ICreateCourseRes extends ICommonRes {
 
 export interface ICourseInfoWithContents extends ICourseInfo {
     courseId: number;
-    pageImageUrl: string;
+    thumbImageId: number;
     thumbImageUrl: string;
-    contents: Array<ISection>;
+    bannerImageId: number;
+    bannerImageUrl: string;
+    contents: Array<ISectionWithContentId>;
 }
 
 export interface IUpdateCourseInfoReq extends ICourseInfo {
     courseId: number;
+    thumbImageId: number;
+    bannerImageId: number;
 }
 
 export interface IUpdateCourseSeqReq {
     courseId: number;
-    seq: number;
-    seqBase: number;
 }
 
 export interface IRunEyedropReq {
@@ -165,7 +172,7 @@ export interface IRunEyedropRes extends ICommonRes {
 }
 
 export interface IAboutUsEditorInput {
-    name: string;
-    background: string;
-    imageId: number;
+    pageName: string;
+    bannerImageId: number;
+    bannerImageUrl: string;
 }
