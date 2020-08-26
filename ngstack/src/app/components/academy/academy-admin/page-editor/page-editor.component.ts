@@ -216,6 +216,8 @@ export class PageEditorComponent implements OnInit {
 	}
 
 	onHeaderEditStateChange(e) {
+		console.log(e)
+
 		if (e) {
 			this.childComponentEditState = 1;
 		} else {

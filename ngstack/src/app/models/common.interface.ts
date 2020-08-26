@@ -176,3 +176,19 @@ export interface IAboutUsEditorInput {
     bannerImageId: number;
     bannerImageUrl: string;
 }
+
+export interface IGetImageListRes extends ICommonRes {
+    data: {
+        pageCount: number;
+        pageNo: number;
+        rowCount: number;
+        images: Array<IImage>;
+    }
+}
+
+export interface IImage {
+    fileName: string;
+    imageId: number;
+    thumbUrl?: string;
+    url: string;
+}

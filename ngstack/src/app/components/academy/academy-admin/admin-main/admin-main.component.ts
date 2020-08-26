@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataService } from '@services/data/data.service';
 import * as _ from 'lodash';
-import { FormBuilder } from '@angular/forms';
 import { UtilService } from '@services/util/util.service';
 
 @Component({
@@ -10,6 +9,7 @@ import { UtilService } from '@services/util/util.service';
 	templateUrl: './admin-main.component.html',
 	styleUrls: ['./admin-main.component.scss']
 })
+
 export class AdminMainComponent implements OnInit {
 
 	courses;
@@ -19,7 +19,6 @@ export class AdminMainComponent implements OnInit {
 		private router: Router, 
 		private dataService: DataService,
 		private utilService: UtilService,
-		private fb: FormBuilder
 	) { }
 
 	ngOnInit() {
@@ -72,7 +71,18 @@ export class AdminMainComponent implements OnInit {
 					this.loadCourse();
 				}
 			});
+
 		}
+	}
+
+	onCourseSelected(e) {	
+		e.originalEvent ? e.originalEvent.preventDefault(): null;	
+		this.selectedCourseId = e.value[0].courseId;
+		console.log(this.selectedCourseId);
+	}	
+
+	onCourseOrdered(e) {	
+		console.log(e)
 	}
 
 	goToEditCourse(e) {

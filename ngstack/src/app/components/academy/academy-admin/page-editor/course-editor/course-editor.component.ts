@@ -118,12 +118,13 @@ export class CourseEditorComponent implements OnInit {
 			cField4,
 			cField5,
 			cField6,
-			cPageImageId,
-			cPageImageUrl,
+			cBannerImageId,
+			cBannerImageUrl,
 			cThumbImageId,
 			cThumbImageUrl,
 			cRegisterUrl
 		} = this.courseInfoForm.getRawValue();
+
 		return cCourseName !== this.courseInfoData.courseName 
 			|| cDescription1 !== this.courseInfoData.description1 
 			|| cDescription2 !== this.courseInfoData.description2 
@@ -139,8 +140,8 @@ export class CourseEditorComponent implements OnInit {
 			|| cField4 !== this.courseInfoData.field4
 			|| cField5 !== this.courseInfoData.field5
 			|| cField6 !== this.courseInfoData.field6
-			|| cPageImageId !== this.courseInfoData.bannerImageId
-			|| cPageImageUrl !== this.courseInfoData.bannerImageUrl
+			|| cBannerImageId !== this.courseInfoData.bannerImageId
+			|| cBannerImageUrl !== this.courseInfoData.bannerImageUrl
 			|| cThumbImageId !== this.courseInfoData.thumbImageId
 			|| cThumbImageUrl !== this.courseInfoData.thumbImageUrl
 			|| cRegisterUrl !== this.courseInfoData.registerUrl;
@@ -164,8 +165,8 @@ export class CourseEditorComponent implements OnInit {
 				cField4: this.courseInfoData.field4,
 				cField5: this.courseInfoData.field5,
 				cField6: this.courseInfoData.field6,
-				cPageImageId: this.courseInfoData.bannerImageId,
-				cPageImageUrl: this.courseInfoData.bannerImageUrl,
+				cBannerImageId: this.courseInfoData.bannerImageId,
+				cBannerImageUrl: this.courseInfoData.bannerImageUrl,
 				cThumbImageId: this.courseInfoData.thumbImageId,
 				cThumbImageUrl: this.courseInfoData.thumbImageUrl,
 				cRegisterUrl: this.courseInfoData.registerUrl

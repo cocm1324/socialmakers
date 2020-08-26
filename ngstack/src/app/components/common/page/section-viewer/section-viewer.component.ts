@@ -42,8 +42,7 @@ export class SectionViewerComponent implements OnInit {
 	delete() {
 		if (confirm("섹션을 삭제하시겠습니까?")) {
 			this.onDelete.emit({
-				seq: this.seq,
-				seqBase: this.seqBase
+				contentId: this.section.contentId
 			});
 		}
 	}

@@ -18,10 +18,13 @@
             </div>
             <p-orderList 
                 [value]="courses" 
-                [listStyle]="{'height':'168px'}" 
+                [listStyle]="{'height':'168px'}"
+                [dragdrop]="false"
                 filter="filter" 
                 filterBy="courseName" 
                 filterPlaceholder="Course 이름으로 검색"
+                (onSelectionChange)="onCourseSelected($event)"
+                (onReorder)="onCourseOrdered($event)"
             >
                 <ng-template let-course pTemplate="item">
                     <div class="ui-helper-clearfix w-100 p-d-flex p-justify-between">

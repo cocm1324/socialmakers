@@ -14,6 +14,7 @@ import {ColorPickerModule} from 'primeng/colorpicker';
 import {OrderListModule} from 'primeng/orderlist';
 import {InputTextareaModule} from 'primeng/inputtextarea';
 import {TableModule} from 'primeng/table';
+import {PaginatorModule} from 'primeng/paginator';
 
 @NgModule({
     imports: [
@@ -32,7 +33,8 @@ import {TableModule} from 'primeng/table';
         ColorPickerModule,
         OrderListModule,
         InputTextareaModule,
-        TableModule
+        TableModule,
+        PaginatorModule
     ],
     exports: [
         FormsModule,
@@ -50,7 +52,8 @@ import {TableModule} from 'primeng/table';
         ColorPickerModule,
         OrderListModule,
         InputTextareaModule,
-        TableModule
+        TableModule,
+        PaginatorModule
     ]
 })
 export class AppCommonModule {}
