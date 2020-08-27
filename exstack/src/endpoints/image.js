@@ -8,8 +8,6 @@ const mdHelper = require('../helpers/messageDigestHelper');
 const sharp = require('sharp');
 const fs = require('fs');
 const getPixels = require('get-pixels');
-const { format } = require('path');
-
 
 const componentToHex = (c) => {
     var hex = c.toString(16);
@@ -22,25 +20,34 @@ const rgbToHex = (r, g, b) => {
 
 
 router.get('/', (req, res) => {
-    let {pageCount, pageNo} = req.query;
+    const {pageNo} = req.query;
+    let {pageCount, increment} = req.query;
 
-    if (pageNo) {
-        if (!pageCount) {
-            pageCount = 10;
+    if (!pageCount) {
+        pageCount = 20;
+    }
+    if (increment == undefined || increment == null || increment === 'true') {
+        increment = true;
+    } else if (increment === 'false') {
+        increment = false;
+    } else {
+        increment = true;
+    }
+
+    mysqlPool.getConnection((connectionErr, connection) => {
+        if (connectionErr) {
+            res.send({
+                status: false,
+                error: {
+                    code: 500,
+                    message: 'Failed to Connect Database'
+                }
+            });
+            return;
         }
-        mysqlPool.getConnection((err, connection) => {
-            if (err) {
-                res.send({
-                    status: false,
-                    error: {
-                        code: 500,
-                        message: 'Internal Server Error: \n' + err
-                    }
-                });
-                return;
-            }
 
-            connection.query(queryStatement.selectPageImage(pageCount, pageNo), (err1, rows) => {
+        if (pageNo) {
+            connection.query(queryStatement.selectPageImage(pageCount, pageNo, increment), (err1, rows1) => {
                 connection.release();
                 if (err1) {
                     res.send({
@@ -52,7 +59,8 @@ router.get('/', (req, res) => {
                     });
                     return;
                 } else {
-                    const dataMap = rows.map(row => {
+                    const {rowCount} = rows1[0];
+                    const dataMap = rows1.map(row => {
                         const {imageId, messageDigest, originalFileName, extension} = row;
                         return {
                             imageId: imageId,
@@ -64,41 +72,28 @@ router.get('/', (req, res) => {
                     res.send({
                         status: true,
                         data: {
-                            pageNo: pageNo,
-                            pageCount: pageCount,
-                            rowCount: dataMap.length,
+                            pageNo: parseInt(pageNo),
+                            pageCount: dataMap.length,
+                            rowCount: rowCount,
                             images: dataMap
                         }
                     });
                 }
             });    
-        });
-    } else {
-        mysqlPool.getConnection((err2, connection) => {
-            if (err2) {
-                res.send({
-                    status: false,
-                    error: {
-                        code: 500,
-                        message: 'Internal Server Error: \n' + err2
-                    }
-                });
-                return;
-            }
-
-            connection.query(queryStatement.selectAllImage(), (err3, rows) => {
+        } else {
+            connection.query(queryStatement.selectAllImage(increment), (err2, rows2) => {
                 connection.release();
-                if (err3) {
+                if (err2) {
                     res.send({
                         status: false,
                         error: {
                             code: 500,
-                            message: 'Internal Server Error: \n' + err3
+                            message: 'Internal Server Error: \n' + err2
                         }
                     });
                     return;
                 } else {
-                    const dataMap = rows.map(row => {
+                    const dataMap = rows2.map(row => {
                         const {imageId, messageDigest, originalFileName, extension} = row;
                         return {
                             imageId: imageId,
@@ -116,8 +111,8 @@ router.get('/', (req, res) => {
                     });
                 }
             });    
-        });
-    }
+        }
+    });
 });
 
 router.post('/', (req, res) => {
@@ -135,6 +130,7 @@ router.post('/', (req, res) => {
             const THUMBNAIL_WIDTH = 480;
 
             const file = req.files.upload;
+
             const fileNameSplit = fileHelper.splitFileName(file.name);
             const fileUid = Buffer.from(mdHelper.messageDigestWithTimeStamp(fileNameSplit[0], 32)).toString('base64');
             const fileName = `${fileUid}.${fileNameSplit[1]}`

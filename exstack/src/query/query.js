@@ -46,28 +46,54 @@ const query = {
             ;
         `;
     },
-    selectPageImage: (pageCount, pageNo) => {
+    selectPageImage: (pageCount, pageNo, increment) => {
         const start = pageCount * (pageNo - 1);
-        const end = pageCount * pageNo;
-
-        return `
-            SELECT 
-                * 
-            FROM 
-                dbibridge.image 
-            LIMIT 
-                ${start},${end}
-            ;
-        `;
+        if (increment) {
+            return `
+                SELECT 
+                    a.*, b.*
+                FROM 
+                    dbibridge.image a
+                    CROSS JOIN (SELECT COUNT(*) as rowCount FROM dbibridge.image) b
+                LIMIT 
+                    ${start},${pageCount}
+                ;
+            `;
+        } else {
+            return `
+                SELECT 
+                    a.*, b.*
+                FROM 
+                    dbibridge.image a
+                    CROSS JOIN (SELECT COUNT(*) as rowCount FROM dbibridge.image) b
+                ORDER BY
+                    imageId DESC
+                LIMIT 
+                    ${start},${pageCount}
+                ;
+            `;
+        }
     },
-    selectAllImage: () => {
-        return `
-            SELECT 
-                * 
-            FROM 
-                dbibridge.image
-            ;
-        `;
+    selectAllImage: (increment) => {
+        if (increment) {
+            return `
+                SELECT 
+                    * 
+                FROM 
+                    dbibridge.image
+                ;
+            `;
+        } else {
+            return `
+                SELECT 
+                    * 
+                FROM 
+                    dbibridge.image
+                ORDER BY
+                    imageId DESC
+                ;
+            `;
+        }
     },
     deleteSingleImage: (imageId) => {
         return `
@@ -327,9 +353,9 @@ const query = {
         return `
             update
                 dbibridge.page a
-                inner join dbibridge.course b on a.page_id=b.page_id
-                inner join dbibridge.page_image c on a.page_id=c.page_id
-                inner join dbibridge.course_image d on a.page_id=d.page_id
+                INNER JOIN dbibridge.course b ON a.page_id=b.page_id
+                INNER JOIN dbibridge.page_image c ON a.page_id=c.page_id
+                INNER JOIN dbibridge.course_image d ON a.page_id=d.page_id
             set
                 a.name='${eName}',
                 b.description1='${eDescription1}',
