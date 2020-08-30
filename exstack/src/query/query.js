@@ -139,7 +139,7 @@ const query = {
             FROM 
                 dbibridge.page a
                 LEFT JOIN dbibridge.pageContent b ON a.pageId=b.pageId
-                INNER JOIN dbibridge.image c ON b.imageId=c.imageId
+                LEFT JOIN dbibridge.image c ON b.imageId=c.imageId
                 CROSS JOIN (
                     SELECT 
                         d2.imageId AS bannerImageId, 

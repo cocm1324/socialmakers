@@ -292,7 +292,10 @@ router.post('/course', (req, res) => {
 
                             connection.release();
                             res.status(200).send({
-                                status: true
+                                status: true,
+                                data: {
+                                    courseId: pageId
+                                }
                             });
                         });
                     });

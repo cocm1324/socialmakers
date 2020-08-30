@@ -1,8 +1,8 @@
 <div class="p-grid p-nogutter p-relative item">
-    <img class="image-container" [src]="aboutUsBackground.value" style="width: 100%; height: 400px;">
+    <img class="image-container" [src]="bannerImageUrl.value" style="width: 100%; height: 400px;">
     <div class="p-absolute p-d-flex p-justify-center p-align-center w-100 h-100" style="z-index: 1000;">
         <div class="hero-content p-p-5 p-relative">
-            <h1>{{aboutUsName.value}}</h1>
+            <h1>{{pageName.value}}</h1>
         </div>
     </div>
     <div *ngIf="!isEdit && !lock" class="p-absolute overlay p-d-flex p-justify-center p-align-center w-100 h-100">
@@ -15,13 +15,13 @@
             <div class="p-py-3">
                 <label>페이지 이름</label>
                 <span class="ui-inputgroup">
-                    <input formControlName="aboutUsName" class="w-100" pInputText> 
+                    <input [maxLength]="dataLength.SHORT" formControlName="pageName" class="w-100" pInputText> 
                 </span>
             </div>
             <div class="p-py-3">
                 <label>백그라운드 이미지 URL</label>
                 <span class="ui-inputgroup">
-                    <input formControlName="aboutUsBackground" class="w-100" pInputText readonly>
+                    <input formControlName="bannerImageUrl" class="w-100" pInputText readonly>
                     <app-image-upload label="수정" icon="pi pi-pencil" (onSubmit)="imageUploaded($event)"></app-image-upload>
                 </span>
             </div>

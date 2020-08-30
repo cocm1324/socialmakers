@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { IAboutUsEditorInput, ICourseInfo } from '@app/models/';
+import { IAboutUsEditorInput, ICourseInfo, DATA_LENGTH } from '@app/models/';
 
 @Component({
 	selector: 'app-course-editor',
@@ -14,6 +14,9 @@ export class CourseEditorComponent implements OnInit {
 	@Input() isNewPage: boolean = false;
 	@Output() onEditStateChange: EventEmitter<boolean> = new EventEmitter();
 	@Output() onFinish: EventEmitter<ICourseInfo> = new EventEmitter();
+
+	dataLength = DATA_LENGTH;
+
 	courseInfoForm: FormGroup;
 	isEdit: boolean = false;
 	lock: boolean = false;
@@ -102,6 +105,10 @@ export class CourseEditorComponent implements OnInit {
 	}
 
 	isChanged() {
+		if (!this.courseInfoData) {
+			return true;
+		}
+
 		const {
 			cCourseName,
 			cDescription1,

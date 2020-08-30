@@ -64,8 +64,6 @@ export class DataService {
 			}
 		}
 
-		console.log(url);
-
 		return this.http.get<IGetImageListRes>(url);
 	}
 

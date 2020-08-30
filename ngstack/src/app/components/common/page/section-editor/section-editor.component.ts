@@ -41,8 +41,6 @@ export class SectionEditorComponent implements OnInit, OnDestroy {
 			width: [this.typeWidth.MEDIUM],
 			type: [null, Validators.required],
 			content: ["", Validators.required],
-			seq: [1, Validators.required],
-			seqBase: [1, Validators.required],
 			background: ["#FFFFFF", Validators.required],
 			backgroundInput: ["#FFFFFF", Validators.required]
 		});
@@ -65,13 +63,11 @@ export class SectionEditorComponent implements OnInit, OnDestroy {
 				width: this.section.width,
 				type: this.section.type,
 				content: this.section.content,
-				seq: this.section.seq,
-				seqBase: this.section.seqBase,
 				background: this.section.background,
 				backgroundInput: this.section.background
 			});
 
-			if (this.section.imageId != undefined) {
+			if (this.section.imageId) {
 				this.sectionForm.addControl("imageId", this.fb.control(this.section.imageId));
 			}
 		}
@@ -135,10 +131,16 @@ export class SectionEditorComponent implements OnInit, OnDestroy {
 	}
 
 	isFormModified() {
-		return this.section.width != this.width.value 
-			|| this.section.type != this.type.value 
-			|| this.section.content != this.content.value
-			|| this.section.background != this.background.value;
+		const {width, type, content, background} = this.sectionForm.getRawValue();
+
+		if (this.section) {
+			return this.section.width != width
+				|| this.section.type != type
+				|| this.section.content !== content
+				|| this.section.background !== background;
+		} else {
+			return content !== "" || background !== "#FFFFFF";
+		}
 	}
 
 	imageUrlSubmitted(url) {
@@ -215,7 +217,19 @@ export class SectionEditorComponent implements OnInit, OnDestroy {
 		if (this.sectionForm.contains('backgroundInput')) {
 			this.sectionForm.removeControl('backgroundInput');
 		}
-		this.onFinished.emit(this.sectionForm.getRawValue());
+		const {background, content, type, width, imageId} = this.sectionForm.getRawValue();
+		
+		const sectionData = {
+			...this.section,
+			background: background,
+			content: content,
+			type: type,
+			width: width
+		};
+		if (imageId) {
+			sectionData['imageId'] = imageId;
+		}
+		this.onFinished.emit(sectionData);
 	}
 
 	ngOnDestroy() {

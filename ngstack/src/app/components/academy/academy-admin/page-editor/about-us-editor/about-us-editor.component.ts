@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, NgModel } from '@angular/forms';
 import { IAboutUsEditorInput } from '@app/models';
+import { DATA_LENGTH } from '@app/models';
 
 @Component({
 	selector: 'app-about-us-editor',
@@ -13,9 +14,12 @@ export class AboutUsEditorComponent implements OnInit, OnChanges {
 	@Input() disabledByParent: boolean;
 	@Output() onEditStateChange: EventEmitter<boolean> = new EventEmitter();
 	@Output() onFinish: EventEmitter<IAboutUsEditorInput> = new EventEmitter();
+	
 	aboutUsForm: FormGroup;
 	isEdit: boolean;
 	lock: boolean = false;
+
+	dataLength = DATA_LENGTH;
 
 	get pageName() {return this.aboutUsForm.get('pageName');}
 	get bannerImageId() {return this.aboutUsForm.get('bannerImageId');}
@@ -34,9 +38,9 @@ export class AboutUsEditorComponent implements OnInit, OnChanges {
 
 		if (this.aboutUsData) {
 			this.aboutUsForm.patchValue({
-				aboutUsName: this.aboutUsData.pageName,
-				aboutUsImageId: this.aboutUsData.bannerImageId,
-				aboutUsBackground: this.aboutUsData.bannerImageUrl
+				pageName: this.aboutUsData.pageName,
+				bannerImageId: this.aboutUsData.bannerImageId,
+				bannerImageUrl: this.aboutUsData.bannerImageUrl
 			});
 		}
 	}

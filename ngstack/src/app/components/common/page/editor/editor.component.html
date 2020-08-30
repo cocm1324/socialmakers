@@ -1,21 +1,19 @@
 
 <div *ngFor="let pageDatum of pageData; let i = index">
-    <div *ngIf="pageDatum.seq==curEdit && pageDatum.seqBase==curEditBase">
+    <div *ngIf="pageDatum.contentId==curEditSectionData.contentId">
         <app-section-editor [section]="pageDatum" (onFinished)="closeEdit($event)"></app-section-editor>
     </div>
-    <div *ngIf="pageDatum.seq!=curEdit || pageDatum.seqBase!=curEditBase">
+    <div *ngIf="pageDatum.contentId != curEditSectionData.contentId">
         <app-section-viewer 
             [section]="pageDatum" 
             [editable]="!isEditing()" 
-            [seq]="pageDatum.seq"
-            [seqBase]="pageDatum.seqBase" 
             (onEdit)="viewerEdit($event)"
             (onDelete)="viewerDelete($event)"
         ></app-section-viewer>
     </div>
 </div>
 <div *ngIf="newSection">
-    <app-section-editor [section]="newSection" (onFinished)="closeEdit($event)"></app-section-editor>
+    <app-section-editor (onFinished)="closeEdit($event)"></app-section-editor>
 </div>
 <div class="spacing"></div>
 
@@ -23,6 +21,7 @@
     <div class="p-grid-medium p-justify-between">
         <div class="p-py-3">
             <button (click)="createNewSection()" [disabled]="isEditing()" pButton type="button" label="새 섹션 추가하기" icon="pi pi-check" class="ui-button-primary"></button>
+
         </div>
         <div class="p-py-3">
             <button (click)="finish()" pButton [disabled]="isEditing()" type="button" label="완료" icon="pi pi-check" class="ui-button-primary p-mr-2"></button>

@@ -21,9 +21,12 @@ export class ImageUploadComponent implements OnInit, AfterViewInit {
 	pageCount = 16;
 	increment = false;
 	rowCount;
-	
 
-	selectedImageId = -1;
+	selectedImage: IImage = {
+		imageId: -1,
+		url: "",
+		fileName: ""
+	};
 
 	uploadedFiles = [];
 	requestUrl: string = '/api/image';
@@ -51,12 +54,22 @@ export class ImageUploadComponent implements OnInit, AfterViewInit {
 		});
 	}
 
+	onImageClick(image) {
+		this.selectedImage = image;
+	}
+
 	onUpload(e) {
-		for(let file of e.files) {
-            this.uploadedFiles.push(file);
-		}
 		this.curPage = 1;
-		this.loadImage();
+		this.dataService.getImageList(this.pageCount, this.curPage, this.increment).toPromise().then(res => {
+			if (res.status) {
+				this.imageList = res.data.images;
+				this.rowCount = res.data.rowCount;
+				
+				if (this.imageList.length > 0) {
+					this.selectedImage = this.imageList[0];
+				}
+			}
+		});
 	}
 
 	onPageChange(e) {
@@ -72,12 +85,11 @@ export class ImageUploadComponent implements OnInit, AfterViewInit {
 
 	confirm() {
 		const response = {
-			url: "",
-			imageId: 0
+			url: this.selectedImage.url,
+			imageId: this.selectedImage.imageId
 		};
-		console.log("confirm")
-		// this.display = false;
-		// this.onSubmit.emit(response);
+		this.display = false;
+		this.onSubmit.emit(response);
 	}
 
 	cancel() {

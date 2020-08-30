@@ -117,6 +117,7 @@ export class PageEditorComponent implements OnInit {
 						};
 						if (content.imageId) {
 							contentMap['imageId'] = content.imageId;
+							contentMap['imageUrl'] = content.imageUrl;
 						}
 						return contentMap;
 					});
@@ -148,7 +149,7 @@ export class PageEditorComponent implements OnInit {
 			...e
 		};
 
-		if (this.contents.some(section => {return section.seq == request.seq})) {
+		if (this.contents.some(section => {return section.contentId == request.contentId})) {
 			this.dataService.updateSection(request).toPromise().then((response) => {
 				if (response.status) {
 					this.loadPage();
@@ -157,6 +158,7 @@ export class PageEditorComponent implements OnInit {
 				}
 			});
 		} else {
+			delete request.contentId;
 			this.dataService.createSection(request).toPromise().then((response) => {
 				if (response.status) {
 					this.loadPage();
@@ -197,10 +199,14 @@ export class PageEditorComponent implements OnInit {
 		} else if (this.isCourse()) {
 			if (this.isNewPage) {
 				const request: ICreateCourseReq = {
-					seq: 1,
-					seqBase: 1,
 					...e
-				}
+				};
+				this.dataService.createCourse(request).toPromise().then(res => {
+					if (res.status) {
+						const courseId = res.data;
+						this.router.navigate([`academy/admin/pageEditor/course/${courseId}`]);
+					}
+				});
 			} else {
 				const request: IUpdateCourseInfoReq = {
 					courseId: this.pageId,
@@ -216,8 +222,6 @@ export class PageEditorComponent implements OnInit {
 	}
 
 	onHeaderEditStateChange(e) {
-		console.log(e)
-
 		if (e) {
 			this.childComponentEditState = 1;
 		} else {

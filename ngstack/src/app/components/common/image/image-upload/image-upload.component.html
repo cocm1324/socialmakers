@@ -1,32 +1,39 @@
 <p-dialog header="이미지 추가하기" [(visible)]="display" [style]="{width: '50vw'}" [baseZIndex]="10000">
 
-    <p-fileUpload 
-        name="upload"
-        accept="image/*"
-        chooseLabel="파일업로드"
-        mode="basic"
-        [auto]="true"
-        [url]="requestUrl" 
-        [maxFileSize]="maxSize"
-        (onUpload)="onUpload($event)"
-    >
-        <!-- <ng-template pTemplate="content">
-            <ul *ngIf="uploadedFiles.length">
-                <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
-            </ul>
-        </ng-template> -->
-    </p-fileUpload>
+    <div class="p-d-flex p-justify-between">
+        <div class="p-d-flex p-align-center"> 
+            {{this.selectedImage.fileName}}
+        </div>
+        <p-fileUpload 
+            name="upload"
+            accept="image/*"
+            chooseLabel="파일업로드"
+            mode="basic"
+            [auto]="true"
+            [url]="requestUrl" 
+            [maxFileSize]="maxSize"
+            (onUpload)="onUpload($event)"
+        >
+        </p-fileUpload>
+    </div>
 
     <div class="p-grid">
         <div *ngFor="let image of imageList" class="p-col-3">
-            <img class="image-icon" [src]="image.thumbUrl" [alt]="image.fileName">
+            <img 
+                [ngClass]="{'image-icon-selected': image.imageId==selectedImage.imageId}"
+                (click)="onImageClick(image)"
+                (dblclick)="confirm()"
+                class="image-icon" 
+                [src]="image.thumbUrl" 
+                [alt]="image.fileName"
+            >
             <div class="image-label">{{image.fileName}}</div>
         </div>
     </div>
     <p-paginator [rows]="pageCount" [totalRecords]="rowCount" pageLinkSize="3" (onPageChange)="onPageChange($event)"></p-paginator>
 
     <p-footer>
-        <button type="button" pButton icon="pi pi-check" (click)="confirm()" label="Yes"></button>
+        <button type="button" pButton icon="pi pi-check" (click)="confirm()" label="Yes" [disabled]="selectedImage.imageId==-1"></button>
         <button type="button" pButton icon="pi pi-times" (click)="cancel()" label="No" class="ui-button-secondary"></button>
     </p-footer>
 </p-dialog>

@@ -7,8 +7,8 @@ export interface ISection {
     content: string;
     imageId?: number;
     imageUrl?: string;
-    seq: number;
-    seqBase: number;
+    seq?: number;
+    seqBase?: number;
     background: string;
 }
 

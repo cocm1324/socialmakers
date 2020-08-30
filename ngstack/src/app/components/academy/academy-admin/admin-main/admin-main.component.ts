@@ -78,7 +78,6 @@ export class AdminMainComponent implements OnInit {
 	onCourseSelected(e) {	
 		e.originalEvent ? e.originalEvent.preventDefault(): null;	
 		this.selectedCourseId = e.value[0].courseId;
-		console.log(this.selectedCourseId);
 	}	
 
 	onCourseOrdered(e) {	
