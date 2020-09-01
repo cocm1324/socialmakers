@@ -12,6 +12,7 @@
         </div>
         <div *ngIf="isImage()" class="w-100">
             <img class="image-container" [src]="content" onerror="this.src='./assets/img/notfound.jpg';">
+            <pre>{{content}}</pre>
         </div>
 
         <div *ngIf="isPost()" class="w-100 p-py-3">

@@ -10,8 +10,6 @@ export class SectionViewerComponent implements OnInit {
 
 	@Input() section: ISectionWithContentId;
 	@Input() editable: boolean = false;
-	@Input() seq: number;
-	@Input() seqBase: number;
 	@Output() onEdit: EventEmitter<any> = new EventEmitter();
 	@Output() onDelete: EventEmitter<any> = new EventEmitter();
 	typeWidth = TypeSectionWidth;
@@ -19,7 +17,13 @@ export class SectionViewerComponent implements OnInit {
 	
 	get width() {return this.section.width}
 	get type() {return this.section.type}
-	get content() {return this.section.content}
+	get content() {
+		if (this.isImage()) {
+			return this.section.imageUrl;
+		} else {
+			return this.section.content;
+		}
+	}
 	get background() {return this.section.background}
 
 	constructor() {}

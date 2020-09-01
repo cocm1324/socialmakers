@@ -28,6 +28,7 @@ export class EditorComponent implements OnInit, OnChanges {
 	constructor() { }
 
 	ngOnInit() {
+
 	}
 
 	ngOnChanges(changes: SimpleChanges) {
@@ -47,6 +48,15 @@ export class EditorComponent implements OnInit, OnChanges {
 			background: "#FFFFFF"
 		};
 		this.curEditSectionData = _.cloneDeep(this.newSection);
+		this.onEditStateChange.emit(this.curEditSectionData.contentId != SectionState.NOT_EDITING);
+	}
+
+	cancelNewSection() {
+		if (this.newSection) {
+			this.newSection = null;
+		}
+
+		this.curEditSectionData = {contentId: -1};
 		this.onEditStateChange.emit(this.curEditSectionData.contentId != SectionState.NOT_EDITING);
 	}
 

@@ -48,14 +48,14 @@
                 <div class="ui-g ui-fluid">
                     <div class="ui-g-12 p-pl-0 p-pr-0">
                         <div class="ui-inputgroup w-100">
-                            <input type="text" formControlName="content" readonly pInputText>
+                            <input type="text" formControlName="imageUrl" readonly pInputText>
                             <app-image-url label="URL등록하기" [initialValue]="content.value" (onSubmit)="imageUrlSubmitted($event)"></app-image-url>
                             <app-image-upload label="추가하기" (onSubmit)="imageUploaded($event)"></app-image-upload>
                         </div>
                     </div>
                 </div>
                 <div class="preview">
-                    <img #image class="image-container" [ngClass]="{'p-highlight p-crosshair': eyedrop}" [src]="content.value" (click)="onImageClick($event)" onerror="this.src='./assets/img/notfound.jpg';">
+                    <img #image class="image-container" [ngClass]="{'p-highlight p-crosshair': eyedrop}" [src]="imageUrl.value" (click)="onImageClick($event)" onerror="this.src='./assets/img/notfound.jpg';">
                 </div>
                 <p-footer class="p-d-flex p-justify-between">
                     <div>

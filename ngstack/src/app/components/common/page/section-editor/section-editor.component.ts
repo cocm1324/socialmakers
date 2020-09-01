@@ -1,7 +1,7 @@
-import {Component, OnInit, Input, Output, EventEmitter, OnDestroy, ViewChild, AfterViewInit, ElementRef} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {ISection, TypeSectionWidth, TypeContent, ISectionWithContentId} from '@app/models';
-import {Subscription} from 'rxjs';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { TypeSectionWidth, TypeContent, ISectionWithContentId } from '@app/models';
+import { Subscription } from 'rxjs';
 import { DataService } from '@services/data/data.service';
 
 @Component({
@@ -9,26 +9,33 @@ import { DataService } from '@services/data/data.service';
 	templateUrl: './section-editor.component.html',
 	styleUrls: ['./section-editor.component.scss']
 })
-export class SectionEditorComponent implements OnInit, OnDestroy {
+export class SectionEditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	@Input() section: ISectionWithContentId;
 	@Output() onFinished: EventEmitter<any> = new EventEmitter();
 	@ViewChild('image', {static: false}) image: ElementRef;
+
 	sectionForm: FormGroup;
 	typeWidth = TypeSectionWidth;
 	typeContent = TypeContent;
 	eyedrop: boolean;
-	
 	subscription: Subscription[] = [];
 
 	get width() {return this.sectionForm.get('width')}
 	get type() {return this.sectionForm.get('type')}
-	get content() {return this.sectionForm.get('content')}
+	get content() {return this.sectionForm.get('content');}
 	get background() {return this.sectionForm.get('background')}
 	get backgroundInput() {return this.sectionForm.get('backgroundInput')}
 	get imageId() {
 		if (this.sectionForm.contains('imageId')) {
 			return this.sectionForm.get('imageId');
+		} else {
+			return undefined;
+		}
+	}
+	get imageUrl() {
+		if (this.sectionForm.contains('imageUrl')) {
+			return this.sectionForm.get('imageUrl');
 		} else {
 			return undefined;
 		}
@@ -67,12 +74,81 @@ export class SectionEditorComponent implements OnInit, OnDestroy {
 				backgroundInput: this.section.background
 			});
 
-			if (this.section.imageId) {
-				this.sectionForm.addControl("imageId", this.fb.control(this.section.imageId));
+			if (this.section.type = TypeContent.IMAGE) {
+				this.goToImageUploadState(this.section.imageId, this.section.imageUrl);
+			} else if (this.section.type = TypeContent.IMAGE_URL) {
+				this.goToImageUrlState(this.section.content);
+			} else {
+				this.goToPostState();
 			}
 		}
 		
 		this.eyedrop = false;
+	}
+
+	ngAfterViewInit() {
+		if (this.isTypeNull()) {
+			document.body.scrollTop = document.body.scrollHeight;
+		}
+	}
+
+	goToImageUploadState(imageId, imageUrl) {
+		if (this.sectionForm.contains("imageId")) {
+			this.imageId.patchValue(imageId);
+		} else {
+			this.sectionForm.addControl("imageId", this.fb.control(imageId));
+		}
+		if (this.sectionForm.contains("imageUrl")) {
+			this.imageUrl.patchValue(imageUrl);
+		} else {
+			this.sectionForm.addControl("imageUrl", this.fb.control(imageUrl));
+		}
+
+		if (this.content.validator) {
+			this.content.clearValidators();
+		}
+		this.content.patchValue("");
+
+		this.content.updateValueAndValidity();
+		this.type.patchValue(TypeContent.IMAGE);
+	}
+
+	goToImageUrlState(imageUrl) {
+		console.log("hi", imageUrl)
+		if (this.sectionForm.contains("imageId")) {
+			this.sectionForm.removeControl("imageId");
+		} 
+
+		if (this.sectionForm.contains("imageUrl")) {
+			this.imageUrl.patchValue(imageUrl);
+		} else {
+			this.sectionForm.addControl("imageUrl", this.fb.control(imageUrl));
+		}
+
+		if (this.content.validator) {
+			this.content.clearValidators();
+		}
+		this.content.patchValue("");
+
+		this.content.updateValueAndValidity();
+		this.type.patchValue(TypeContent.IMAGE_URL);
+	}
+
+	goToPostState() {
+		if (this.sectionForm.contains("imageId")) {
+			this.sectionForm.removeControl("imageId");
+		} 
+
+		if (this.sectionForm.contains("imageUrl")) {
+			this.sectionForm.removeControl("imageUrl");
+		}
+
+		if (!this.content.validator) {
+			this.content.setValidators(Validators.required);
+		}
+
+		this.content.updateValueAndValidity();
+		this.type.patchValue(TypeContent.POST);
 	}
 
 	isTypeNull() {return this.type.value == null}
@@ -112,15 +188,11 @@ export class SectionEditorComponent implements OnInit, OnDestroy {
 	}
 
 	openImage() {
-		this.sectionForm.patchValue({
-			type: this.typeContent.IMAGE_URL
-		});
+		this.goToImageUrlState("");
 	}
 
 	openPost() {
-		this.sectionForm.patchValue({
-			type: this.typeContent.POST
-		});
+		this.goToPostState();
 	}
 
 	backToSelect() {
@@ -144,31 +216,13 @@ export class SectionEditorComponent implements OnInit, OnDestroy {
 	}
 
 	imageUrlSubmitted(url) {
-		if (this.sectionForm.contains('imageId')) {
-			this.sectionForm.removeControl('imageId');
-		}
-		this.sectionForm.patchValue({
-			type: this.typeContent.IMAGE_URL,
-			content: url
-		});
+		this.goToImageUrlState(url);
 	}
 
 	imageUploaded(e) {
 		const {url, imageId} = e;
-
-		if (this.sectionForm.contains('imageId')) {
-			this.sectionForm.patchValue({
-				type: this.typeContent.IMAGE,
-				content: url,
-				imageId: imageId
-			});
-		} else {
-			this.sectionForm.patchValue({
-				type: this.typeContent.IMAGE,
-				content: url,
-			});
-			this.sectionForm.addControl('imageId', this.fb.control(imageId));
-		}
+		console.log(e)
+		this.goToImageUploadState(imageId, url);
 	}
 
 	onImageClick(e: MouseEvent) {
@@ -214,11 +268,8 @@ export class SectionEditorComponent implements OnInit, OnDestroy {
 
 	save() {
 		this.eyedrop = false;
-		if (this.sectionForm.contains('backgroundInput')) {
-			this.sectionForm.removeControl('backgroundInput');
-		}
-		const {background, content, type, width, imageId} = this.sectionForm.getRawValue();
 		
+		const {background, content, type, width, imageId, imageUrl} = this.sectionForm.getRawValue();
 		const sectionData = {
 			...this.section,
 			background: background,
@@ -226,9 +277,13 @@ export class SectionEditorComponent implements OnInit, OnDestroy {
 			type: type,
 			width: width
 		};
-		if (imageId) {
+
+		if (this.type.value == TypeContent.IMAGE) {
 			sectionData['imageId'] = imageId;
+		} else if (this.type.value == TypeContent.IMAGE_URL) {
+			sectionData['content'] = imageUrl;
 		}
+
 		this.onFinished.emit(sectionData);
 	}
 

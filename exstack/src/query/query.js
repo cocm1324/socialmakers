@@ -176,7 +176,7 @@ const query = {
                 b.imageId, b.messageDigest, b.extension
             FROM 
                 dbibridge.pageContent a
-                INNER JOIN dbibridge.image b ON a.imageId=b.imageId
+                LEFT JOIN dbibridge.image b ON a.imageId=b.imageId
             WHERE
                 a.pageId=${pageId}
             ;

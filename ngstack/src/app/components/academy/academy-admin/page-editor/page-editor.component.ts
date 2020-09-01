@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ISection, IAboutUsEditorInput, IUpdateAboutUsReq, ICourseInfo, IUpdateCourseInfoReq, ICreateCourseReq, ISectionWithContentId } from '@app/models';
+import { IAboutUsEditorInput, IUpdateAboutUsReq, ICourseInfo, IUpdateCourseInfoReq, ICreateCourseReq, ISectionWithContentId } from '@app/models';
 import { Router } from '@angular/router';
 import { PAGE_URL_TYPE } from '@app/models';
 import { DataService } from '@services/data/data.service';
@@ -53,38 +53,10 @@ export class PageEditorComponent implements OnInit {
 		if (this.isAboutUs()) {
 			this.dataService.getAboutUs().toPromise().then(res => {
 				if (res.status) {
-					const {pageId, contents, pageName, bannerImageId, bannerImageUrl} = res.data;
+					const {pageId, contents} = res.data;
 					this.pageId = pageId;
-					contents.sort((a, b)=> {
-						if (a.seq - b.seq < 0) {
-							return -1;
-						}
-						if (a.seq - b.seq > 0) {
-							return 1;
-						}
-						return 0;
-					});
-					this.aboutUsData = {
-						pageName: pageName,
-						bannerImageId: bannerImageId,
-						bannerImageUrl: bannerImageUrl,
-					};
-					this.contents = contents.map(content => {
-						const contentMap = {
-							contentId: content.contentId,
-							width: content.width,
-							type: content.type,
-							content: content.content,
-							seq: content.seq,
-							seqBase: content.seqBase,
-							background: content.background
-						};
-						if (content.imageId) {
-							contentMap['imageId'] = content.imageId;
-							contentMap['imageUrl'] = content.imageUrl;
-						}
-						return contentMap;
-					});
+					this.aboutUsData = res.data;
+					this.initContent(contents);
 					this.loaded = true;
 				}
 			}, reject => {
@@ -95,34 +67,10 @@ export class PageEditorComponent implements OnInit {
 				if (res.status) {
 					const {courseId, contents} = res.data;
 					this.pageId = courseId;
-					contents.sort((a, b)=> {
-						if (a.seq - b.seq < 0) {
-							return -1;
-						}
-						if (a.seq - b.seq > 0) {
-							return 1;
-						}
-						return 0;
-					});
 					this.courseInfoData = res.data;
-					this.contents = contents.map(content => {
-						const contentMap = {
-							contentId: content.contentId,
-							width: content.width,
-							type: content.type,
-							content: content.content,
-							seq: content.seq,
-							seqBase: content.seqBase,
-							background: content.background
-						};
-						if (content.imageId) {
-							contentMap['imageId'] = content.imageId;
-							contentMap['imageUrl'] = content.imageUrl;
-						}
-						return contentMap;
-					});
+					this.initContent(contents);
+					this.loaded = true;
 				}
-				this.loaded = true;
 			});
 		}
 	}
@@ -135,6 +83,37 @@ export class PageEditorComponent implements OnInit {
 	}
 	isNotice() {
 		return this.pageType === PAGE_URL_TYPE.NOTICE;
+	}
+
+	initContent(data: ISectionWithContentId[]) {
+		data.sort((a, b)=> {
+			if (a.seq - b.seq < 0) {
+				return -1;
+			}
+			if (a.seq - b.seq > 0) {
+				return 1;
+			}
+			return 0;
+		});
+
+		const mappedContent = data.map(content => {
+			const contentMap = {
+				contentId: content.contentId,
+				width: content.width,
+				type: content.type,
+				content: content.content,
+				seq: content.seq,
+				seqBase: content.seqBase,
+				background: content.background
+			};
+			if (content.imageId) {
+				contentMap['imageId'] = content.imageId;
+				contentMap['imageUrl'] = content.imageUrl;
+			}
+			return contentMap;
+		});
+
+		this.contents = mappedContent;
 	}
 
 	onFinished(e) {

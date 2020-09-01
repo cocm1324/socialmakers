@@ -20,8 +20,8 @@
 <div class="editor-footer">
     <div class="p-grid-medium p-justify-between">
         <div class="p-py-3">
-            <button (click)="createNewSection()" [disabled]="isEditing()" pButton type="button" label="새 섹션 추가하기" icon="pi pi-check" class="ui-button-primary"></button>
-
+            <button *ngIf="!isEditing()" pButton (click)="createNewSection()" type="button" label="새 섹션 추가하기" icon="pi pi-check" class="ui-button-primary"></button>
+            <!-- <button *ngIf="isEditing()" pButton (click)="cancelNewSection()" type="button" label="취소하기" icon="pi pi-times" class="ui-button-secondary"></button> -->
         </div>
         <div class="p-py-3">
             <button (click)="finish()" pButton [disabled]="isEditing()" type="button" label="완료" icon="pi pi-check" class="ui-button-primary p-mr-2"></button>
