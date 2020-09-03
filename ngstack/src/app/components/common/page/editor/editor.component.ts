@@ -28,7 +28,7 @@ export class EditorComponent implements OnInit, OnChanges {
 	constructor() { }
 
 	ngOnInit() {
-
+		console.log(this.pageData)
 	}
 
 	ngOnChanges(changes: SimpleChanges) {

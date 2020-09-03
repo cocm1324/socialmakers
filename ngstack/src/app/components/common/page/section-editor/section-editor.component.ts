@@ -114,7 +114,6 @@ export class SectionEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 	}
 
 	goToImageUrlState(imageUrl) {
-		console.log("hi", imageUrl)
 		if (this.sectionForm.contains("imageId")) {
 			this.sectionForm.removeControl("imageId");
 		} 
