@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { IAboutUsEditorInput, ICourseInfo, DATA_LENGTH } from '@app/models/';
+import { ICourseInfo, DATA_LENGTH } from '@app/models/';
 
 @Component({
 	selector: 'app-course-editor',
@@ -45,6 +45,8 @@ export class CourseEditorComponent implements OnInit {
 	constructor(private fb: FormBuilder) { }
 
 	ngOnInit() {
+		console.log(this.courseInfoData, this.isNewPage);
+
 		this.courseInfoForm = this.fb.group({
 			cCourseName: ["", Validators.required],
 			cDescription1: ["", Validators.required],

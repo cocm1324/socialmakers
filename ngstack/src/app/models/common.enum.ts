@@ -23,14 +23,7 @@ export enum LOCAL_STORAGE_TYPE {
 }
 
 export enum PAGE_TYPE {
-    COURSES = "COURSES",
-    ABOUT_US = "ABOUTUS",
-    NOTICE = "NOTICE"
-}
-
-export enum PAGE_URL_TYPE {
-    COURSE = "course",
-    ABOUT_US = "aboutUs",
-    NOTICE = "notice",
-    NEW = "new"
+    COURSE,
+    ABOUT_US,
+    NOTICE
 }

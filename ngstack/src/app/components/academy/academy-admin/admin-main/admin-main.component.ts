@@ -3,13 +3,13 @@ import { Router } from '@angular/router';
 import { DataService } from '@services/data/data.service';
 import * as _ from 'lodash';
 import { UtilService } from '@services/util/util.service';
+import { ACADEMY_ADMIN_URL } from '@app/models/';
 
 @Component({
 	selector: 'app-main',
 	templateUrl: './admin-main.component.html',
 	styleUrls: ['./admin-main.component.scss']
 })
-
 export class AdminMainComponent implements OnInit {
 
 	courses;
@@ -55,12 +55,12 @@ export class AdminMainComponent implements OnInit {
 
 	goToMain(e) {
 		e.preventDefault();
-		this.router.navigate(['academy/admin']);
+		this.router.navigate([ACADEMY_ADMIN_URL.PREFIX]);
 	}
 
   	goToEditAboutUs(e) {
 		e.preventDefault();
-		this.router.navigate(['academy/admin/pageEditor/aboutUs']);
+		this.router.navigate([`${ACADEMY_ADMIN_URL.PREFIX}/${ACADEMY_ADMIN_URL.ABOUT_US}`]);
 	}
 
 	onCourseDelete() {
@@ -86,10 +86,10 @@ export class AdminMainComponent implements OnInit {
 
 	goToEditCourse(e) {
 		e.preventDefault();
-		this.router.navigate([`academy/admin/pageEditor/course/${this.selectedCourseId}`]);
+		this.router.navigate([`${ACADEMY_ADMIN_URL.PREFIX}/${ACADEMY_ADMIN_URL.COURSE_FRAGMANT}/${this.selectedCourseId}`]);
 	}
 
 	onCreateCourse() {
-		this.router.navigate([`academy/admin/pageEditor/course/new`]);
+		this.router.navigate([`${ACADEMY_ADMIN_URL.PREFIX}/${ACADEMY_ADMIN_URL.NEW_COURSE}`]);
 	}
 }
