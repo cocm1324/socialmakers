@@ -1,5 +1,5 @@
 <form [formGroup]="sectionForm">
-<div class="w-100 p-my-3" [ngStyle]="{'background-color': background.value}">
+<div class="w-100" [ngStyle]="{'background-color': background.value}">
     <div class="p-relative p-nogutter"
         [class.p-grid]="isWide()"
         [class.p-grid-medium]="isMedium()"
@@ -43,24 +43,26 @@
             </div>
         </div>
 
-        <div *ngIf="isImage()" class="w-100">
+        <div *ngIf="isImage() || isImageUrl()" class="w-100">
             <p-card styleClass="ui-card-shadow">
                 <div class="ui-g ui-fluid">
                     <div class="ui-g-12 p-pl-0 p-pr-0">
                         <div class="ui-inputgroup w-100">
-                            <input type="text" formControlName="imageUrl" readonly pInputText>
+                            <input *ngIf="isImage()" type="text" formControlName="imageUrl" readonly pInputText>
+                            <input *ngIf="isImageUrl()" type="text" formControlName="content" readonly pInputText>
                             <app-image-url label="URL등록하기" [initialValue]="content.value" (onSubmit)="imageUrlSubmitted($event)"></app-image-url>
                             <app-image-upload label="추가하기" (onSubmit)="imageUploaded($event)"></app-image-upload>
                         </div>
                     </div>
                 </div>
                 <div class="preview">
-                    <img #image class="image-container" [ngClass]="{'p-highlight p-crosshair': eyedrop}" [src]="imageUrl.value" (click)="onImageClick($event)" onerror="this.src='./assets/img/notfound.jpg';">
+                    <img *ngIf="isImage()" #imageEyedropBox class="image-container" [ngClass]="{'p-highlight p-crosshair': eyedrop}" [src]="imageUrl.value" (click)="onImageClick($event)" onerror="this.src='./assets/img/notfound.jpg';">
+                    <img *ngIf="isImageUrl()" class="image-container" [src]="content.value" (click)="onImageClick($event)" onerror="this.src='./assets/img/notfound.jpg';">
                 </div>
                 <p-footer class="p-d-flex p-justify-between">
                     <div>
-                        <button *ngIf="!eyedrop && type.value === typeContent.IMAGE" (click)="onEyedrop(true)" pButton type="button" label="아이드롭" class="ui-button-secondary p-mr-2"></button>
-                        <button *ngIf="eyedrop && type.value === typeContent.IMAGE" (click)="onEyedrop(false)" pButton type="button" label="취소하기" class="ui-button-danger p-mr-2"></button>
+                        <button *ngIf="!eyedrop && isImage()" (click)="onEyedrop(true)" pButton type="button" label="아이드롭" class="ui-button-secondary p-mr-2"></button>
+                        <button *ngIf="eyedrop && isImage()" (click)="onEyedrop(false)" pButton type="button" label="취소하기" class="ui-button-danger p-mr-2"></button>
                         <p-colorPicker formControlName="background"></p-colorPicker>
                         <input type="text" formControlName="backgroundInput" style="width: 6em; margin-left: 0.5em;" pInputText>
                         <span style="margin-left: 0.5em;">배경색(#RGB)</span>

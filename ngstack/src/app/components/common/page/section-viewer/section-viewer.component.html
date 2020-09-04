@@ -10,11 +10,13 @@
                 <button (click)="delete()" pButton type="button" label="삭제하기" icon="pi pi-times" class="ui-button-secondary"></button>
             </div>
         </div>
+        
         <div *ngIf="isImage()" class="w-100">
-            <img class="image-container" [src]="content" onerror="this.src='./assets/img/notfound.jpg';">
-            <pre>{{content}}</pre>
+            <img class="image-container" [src]="imageUrl" onerror="this.src='./assets/img/notfound.jpg';">
         </div>
-
+        <div *ngIf="isImageUrl()" class="w-100">
+            <img class="image-container" [src]="content" onerror="this.src='./assets/img/notfound.jpg';">
+        </div>
         <div *ngIf="isPost()" class="w-100 p-py-3">
             <div class="p-post-style">
                 <div [innerHTML]="content"></div>

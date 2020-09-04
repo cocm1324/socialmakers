@@ -27,9 +27,7 @@ export class EditorComponent implements OnInit, OnChanges {
 
 	constructor() { }
 
-	ngOnInit() {
-		console.log(this.pageData)
-	}
+	ngOnInit() { }
 
 	ngOnChanges(changes: SimpleChanges) {
 		if (this.disabledByParent != undefined && this.disabledByParent == true) {

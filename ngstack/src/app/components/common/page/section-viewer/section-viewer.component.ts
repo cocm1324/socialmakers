@@ -1,5 +1,5 @@
 import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
-import {ISection, TypeSectionWidth, TypeContent, ISectionWithContentId} from '@app/models';
+import {TypeSectionWidth, TypeContent, ISectionWithContentId} from '@app/models';
 
 @Component({
 	selector: 'app-section-viewer',
@@ -15,27 +15,22 @@ export class SectionViewerComponent implements OnInit {
 	typeWidth = TypeSectionWidth;
 	typeContent = TypeContent;
 	
-	get width() {return this.section.width}
-	get type() {return this.section.type}
-	get content() {
-		if (this.isImage()) {
-			return this.section.imageUrl;
-		} else {
-			return this.section.content;
-		}
-	}
-	get background() {return this.section.background}
+	get width() {return this.section.width;}
+	get type() {return this.section.type;}
+	get content() {return this.section.content;}
+	get background() {return this.section.background;}
+	get imageUrl() {return this.section.imageUrl;}
 
 	constructor() {}
-
 	ngOnInit() {}
 
-	isImage() {return this.type == this.typeContent.IMAGE || this.type == this.typeContent.IMAGE_URL}
-	isPost() {return this.type == this.typeContent.POST}
+	isImage() {return this.type == this.typeContent.IMAGE;}
+	isImageUrl() {return this.type == this.typeContent.IMAGE_URL;}
+	isPost() {return this.type == this.typeContent.POST;}
 	
-	isWide() {return this.width == this.typeWidth.WIDE}
-	isMedium() {return this.width == this.typeWidth.MEDIUM}
-	isNarrow() {return this.width == this.typeWidth.NARROW}
+	isWide() {return this.width == this.typeWidth.WIDE;}
+	isMedium() {return this.width == this.typeWidth.MEDIUM;}
+	isNarrow() {return this.width == this.typeWidth.NARROW;}
 
 	edit() {
 		this.onEdit.emit({

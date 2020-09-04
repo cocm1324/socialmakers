@@ -13,7 +13,7 @@ export class SectionEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
 	@Input() section: ISectionWithContentId;
 	@Output() onFinished: EventEmitter<any> = new EventEmitter();
-	@ViewChild('image', {static: false}) image: ElementRef;
+	@ViewChild('imageEyedropBox', {static: false}) imageEyedropBox: ElementRef;
 
 	sectionForm: FormGroup;
 	typeWidth = TypeSectionWidth;
@@ -69,16 +69,17 @@ export class SectionEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 			this.sectionForm.patchValue({
 				width: this.section.width,
 				type: this.section.type,
-				content: this.section.content,
 				background: this.section.background,
 				backgroundInput: this.section.background
 			});
 
-			if (this.section.type = TypeContent.IMAGE) {
+			if (this.section.type == TypeContent.IMAGE) {
 				this.goToImageUploadState(this.section.imageId, this.section.imageUrl);
-			} else if (this.section.type = TypeContent.IMAGE_URL) {
-				this.goToImageUrlState(this.section.content);
+			} else if (this.section.type == TypeContent.IMAGE_URL) {
+				const imageUrl = this.section.content;
+				this.goToImageUrlState(imageUrl);
 			} else {
+				this.content.patchValue(this.section.content);
 				this.goToPostState();
 			}
 		}
@@ -91,6 +92,17 @@ export class SectionEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 			document.body.scrollTop = document.body.scrollHeight;
 		}
 	}
+
+	isTypeNull() {return this.type.value == null;}
+	isImage() {return this.type.value == this.typeContent.IMAGE;}
+	isImageUrl() {return this.type.value == this.typeContent.IMAGE_URL;}
+	isPost() {return this.type.value == this.typeContent.POST;}
+	
+	isWide() {return this.width.value == this.typeWidth.WIDE;}
+	isMedium() {return this.width.value == this.typeWidth.MEDIUM;}
+	isNarrow() {return this.width.value == this.typeWidth.NARROW;}
+
+	isFormInvalid() {return this.sectionForm.invalid;}
 
 	goToImageUploadState(imageId, imageUrl) {
 		if (this.sectionForm.contains("imageId")) {
@@ -119,15 +131,13 @@ export class SectionEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 		} 
 
 		if (this.sectionForm.contains("imageUrl")) {
-			this.imageUrl.patchValue(imageUrl);
-		} else {
-			this.sectionForm.addControl("imageUrl", this.fb.control(imageUrl));
+			this.sectionForm.removeControl("imageUrl");
 		}
 
-		if (this.content.validator) {
-			this.content.clearValidators();
+		this.content.patchValue(imageUrl);
+		if (!this.content.validator) {
+			this.content.setValidators(Validators.required);
 		}
-		this.content.patchValue("");
 
 		this.content.updateValueAndValidity();
 		this.type.patchValue(TypeContent.IMAGE_URL);
@@ -148,18 +158,6 @@ export class SectionEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
 		this.content.updateValueAndValidity();
 		this.type.patchValue(TypeContent.POST);
-	}
-
-	isTypeNull() {return this.type.value == null}
-	isImage() {return this.type.value == this.typeContent.IMAGE || this.type.value == this.typeContent.IMAGE_URL}
-	isPost() {return this.type.value == this.typeContent.POST}
-	
-	isWide() {return this.width.value == this.typeWidth.WIDE}
-	isMedium() {return this.width.value == this.typeWidth.MEDIUM}
-	isNarrow() {return this.width.value == this.typeWidth.NARROW}
-
-	isFormInvalid() {
-		return this.sectionForm.invalid;
 	}
 
 	spread() {
@@ -201,33 +199,19 @@ export class SectionEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 		});
 	}
 
-	isFormModified() {
-		const {width, type, content, background} = this.sectionForm.getRawValue();
-
-		if (this.section) {
-			return this.section.width != width
-				|| this.section.type != type
-				|| this.section.content !== content
-				|| this.section.background !== background;
-		} else {
-			return content !== "" || background !== "#FFFFFF";
-		}
-	}
-
 	imageUrlSubmitted(url) {
 		this.goToImageUrlState(url);
 	}
 
 	imageUploaded(e) {
 		const {url, imageId} = e;
-		console.log(e)
 		this.goToImageUploadState(imageId, url);
 	}
 
 	onImageClick(e: MouseEvent) {
 		if (this.eyedrop) {
 			const {offsetX, offsetY} = e;
-			const {clientWidth, clientHeight} = this.image.nativeElement;
+			const {clientWidth, clientHeight} = this.imageEyedropBox.nativeElement;
 
 			if (this.type.value === this.typeContent.IMAGE) {
 				const idControl = this.imageId.value;
@@ -254,8 +238,27 @@ export class SectionEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 		this.eyedrop = flag;
 	}
 
+	isFormModified() {
+		const {width, type, content, background, imageId} = this.sectionForm.getRawValue();
+
+		if (this.section) {
+			if (width != this.section.width) {return true;}
+			if (type != this.section.type) {return true;}
+			if (background != this.section.background) {return true;}
+
+			if (this.isImage()) {
+				return this.section.imageId != imageId;
+			} else {
+				return this.section.content != content;
+			}
+		} else {
+			return content !== "" || background !== "#FFFFFF";
+		}
+	}
+
 	cancel() {
 		this.eyedrop = false;
+
 		if (this.isFormModified()) {
 			if (confirm("변경사항을 저장하지 않고 편집을 끝내시겠습니까?")) {
 				this.onFinished.emit(false);
@@ -268,22 +271,24 @@ export class SectionEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 	save() {
 		this.eyedrop = false;
 		
-		const {background, content, type, width, imageId, imageUrl} = this.sectionForm.getRawValue();
-		const sectionData = {
-			...this.section,
-			background: background,
-			content: content,
-			type: type,
-			width: width
-		};
+		if (this.isFormModified()) {
+			const {background, content, type, width, imageId} = this.sectionForm.getRawValue();
+			const sectionData = {
+				...this.section,
+				background: background,
+				content: content,
+				type: type,
+				width: width
+			};
 
-		if (this.type.value == TypeContent.IMAGE) {
-			sectionData['imageId'] = imageId;
-		} else if (this.type.value == TypeContent.IMAGE_URL) {
-			sectionData['content'] = imageUrl;
+			if (this.type.value == TypeContent.IMAGE) {
+				sectionData['imageId'] = imageId;
+			}
+
+			this.onFinished.emit(sectionData);
+		} else {
+			this.onFinished.emit(false);
 		}
-
-		this.onFinished.emit(sectionData);
 	}
 
 	ngOnDestroy() {
