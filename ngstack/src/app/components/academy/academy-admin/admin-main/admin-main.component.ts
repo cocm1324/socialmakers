@@ -65,13 +65,12 @@ export class AdminMainComponent implements OnInit {
 
 	onCourseDelete() {
 		if (window.confirm("선택한 Course를 삭제하시겠습니까?")) {
-			this.dataService.deleteCourse(this.selectedCourseId).toPromise().then((response) => {
-				if (response.status) {
+			this.dataService.deleteCourse(this.selectedCourseId).toPromise().then((res) => {
+				if (res.status) {
 					this.selectedCourseId = -1;
 					this.loadCourse();
 				}
 			});
-
 		}
 	}
 

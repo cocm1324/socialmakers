@@ -183,7 +183,7 @@ export class PageEditorComponent implements OnInit {
 				};
 				this.dataService.createCourse(request).toPromise().then(res => {
 					if (res.status) {
-						const courseId = res.data;
+						const {courseId} = res.data;
 						this.router.navigate([`${ACADEMY_ADMIN_URL.PREFIX}/${ACADEMY_ADMIN_URL.COURSE_FRAGMANT}/${courseId}`]);
 					}
 				});

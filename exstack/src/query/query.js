@@ -383,12 +383,13 @@ const query = {
         const course = 1;
         return `
             DELETE
-                a, b
+                a, b, c
             FROM
                 dbibridge.page a
                 INNER JOIN dbibridge.courseInfo b ON a.pageId=b.courseId 
+                LEFT JOIN dbibridge.pageContent c ON a.pageId=c.pageId
             WHERE 
-                a.pageId=${pageId} AND a.pageId=${course}
+                a.pageId=${pageId} AND a.pageType=${course}
             ;
         `;
     },

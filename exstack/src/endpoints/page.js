@@ -213,7 +213,7 @@ router.post('/course', (req, res) => {
                 });
                 return;
             }
-            connection.query(queryStatement.selectCourseObjectSeqSeqBase(), (err1, result1) => {
+            connection.query(queryStatement.selectCourseObjectIdSeqSeqBase(), (err1, result1) => {
                 if (err1) {
                     connection.release();
                     res.send({
