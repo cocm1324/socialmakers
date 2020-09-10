@@ -1,22 +1,4 @@
-<p-dialog header="이미지 추가하기" [(visible)]="display" [style]="{width: '50vw'}" [baseZIndex]="10000">
-
-    <div class="p-d-flex p-justify-between">
-        <div class="p-d-flex p-align-center"> 
-            {{this.selectedImage.fileName}}
-        </div>
-        <p-fileUpload 
-            name="upload"
-            accept="image/*"
-            chooseLabel="파일업로드"
-            mode="basic"
-            [auto]="true"
-            [url]="requestUrl" 
-            [maxFileSize]="maxSize"
-            (onUpload)="onUpload($event)"
-        >
-        </p-fileUpload>
-    </div>
-
+<p-dialog header="이미지 선택하기" [(visible)]="display" [style]="{width: '50vw'}" [baseZIndex]="10000">
     <div class="p-grid">
         <div *ngFor="let image of imageList" class="p-col-3">
             <img 
@@ -33,8 +15,23 @@
     <p-paginator [rows]="pageCount" [totalRecords]="rowCount" pageLinkSize="3" (onPageChange)="onPageChange($event)"></p-paginator>
 
     <p-footer>
-        <button type="button" pButton icon="pi pi-check" (click)="confirm()" label="Yes" [disabled]="selectedImage.imageId==-1"></button>
-        <button type="button" pButton icon="pi pi-times" (click)="cancel()" label="No" class="ui-button-secondary"></button>
+        <div class="p-d-flex p-justify-between">
+            <p-fileUpload 
+                name="upload"
+                accept="image/*"
+                chooseLabel="새 이미지 업로드 하기"
+                mode="basic"
+                [auto]="true"
+                [url]="requestUrl" 
+                [maxFileSize]="maxSize"
+                (onUpload)="onUpload($event)"
+            >
+            </p-fileUpload>
+            <div class="p-d-flex"> 
+                <button type="button" pButton icon="pi pi-check" (click)="confirm()" label="Yes" [disabled]="selectedImage.imageId==-1"></button>
+                <button type="button" pButton icon="pi pi-times" (click)="cancel()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
     </p-footer>
 </p-dialog>
 

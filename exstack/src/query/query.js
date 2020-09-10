@@ -134,6 +134,7 @@ const query = {
             SELECT 
                 a.pageId, a.pageName, 
                 d.bannerImageId, d.bannerMessageDigest, d.bannerExtension,
+                d.bannerImageBlur, d.bannerColor,
                 b.contentId, b.seq, b.seqBase, b.width, b.type, b.content, b.background, 
                 b.imageId, c.messageDigest, c.extension
             FROM 
@@ -142,6 +143,8 @@ const query = {
                 LEFT JOIN dbibridge.image c ON b.imageId=c.imageId
                 CROSS JOIN (
                     SELECT 
+                        d1.aboutUsBannerImageBlur AS bannerImageBlur,
+                        d1.aboutUsBannerColor As bannerColor,
                         d2.imageId AS bannerImageId, 
                         d2.messageDigest AS bannerMessageDigest, 
                         d2.extension AS bannerExtension
@@ -154,15 +157,19 @@ const query = {
             ;
         `;
     },
-    updatePageAboutUs: (pageName, bannerImageId) => {
+    updatePageAboutUs: (pageName, bannerImageId, bannerImageBlur, bannerColor) => {
         const aboutUs = 0;
+        const dbBannerColor = bannerColor ? `'${bannerColor}'` : 'NULL';
+
         return `
             UPDATE 
                 dbibridge.page a
                 CROSS JOIN dbibridge.configuration b
             SET
                 a.pageName='${pageName}',
-                b.aboutUsBannerImageId=${bannerImageId}
+                b.aboutUsBannerImageId=${bannerImageId},
+                b.aboutUsBannerImageBlur=${bannerImageBlur},
+                b.aboutUsBannerColor=${dbBannerColor}
             WHERE
                 a.pageType=${aboutUs}
             ;

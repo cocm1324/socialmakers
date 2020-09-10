@@ -42,7 +42,6 @@ export class PageEditorComponent implements OnInit {
 			this.pageId = parseInt(possibleId);
 		}
 
-		console.log(this.isCourse(), this.isNotice())
 		this.loadPage();
 	}
 
@@ -169,8 +168,14 @@ export class PageEditorComponent implements OnInit {
 		if (this.isAboutUs()) {
 			const request: IUpdateAboutUsReq = {
 				pageName: e.pageName,
-				bannerImageId: e.bannerImageId
+				bannerImageId: e.bannerImageId,
+				bannerImageBlur: e.bannerImageBlur
 			};
+
+			if (e.bannerColor) {
+				request['bannerColor'] = e.bannerColor;
+			}
+
 			this.dataService.updateAboutUs(request).toPromise().then((res) => {
 				if (res.status) {
 					this.loadPage();

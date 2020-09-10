@@ -15,6 +15,8 @@ import {OrderListModule} from 'primeng/orderlist';
 import {InputTextareaModule} from 'primeng/inputtextarea';
 import {TableModule} from 'primeng/table';
 import {PaginatorModule} from 'primeng/paginator';
+import {SelectButtonModule} from 'primeng/selectbutton';
+import {SliderModule} from 'primeng/slider';
 
 @NgModule({
     imports: [
@@ -34,7 +36,9 @@ import {PaginatorModule} from 'primeng/paginator';
         OrderListModule,
         InputTextareaModule,
         TableModule,
-        PaginatorModule
+        PaginatorModule,
+        SelectButtonModule,
+        SliderModule
     ],
     exports: [
         FormsModule,
@@ -53,7 +57,9 @@ import {PaginatorModule} from 'primeng/paginator';
         OrderListModule,
         InputTextareaModule,
         TableModule,
-        PaginatorModule
+        PaginatorModule,
+        SelectButtonModule,
+        SliderModule
     ]
 })
 export class AppCommonModule {}

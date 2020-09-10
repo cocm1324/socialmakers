@@ -39,7 +39,7 @@ aboutUs.get('/', (req, res) => {
                 return;
             }
 
-            const {pageId, pageName, bannerImageId, bannerMessageDigest, bannerExtension} = rows1[0]; 
+            const {pageId, pageName, bannerImageId, bannerMessageDigest, bannerExtension, bannerImageBlur, bannerColor} = rows1[0]; 
             const bannerImageUrl = `/api/static/image/${bannerMessageDigest}.${bannerExtension}`;
             const contents = rows1.map(row => {
                 const {contentId, seq, seqBase, width, type, background, imageId, messageDigest, extension, content} = row;
@@ -64,23 +64,29 @@ aboutUs.get('/', (req, res) => {
                 return rowMap;
             });
 
+            const data = {
+                pageId: pageId,
+                pageName: pageName,
+                bannerImageId: bannerImageId,
+                bannerImageUrl: bannerImageUrl,
+                bannerImageBlur: bannerImageBlur,
+                contents: contents
+            };
+
+            if (bannerColor) {
+                data['bannerColor'] = bannerColor;
+            }
 
             res.status(200).send({
                 status: true,
-                data: {
-                    pageId: pageId,
-                    pageName: pageName,
-                    bannerImageId: bannerImageId,
-                    bannerImageUrl: bannerImageUrl,
-                    contents: contents
-                }
+                data: data
             });
         });
     });
 });
 
 aboutUs.put('/', (req, res) => {
-    const {pageName, bannerImageId} = req.body;
+    const {pageName, bannerImageId, bannerImageBlur, bannerColor} = req.body;
 
     if (!pageName || !bannerImageId) {
         res.send({
@@ -105,7 +111,7 @@ aboutUs.put('/', (req, res) => {
             return;
         }
 
-        connection.query(queryStatement.updatePageAboutUs(pageName, bannerImageId), (err1, rows1) => {
+        connection.query(queryStatement.updatePageAboutUs(pageName, bannerImageId, bannerImageBlur, bannerColor), (err1, rows1) => {
             connection.release();
             if (err1) {
                 res.send({
@@ -119,7 +125,7 @@ aboutUs.put('/', (req, res) => {
             }
 
             res.status(200).send({
-                status: true,
+                status: true
             });
         });
     });

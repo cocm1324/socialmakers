@@ -27,3 +27,8 @@ export enum PAGE_TYPE {
     ABOUT_US,
     NOTICE
 }
+
+export enum BANNER_TYPE {
+	IMAGE,
+	COLOR
+}

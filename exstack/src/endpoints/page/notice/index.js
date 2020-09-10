@@ -22,7 +22,6 @@ notice.get('/', (req, res) => {
 });
 
 notice.post('/', (req, res) => {
-    const {noticeName}
 });
 
 notice.get('/:pageId', (req, res) => {

@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, NgModel } from '@angular/forms';
-import { IAboutUsEditorInput } from '@app/models';
-import { DATA_LENGTH } from '@app/models';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { IAboutUsEditorInput, DATA_LENGTH, BANNER_TYPE } from '@app/models';
 
 @Component({
 	selector: 'app-about-us-editor',
@@ -20,10 +19,18 @@ export class AboutUsEditorComponent implements OnInit, OnChanges {
 	lock: boolean = false;
 
 	dataLength = DATA_LENGTH;
+	bannerTypes = [
+		{label: "이미지", value: BANNER_TYPE.IMAGE}, 
+		{label: "단색", value: BANNER_TYPE.COLOR}
+	];
 
 	get pageName() {return this.aboutUsForm.get('pageName');}
+	get bannerType() {return this.aboutUsForm.get('bannerType');}
 	get bannerImageId() {return this.aboutUsForm.get('bannerImageId');}
 	get bannerImageUrl() {return this.aboutUsForm.get('bannerImageUrl');}
+	get bannerImageBlur() {return this.aboutUsForm.get('bannerImageBlur');}
+	get bannerColor() {return this.aboutUsForm.get('bannerColor');}
+	get blurValue() {return `blur(${this.bannerImageBlur.value}px)`;}
 
 	constructor(private fb: FormBuilder) { }
 
@@ -32,16 +39,25 @@ export class AboutUsEditorComponent implements OnInit, OnChanges {
 		this.onEditStateChange.emit(this.isEdit);
 		this.aboutUsForm = this.fb.group({
 			pageName: ["", Validators.required],
+			bannerType: [this.bannerTypes[0].value, Validators.required],
 			bannerImageId: [null, Validators.required],
-			bannerImageUrl: ["", Validators.required]
+			bannerImageUrl: [""],
+			bannerImageBlur: [0],
+			bannerColor: ["#ffffff"]
 		});
 
 		if (this.aboutUsData) {
 			this.aboutUsForm.patchValue({
 				pageName: this.aboutUsData.pageName,
 				bannerImageId: this.aboutUsData.bannerImageId,
-				bannerImageUrl: this.aboutUsData.bannerImageUrl
+				bannerImageUrl: this.aboutUsData.bannerImageUrl,
+				bannerImageBlur: this.aboutUsData.bannerImageBlur
 			});
+
+			if (this.aboutUsData.bannerColor) {
+				this.bannerType.patchValue(this.bannerTypes[1].value);
+				this.bannerColor.patchValue(this.aboutUsData.bannerColor);
+			}
 		}
 	}
 
@@ -55,6 +71,10 @@ export class AboutUsEditorComponent implements OnInit, OnChanges {
 		}
 	}
 	
+	isImage() {
+		return this.bannerType.value == this.bannerTypes[0].value;
+	}
+
 	imageUploaded(e) {
 		const {url, imageId} = e;
 		
@@ -65,8 +85,13 @@ export class AboutUsEditorComponent implements OnInit, OnChanges {
 	}
 
 	isChanged() {
-		const {pageName, bannerImageId, bannerImageUrl} = this.aboutUsForm.getRawValue();
-		return pageName !== this.aboutUsData.pageName || bannerImageId !== this.aboutUsData.bannerImageId || bannerImageUrl != this.aboutUsData.bannerImageUrl;
+		const {pageName, bannerImageId, bannerImageBlur} = this.aboutUsForm.getRawValue();
+		const dataChanged = pageName !== this.aboutUsData.pageName 
+			|| bannerImageId !== this.aboutUsData.bannerImageId 
+			|| bannerImageBlur != this.aboutUsData.bannerImageBlur;
+		const bannerTypeChanged = this.isImage() != !this.aboutUsData.bannerColor;
+
+		return dataChanged || bannerTypeChanged;
 	}
 
 	edit() {
@@ -79,8 +104,13 @@ export class AboutUsEditorComponent implements OnInit, OnChanges {
 			const formData: IAboutUsEditorInput = {
 				pageName: this.pageName.value,
 				bannerImageId: this.bannerImageId.value,
-				bannerImageUrl: this.bannerImageUrl.value
+				bannerImageUrl: this.bannerImageUrl.value,
+				bannerImageBlur: this.bannerImageBlur.value
 			};
+			if (!this.isImage()) {
+				formData['bannerColor'] = this.bannerColor.value;
+			}
+
 			this.onFinish.emit(formData);
 			this.isEdit = false;
 			this.onEditStateChange.emit(this.isEdit);

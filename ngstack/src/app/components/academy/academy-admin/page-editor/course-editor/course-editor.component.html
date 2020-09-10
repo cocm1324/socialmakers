@@ -1,40 +1,47 @@
 <div class="p-grid p-nogutter p-relative p-overflow-hidden item" style="background-color: black;">
-    <img class="image-container" [src]="cBannerImageUrl.value" onerror="this.src='./assets/img/notfound.jpg';">
+    <img 
+        *ngIf="isImage()" 
+        class="banner banner-image" 
+        [src]="bannerImageUrl.value" 
+        [ngStyle]="{'filter': blurValue, '-webkit-filter': blurValue}"
+        onerror="this.src='./assets/img/notfound.jpg';"
+    >
+    <div *ngIf="!isImage()" class="banner" [ngStyle]="{'background-color': bannerColor.value}"></div>
     <div class="p-absolute p-d-flex p-justify-center p-align-center w-100 h-100">
         <div class="p-grid-narrow p-nogutter">
             <div class="p-col-12 p-md-6 p-lg-6">
                 <div class="title-panel">
-                    <div class="p-pre-wrap">{{cDescription1.value}}</div>
-                    <h1>{{cCourseName.value}}</h1>
-                    <div class="p-pre-wrap">{{cDescription2.value}}</div>
+                    <div class="p-pre-wrap">{{description1.value}}</div>
+                    <h1>{{courseName.value}}</h1>
+                    <div class="p-pre-wrap">{{description2.value}}</div>
                 </div>
             </div>
             <div class="p-col-12 p-md-6 p-lg-6">
                 <div class="info-panel">
                     <table>
                         <tr>
-                            <td class="field-title">{{cFieldTitle1.value}}</td>
-                            <td class="field">{{cField1.value}}</td>
+                            <td class="field-title">{{fieldTitle1.value}}</td>
+                            <td class="field">{{field1.value}}</td>
                         </tr>
                         <tr>
-                            <td class="field-title">{{cFieldTitle2.value}}</td>
-                            <td class="field">{{cField2.value}}</td>
+                            <td class="field-title">{{fieldTitle2.value}}</td>
+                            <td class="field">{{field2.value}}</td>
                         </tr>
                         <tr>
-                            <td class="field-title">{{cFieldTitle3.value}}</td>
-                            <td class="field">{{cField3.value}}</td>
+                            <td class="field-title">{{fieldTitle3.value}}</td>
+                            <td class="field">{{field3.value}}</td>
                         </tr>
                         <tr>
-                            <td class="field-title">{{cFieldTitle4.value}}</td>
-                            <td class="field">{{cField4.value}}</td>
+                            <td class="field-title">{{fieldTitle4.value}}</td>
+                            <td class="field">{{field4.value}}</td>
                         </tr>
                         <tr>
-                            <td class="field-title">{{cFieldTitle5.value}}</td>
-                            <td class="field">{{cField5.value}}</td>
+                            <td class="field-title">{{fieldTitle5.value}}</td>
+                            <td class="field">{{field5.value}}</td>
                         </tr>
                         <tr>
-                            <td class="field-title">{{cFieldTitle6.value}}</td>
-                            <td class="field">{{cField6.value}}</td>
+                            <td class="field-title">{{fieldTitle6.value}}</td>
+                            <td class="field">{{field6.value}}</td>
                         </tr>
                     </table>
                     <button pButton label="참가신청하기"></button>
@@ -50,54 +57,65 @@
     <div *ngIf="isEdit" class="p-grid-medium">
         <p-card class="w-100 p-my-2" styleClass="ui-card-shadow">
             <div class="p-py-3">
+                <h3>페이지 정보</h3>
                 <label>Course 이름</label>
-                <span class="ui-inputgroup">
-                    <input [maxLength]="dataLength.SHORT" formControlName="cCourseName" class="w-100" pInputText> 
+                <span class="ui-inputgroup p-pb-2">
+                    <input [maxLength]="dataLength.SHORT" formControlName="courseName" class="w-100" pInputText> 
                 </span>
-            </div>
-            <div class="p-py-3">
                 <label>썸네일 이미지</label>
                 <span class="ui-inputgroup">
-                    <input formControlName="cThumbImageUrl" class="w-100" pInputText readonly>
+                    <input formControlName="thumbImageUrl" class="w-100" pInputText readonly>
                     <app-image-upload label="수정" icon="pi pi-pencil" (onSubmit)="thumbImageUploaded($event)"></app-image-upload>
                 </span>
             </div>
             <div class="p-py-3">
-                <label>백그라운드 이미지</label>
-                <span class="ui-inputgroup">
-                    <input formControlName="cBannerImageUrl" class="w-100" pInputText readonly>
-                    <app-image-upload label="수정" icon="pi pi-pencil" (onSubmit)="pageImageUploaded($event)"></app-image-upload>
+                <h3>배너</h3>
+                <span class="ui-inputgroup p-pb-2">
+                    <p-selectButton [options]="bannerTypes" formControlName="bannerType"></p-selectButton>
                 </span>
+                <div *ngIf="isImage()">
+                    <label>이미지 선택</label>
+                    <span class="ui-inputgroup p-pb-2">
+                        <input formControlName="bannerImageUrl" class="w-100" pInputText readonly>
+                        <app-image-upload label="수정" icon="pi pi-pencil" (onSubmit)="bannerImageUploaded($event)"></app-image-upload>
+                    </span>
+                    <label>흐림 ({{bannerImageBlur.value}}%)</label>
+                    <span class="ui-inputgroup p-py-2">
+                        <p-slider formControlName="bannerImageBlur" [style]="{'width':'16em'}" [animate]="true"></p-slider>
+                    </span>
+                </div>
+                <div *ngIf="!isImage()">
+                    <span class="ui-inputgroup">
+                        <p-colorPicker formControlName="bannerColor" [inline]="false"></p-colorPicker>
+                    </span>
+                </div>
             </div>
             <div class="p-py-3">
+                <h3>Course 정보</h3>
                 <label>제목 위쪽 설명</label>
-                <span class="ui-inputgroup">
-                    <textarea [maxLength]="dataLength.LONG" formControlName="cDescription1" class="w-100" [autoResize]="false" [rows]="2" pInputTextarea></textarea>
+                <span class="ui-inputgroup p-pb-2">
+                    <textarea [maxLength]="dataLength.LONG" formControlName="description1" class="w-100" [autoResize]="false" [rows]="2" pInputTextarea></textarea>
                 </span>
-            </div>
-            <div class="p-py-3">
                 <label>제목 아래쪽 설명</label>
-                <span class="ui-inputgroup">
-                    <textarea [maxLength]="dataLength.LONG" formControlName="cDescription2" class="w-100" [autoResize]="false" [rows]="2" pInputTextarea></textarea>
+                <span class="ui-inputgroup p-pb-2">
+                    <textarea [maxLength]="dataLength.LONG" formControlName="description2" class="w-100" [autoResize]="false" [rows]="2" pInputTextarea></textarea>
                 </span>
-            </div>
-            <div class="p-py-3">
                 <label>Register URL</label>
-                <span class="ui-inputgroup">
-                    <input [maxLength]="dataLength.LONG" formControlName="cRegisterUrl" class="w-100" pInputText> 
+                <span class="ui-inputgroup p-pb-2">
+                    <input [maxLength]="dataLength.LONG" formControlName="registerUrl" class="w-100" pInputText> 
                 </span>
             </div>
             <div *ngFor="let i of [1, 2, 3, 4, 5, 6]" class="p-grid">
-                <div class="p-col p-py-3">
+                <div class="p-col p-pb-2">
                     <label>정보{{i}} 제목</label>
                     <span class="ui-inputgroup">
-                        <input [maxLength]="dataLength.SHORT" [formControlName]="'cFieldTitle'+i" class="w-100" pInputText> 
+                        <input [maxLength]="dataLength.SHORT" [formControlName]="'fieldTitle'+i" class="w-100" pInputText> 
                     </span>
                 </div>
-                <div class="p-col p-py-3">
+                <div class="p-col p-pb-2">
                     <label>정보{{i}} 내용</label>
                     <span class="ui-inputgroup">
-                        <input [maxLength]="dataLength.LONG" [formControlName]="'cField'+i" class="w-100" pInputText> 
+                        <input [maxLength]="dataLength.LONG" [formControlName]="'field'+i" class="w-100" pInputText> 
                     </span>
                 </div>
             </div>

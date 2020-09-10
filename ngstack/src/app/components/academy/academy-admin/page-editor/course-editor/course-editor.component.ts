@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ICourseInfo, DATA_LENGTH } from '@app/models/';
+import { ICourseInfo, DATA_LENGTH, BANNER_TYPE } from '@app/models/';
 
 @Component({
 	selector: 'app-course-editor',
@@ -16,58 +16,68 @@ export class CourseEditorComponent implements OnInit {
 	@Output() onFinish: EventEmitter<ICourseInfo> = new EventEmitter();
 
 	dataLength = DATA_LENGTH;
+	bannerTypes = [
+		{label: "이미지", value: BANNER_TYPE.IMAGE}, 
+		{label: "단색", value: BANNER_TYPE.COLOR}
+	];
 
 	courseInfoForm: FormGroup;
 	isEdit: boolean = false;
 	lock: boolean = false;
 
-	get cCourseName() {return this.courseInfoForm.get('cCourseName');}
-	get cDescription1() {return this.courseInfoForm.get('cDescription1');}
-	get cDescription2() {return this.courseInfoForm.get('cDescription2');}
-	get cFieldTitle1() {return this.courseInfoForm.get('cFieldTitle1');}
-	get cFieldTitle2() {return this.courseInfoForm.get('cFieldTitle2');}
-	get cFieldTitle3() {return this.courseInfoForm.get('cFieldTitle3');}
-	get cFieldTitle4() {return this.courseInfoForm.get('cFieldTitle4');}
-	get cFieldTitle5() {return this.courseInfoForm.get('cFieldTitle5');}
-	get cFieldTitle6() {return this.courseInfoForm.get('cFieldTitle6');}
-	get cField1() {return this.courseInfoForm.get('cField1');}
-	get cField2() {return this.courseInfoForm.get('cField2');}
-	get cField3() {return this.courseInfoForm.get('cField3');}
-	get cField4() {return this.courseInfoForm.get('cField4');}
-	get cField5() {return this.courseInfoForm.get('cField5');}
-	get cField6() {return this.courseInfoForm.get('cField6');}
-	get cBannerImageId() {return this.courseInfoForm.get('cBannerImageId');}
-	get cBannerImageUrl() {return this.courseInfoForm.get('cBannerImageUrl');}
-	get cThumbImageId() {return this.courseInfoForm.get('cThumbImageId');}
-	get cThumbImageUrl() {return this.courseInfoForm.get('cThumbImageUrl');}
-	get cRegisterUrl() {return this.courseInfoForm.get('cRegisterUrl');}
+	get courseName() {return this.courseInfoForm.get('courseName');}
+	get description1() {return this.courseInfoForm.get('description1');}
+	get description2() {return this.courseInfoForm.get('description2');}
+	get fieldTitle1() {return this.courseInfoForm.get('fieldTitle1');}
+	get fieldTitle2() {return this.courseInfoForm.get('fieldTitle2');}
+	get fieldTitle3() {return this.courseInfoForm.get('fieldTitle3');}
+	get fieldTitle4() {return this.courseInfoForm.get('fieldTitle4');}
+	get fieldTitle5() {return this.courseInfoForm.get('fieldTitle5');}
+	get fieldTitle6() {return this.courseInfoForm.get('fieldTitle6');}
+	get field1() {return this.courseInfoForm.get('field1');}
+	get field2() {return this.courseInfoForm.get('field2');}
+	get field3() {return this.courseInfoForm.get('field3');}
+	get field4() {return this.courseInfoForm.get('field4');}
+	get field5() {return this.courseInfoForm.get('field5');}
+	get field6() {return this.courseInfoForm.get('field6');}
+	get bannerImageId() {return this.courseInfoForm.get('bannerImageId');}
+	get bannerImageUrl() {return this.courseInfoForm.get('bannerImageUrl');}
+	get thumbImageId() {return this.courseInfoForm.get('thumbImageId');}
+	get thumbImageUrl() {return this.courseInfoForm.get('thumbImageUrl');}
+	get registerUrl() {return this.courseInfoForm.get('registerUrl');}
+
+	get bannerType() {return this.courseInfoForm.get('bannerType');}
+	get bannerImageBlur() {return this.courseInfoForm.get('bannerImageBlur');}
+	get bannerColor() {return this.courseInfoForm.get('bannerColor');}
+	get blurValue() {return `blur(${this.bannerImageBlur.value}px)`;}
 
 	constructor(private fb: FormBuilder) { }
 
 	ngOnInit() {
-		console.log(this.courseInfoData, this.isNewPage);
-
 		this.courseInfoForm = this.fb.group({
-			cCourseName: ["", Validators.required],
-			cDescription1: ["", Validators.required],
-			cDescription2: ["", Validators.required],
-			cFieldTitle1: ["", Validators.required],
-			cFieldTitle2: ["", Validators.required],
-			cFieldTitle3: ["", Validators.required],
-			cFieldTitle4: ["", Validators.required],
-			cFieldTitle5: ["", Validators.required],
-			cFieldTitle6: ["", Validators.required],
-			cField1: ["", Validators.required],
-			cField2: ["", Validators.required],
-			cField3: ["", Validators.required],
-			cField4: ["", Validators.required],
-			cField5: ["", Validators.required],
-			cField6: ["", Validators.required],
-			cBannerImageId: [null, Validators.required],
-			cBannerImageUrl: ["", Validators.required],
-			cThumbImageId: [null, Validators.required],
-			cThumbImageUrl: ["", Validators.required],
-			cRegisterUrl: ["", Validators.required]
+			courseName: ["", Validators.required],
+			description1: ["", Validators.required],
+			description2: ["", Validators.required],
+			fieldTitle1: ["", Validators.required],
+			fieldTitle2: ["", Validators.required],
+			fieldTitle3: ["", Validators.required],
+			fieldTitle4: ["", Validators.required],
+			fieldTitle5: ["", Validators.required],
+			fieldTitle6: ["", Validators.required],
+			field1: ["", Validators.required],
+			field2: ["", Validators.required],
+			field3: ["", Validators.required],
+			field4: ["", Validators.required],
+			field5: ["", Validators.required],
+			field6: ["", Validators.required],
+			bannerImageId: [null, Validators.required],
+			bannerImageUrl: ["", Validators.required],
+			bannerType: [this.bannerTypes[0].value],
+			bannerImageBlur: [0],
+			bannerColor: ["#ffffff"],
+			thumbImageId: [null, Validators.required],
+			thumbImageUrl: ["", Validators.required],
+			registerUrl: ["", Validators.required]
 		});
 
 		if (this.isNewPage) {
@@ -88,12 +98,16 @@ export class CourseEditorComponent implements OnInit {
 		}
 	}
 	
-	pageImageUploaded(e) {
+	isImage() {
+		return this.bannerType.value == this.bannerTypes[0].value;
+	}
+
+	bannerImageUploaded(e) {
 		const {url, imageId} = e;
 		
 		if (url && imageId) {
-			this.cBannerImageUrl.patchValue(url);
-			this.cBannerImageId.patchValue(imageId);
+			this.bannerImageUrl.patchValue(url);
+			this.bannerImageId.patchValue(imageId);
 		}
 	}
 
@@ -101,8 +115,8 @@ export class CourseEditorComponent implements OnInit {
 		const {url, imageId} = e;
 		
 		if (url && imageId) {
-			this.cThumbImageUrl.patchValue(url);
-			this.cThumbImageId.patchValue(imageId);
+			this.thumbImageUrl.patchValue(url);
+			this.thumbImageId.patchValue(imageId);
 		}
 	}
 
@@ -112,73 +126,79 @@ export class CourseEditorComponent implements OnInit {
 		}
 
 		const {
-			cCourseName,
-			cDescription1,
-			cDescription2,
-			cFieldTitle1,
-			cFieldTitle2,
-			cFieldTitle3,
-			cFieldTitle4,
-			cFieldTitle5,
-			cFieldTitle6,
-			cField1,
-			cField2,
-			cField3,
-			cField4,
-			cField5,
-			cField6,
-			cBannerImageId,
-			cBannerImageUrl,
-			cThumbImageId,
-			cThumbImageUrl,
-			cRegisterUrl
+			courseName,
+			description1,
+			description2,
+			fieldTitle1,
+			fieldTitle2,
+			fieldTitle3,
+			fieldTitle4,
+			fieldTitle5,
+			fieldTitle6,
+			field1,
+			field2,
+			field3,
+			field4,
+			field5,
+			field6,
+			bannerImageId,
+			bannerImageUrl,
+			bannerImageBlur,
+			bannerColor,
+			thumbImageId,
+			thumbImageUrl,
+			registerUrl
 		} = this.courseInfoForm.getRawValue();
 
-		return cCourseName !== this.courseInfoData.courseName 
-			|| cDescription1 !== this.courseInfoData.description1 
-			|| cDescription2 !== this.courseInfoData.description2 
-			|| cFieldTitle1 !== this.courseInfoData.fieldTitle1
-			|| cFieldTitle2 !== this.courseInfoData.fieldTitle2
-			|| cFieldTitle3 !== this.courseInfoData.fieldTitle3
-			|| cFieldTitle4 !== this.courseInfoData.fieldTitle4
-			|| cFieldTitle5 !== this.courseInfoData.fieldTitle5
-			|| cFieldTitle6 !== this.courseInfoData.fieldTitle6
-			|| cField1 !== this.courseInfoData.field1
-			|| cField2 !== this.courseInfoData.field2
-			|| cField3 !== this.courseInfoData.field3
-			|| cField4 !== this.courseInfoData.field4
-			|| cField5 !== this.courseInfoData.field5
-			|| cField6 !== this.courseInfoData.field6
-			|| cBannerImageId !== this.courseInfoData.bannerImageId
-			|| cBannerImageUrl !== this.courseInfoData.bannerImageUrl
-			|| cThumbImageId !== this.courseInfoData.thumbImageId
-			|| cThumbImageUrl !== this.courseInfoData.thumbImageUrl
-			|| cRegisterUrl !== this.courseInfoData.registerUrl;
+		const dataChanged = courseName !== this.courseInfoData.courseName 
+			|| description1 !== this.courseInfoData.description1 
+			|| description2 !== this.courseInfoData.description2 
+			|| fieldTitle1 !== this.courseInfoData.fieldTitle1
+			|| fieldTitle2 !== this.courseInfoData.fieldTitle2
+			|| fieldTitle3 !== this.courseInfoData.fieldTitle3
+			|| fieldTitle4 !== this.courseInfoData.fieldTitle4
+			|| fieldTitle5 !== this.courseInfoData.fieldTitle5
+			|| fieldTitle6 !== this.courseInfoData.fieldTitle6
+			|| field1 !== this.courseInfoData.field1
+			|| field2 !== this.courseInfoData.field2
+			|| field3 !== this.courseInfoData.field3
+			|| field4 !== this.courseInfoData.field4
+			|| field5 !== this.courseInfoData.field5
+			|| field6 !== this.courseInfoData.field6
+			|| bannerImageId !== this.courseInfoData.bannerImageId
+			|| bannerImageUrl !== this.courseInfoData.bannerImageUrl
+			|| bannerImageBlur != this.courseInfoData.bannerImageBlur
+			|| thumbImageId !== this.courseInfoData.thumbImageId
+			|| thumbImageUrl !== this.courseInfoData.thumbImageUrl
+			|| registerUrl !== this.courseInfoData.registerUrl;
+		const bannerTypeChanged = this.isImage() != !this.courseInfoData.bannerColor;
+
+		return dataChanged || bannerTypeChanged;
 	}
 
 	mapFormControls() {
 		if (this.courseInfoData) {
 			this.courseInfoForm.patchValue({
-				cCourseName: this.courseInfoData.courseName,
-				cDescription1: this.courseInfoData.description1,
-				cDescription2: this.courseInfoData.description2,
-				cFieldTitle1: this.courseInfoData.fieldTitle1,
-				cFieldTitle2: this.courseInfoData.fieldTitle2,
-				cFieldTitle3: this.courseInfoData.fieldTitle3,
-				cFieldTitle4: this.courseInfoData.fieldTitle4,
-				cFieldTitle5: this.courseInfoData.fieldTitle5,
-				cFieldTitle6: this.courseInfoData.fieldTitle6,
-				cField1: this.courseInfoData.field1,
-				cField2: this.courseInfoData.field2,
-				cField3: this.courseInfoData.field3,
-				cField4: this.courseInfoData.field4,
-				cField5: this.courseInfoData.field5,
-				cField6: this.courseInfoData.field6,
-				cBannerImageId: this.courseInfoData.bannerImageId,
-				cBannerImageUrl: this.courseInfoData.bannerImageUrl,
-				cThumbImageId: this.courseInfoData.thumbImageId,
-				cThumbImageUrl: this.courseInfoData.thumbImageUrl,
-				cRegisterUrl: this.courseInfoData.registerUrl
+				courseName: this.courseInfoData.courseName,
+				description1: this.courseInfoData.description1,
+				description2: this.courseInfoData.description2,
+				fieldTitle1: this.courseInfoData.fieldTitle1,
+				fieldTitle2: this.courseInfoData.fieldTitle2,
+				fieldTitle3: this.courseInfoData.fieldTitle3,
+				fieldTitle4: this.courseInfoData.fieldTitle4,
+				fieldTitle5: this.courseInfoData.fieldTitle5,
+				fieldTitle6: this.courseInfoData.fieldTitle6,
+				field1: this.courseInfoData.field1,
+				field2: this.courseInfoData.field2,
+				field3: this.courseInfoData.field3,
+				field4: this.courseInfoData.field4,
+				field5: this.courseInfoData.field5,
+				field6: this.courseInfoData.field6,
+				bannerImageId: this.courseInfoData.bannerImageId,
+				bannerImageUrl: this.courseInfoData.bannerImageUrl,
+				thumbImageId: this.courseInfoData.thumbImageId,
+				thumbImageUrl: this.courseInfoData.thumbImageUrl,
+				registerUrl: this.courseInfoData.registerUrl
 			});
 		}
 	}
@@ -191,26 +211,26 @@ export class CourseEditorComponent implements OnInit {
 	save() {
 		if (this.isChanged()) {
 			const formData: ICourseInfo = {
-				courseName: this.cCourseName.value,
-				description1: this.cDescription1.value,
-				description2: this.cDescription2.value,
-				field1: this.cField1.value,
-				field2: this.cField2.value,
-				field3: this.cField3.value,
-				field4: this.cField4.value,
-				field5: this.cField5.value,
-				field6: this.cField6.value,
-				fieldTitle1: this.cFieldTitle1.value,
-				fieldTitle2: this.cFieldTitle2.value,
-				fieldTitle3: this.cFieldTitle3.value,
-				fieldTitle4: this.cFieldTitle4.value,
-				fieldTitle5: this.cFieldTitle5.value,
-				fieldTitle6: this.cFieldTitle6.value,
-				bannerImageId: this.cBannerImageId.value,
-				bannerImageUrl: this.cBannerImageUrl.value,
-				thumbImageId: this.cThumbImageId.value,
-				thumbImageUrl: this.cThumbImageUrl.value,
-				registerUrl: this.cRegisterUrl.value
+				courseName: this.courseName.value,
+				description1: this.description1.value,
+				description2: this.description2.value,
+				field1: this.field1.value,
+				field2: this.field2.value,
+				field3: this.field3.value,
+				field4: this.field4.value,
+				field5: this.field5.value,
+				field6: this.field6.value,
+				fieldTitle1: this.fieldTitle1.value,
+				fieldTitle2: this.fieldTitle2.value,
+				fieldTitle3: this.fieldTitle3.value,
+				fieldTitle4: this.fieldTitle4.value,
+				fieldTitle5: this.fieldTitle5.value,
+				fieldTitle6: this.fieldTitle6.value,
+				bannerImageId: this.bannerImageId.value,
+				bannerImageUrl: this.bannerImageUrl.value,
+				thumbImageId: this.thumbImageId.value,
+				thumbImageUrl: this.thumbImageUrl.value,
+				registerUrl: this.registerUrl.value
 			};
 			this.onFinish.emit(formData);
 			this.isEdit = false;

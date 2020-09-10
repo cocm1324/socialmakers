@@ -53,6 +53,8 @@ export interface IGetAboutUsRes extends ICommonRes {
         pageName: string;
         bannerImageId: number;
         bannerImageUrl: string;
+        bannerImageBlur: number;
+        bannerColor?: string;
         contents: Array<ISectionWithContentId>
     };
 }
@@ -60,6 +62,8 @@ export interface IGetAboutUsRes extends ICommonRes {
 export interface IUpdateAboutUsReq {
     pageName: string;
     bannerImageId: number;
+    bannerImageBlur: number;
+    bannerColor?: string;
 }
 
 export interface ICreateSectionReq {
@@ -124,6 +128,8 @@ export interface ICourseInfo {
     fieldTitle6: string;
     bannerImageId?: number;
     bannerImageUrl?: string;
+    bannerImageBlur?: number;
+    bannerColor?: string;
     thumbImageId?: number;
     thumbImageUrl?: string;
     registerUrl: string;
@@ -175,6 +181,8 @@ export interface IAboutUsEditorInput {
     pageName: string;
     bannerImageId: number;
     bannerImageUrl: string;
+    bannerImageBlur: number;
+    bannerColor?: string;
 }
 
 export interface IGetImageListRes extends ICommonRes {
