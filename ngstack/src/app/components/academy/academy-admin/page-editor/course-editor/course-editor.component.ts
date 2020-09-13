@@ -49,7 +49,7 @@ export class CourseEditorComponent implements OnInit {
 	get bannerType() {return this.courseInfoForm.get('bannerType');}
 	get bannerImageBlur() {return this.courseInfoForm.get('bannerImageBlur');}
 	get bannerColor() {return this.courseInfoForm.get('bannerColor');}
-	get blurValue() {return `blur(${this.bannerImageBlur.value}px)`;}
+	get blurValue() {return `blur(${this.bannerImageBlur.value}px) opacity(80%)`;}
 
 	constructor(private fb: FormBuilder) { }
 
@@ -150,6 +150,14 @@ export class CourseEditorComponent implements OnInit {
 			registerUrl
 		} = this.courseInfoForm.getRawValue();
 
+		if (!this.courseInfoData.bannerColor == this.isImage()) {
+			return true;
+		}
+
+		if (this.isImage()) {
+			
+		}
+
 		const dataChanged = courseName !== this.courseInfoData.courseName 
 			|| description1 !== this.courseInfoData.description1 
 			|| description2 !== this.courseInfoData.description2 
@@ -171,9 +179,13 @@ export class CourseEditorComponent implements OnInit {
 			|| thumbImageId !== this.courseInfoData.thumbImageId
 			|| thumbImageUrl !== this.courseInfoData.thumbImageUrl
 			|| registerUrl !== this.courseInfoData.registerUrl;
-		const bannerTypeChanged = this.isImage() != !this.courseInfoData.bannerColor;
+		
+		const bannerChanged = this.isImage() ? bannerImageId !== this.courseInfoData.bannerImageId
+		|| bannerImageUrl !== this.courseInfoData.bannerImageUrl
+		|| bannerImageBlur != this.courseInfoData.bannerImageBlur :
+		bannerColor !== this.courseInfoData.bannerColor;
 
-		return dataChanged || bannerTypeChanged;
+		return dataChanged || bannerChanged;
 	}
 
 	mapFormControls() {
@@ -228,10 +240,14 @@ export class CourseEditorComponent implements OnInit {
 				fieldTitle6: this.fieldTitle6.value,
 				bannerImageId: this.bannerImageId.value,
 				bannerImageUrl: this.bannerImageUrl.value,
+				bannerImageBlur: this.bannerImageBlur.value,
 				thumbImageId: this.thumbImageId.value,
 				thumbImageUrl: this.thumbImageUrl.value,
 				registerUrl: this.registerUrl.value
 			};
+			if (!this.isImage()) {
+				formData['bannerColor'] = this.bannerColor.value;
+			}
 			this.onFinish.emit(formData);
 			this.isEdit = false;
 			this.onEditStateChange.emit(this.isEdit);

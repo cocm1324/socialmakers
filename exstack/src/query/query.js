@@ -116,6 +116,30 @@ const query = {
             ;
         `;
     },
+    updateUser: (login, password, role) => {
+        const active = 1;
+
+        return `
+            UPDATE
+                dbibridge.user
+            SET
+                password='${password}',
+                role=${role},
+                active=${active}
+            WHERE
+                login='${login}'
+            ;
+        `;
+    },
+    deleteUser: (login) => {
+        return `
+            DELETE FROM
+                dbibridge.user
+            WHERE
+                login='${login}'
+            ;
+        `;
+    },
     selectUser: (login) => {
         return `
             SELECT 
@@ -300,88 +324,104 @@ const query = {
         `;
     },
     createCourseTransactionCreateCourseInfo: (
-        courseId, thumbImageId, bannderImageId, description1, description2, seq, seqBase, registerUrl,
+        courseId, thumbImageId, bannderImageId, bannerImageBlur, bannerColor, 
+        description1, description2, seq, seqBase, registerUrl,
         fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6,
         field1, field2, field3, field4, field5, field6
     ) => {
-        const dbDescription1 = description1 ? sqlStringEscape(description1) : 'null';
-        const dbDescription2 = description2 ? sqlStringEscape(description2) : 'null';
+        const defalutImageId = 1;
+
+        const dbBannerImageId = bannderImageId ? bannderImageId : defalutImageId;
+        const dbBannerImageBlur = bannerImageBlur ? bannerImageBlur : 20;
+        const dbBannerColor = bannerColor ? `'${bannerColor}'` : 'NULL';
+
+        const dbDescription1 = description1 ? sqlStringEscape(description1) : 'NULL';
+        const dbDescription2 = description2 ? sqlStringEscape(description2) : 'NULL';
         const dbRegisterUrl = sqlStringEscape(registerUrl);
-        const dbFieldTitle1 = fieldTitle1 ? sqlStringEscape(fieldTitle1) : 'null';
-        const dbFieldTitle2 = fieldTitle2 ? sqlStringEscape(fieldTitle2) : 'null';
-        const dbFieldTitle3 = fieldTitle3 ? sqlStringEscape(fieldTitle3) : 'null';
-        const dbFieldTitle4 = fieldTitle4 ? sqlStringEscape(fieldTitle4) : 'null';
-        const dbFieldTitle5 = fieldTitle5 ? sqlStringEscape(fieldTitle5) : 'null';
-        const dbFieldTitle6 = fieldTitle6 ? sqlStringEscape(fieldTitle6) : 'null';
-        const dbField1 = field1 ? sqlStringEscape(field1) : 'null';
-        const dbField2 = field2 ? sqlStringEscape(field2) : 'null';
-        const dbField3 = field3 ? sqlStringEscape(field3) : 'null';
-        const dbField4 = field4 ? sqlStringEscape(field4) : 'null';
-        const dbField5 = field5 ? sqlStringEscape(field5) : 'null';
-        const dbField6 = field6 ? sqlStringEscape(field6) : 'null';
+        const dbFieldTitle1 = fieldTitle1 ? sqlStringEscape(fieldTitle1) : 'NULL';
+        const dbFieldTitle2 = fieldTitle2 ? sqlStringEscape(fieldTitle2) : 'NULL';
+        const dbFieldTitle3 = fieldTitle3 ? sqlStringEscape(fieldTitle3) : 'NULL';
+        const dbFieldTitle4 = fieldTitle4 ? sqlStringEscape(fieldTitle4) : 'NULL';
+        const dbFieldTitle5 = fieldTitle5 ? sqlStringEscape(fieldTitle5) : 'NULL';
+        const dbFieldTitle6 = fieldTitle6 ? sqlStringEscape(fieldTitle6) : 'NULL';
+        const dbField1 = field1 ? sqlStringEscape(field1) : 'NULL';
+        const dbField2 = field2 ? sqlStringEscape(field2) : 'NULL';
+        const dbField3 = field3 ? sqlStringEscape(field3) : 'NULL';
+        const dbField4 = field4 ? sqlStringEscape(field4) : 'NULL';
+        const dbField5 = field5 ? sqlStringEscape(field5) : 'NULL';
+        const dbField6 = field6 ? sqlStringEscape(field6) : 'NULL';
 
         return `
             INSERT INTO 
                 dbibridge.courseInfo (
-                    courseId, thumbnailImageId, bannerImageId, description1, description2, 
+                    courseId, thumbnailImageId, bannerImageId, bannerImageBlur, bannerColor, description1, description2, 
                     fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6, 
                     field1, field2, field3, field4, field5, field6, registerUrl, seq, seqBase
                 )
             VALUES
                 (
-                    ${courseId}, ${thumbImageId}, ${bannderImageId}, '${dbDescription1}', '${dbDescription2}',
+                    ${courseId}, ${thumbImageId}, ${dbBannerImageId}, ${dbBannerImageBlur}, ${dbBannerColor}, '${dbDescription1}', '${dbDescription2}',
                     '${dbFieldTitle1}', '${dbFieldTitle2}', '${dbFieldTitle3}', '${dbFieldTitle4}', '${dbFieldTitle5}', '${dbFieldTitle6}',
                     '${dbField1}', '${dbField2}', '${dbField3}', '${dbField4}', '${dbField5}', '${dbField6}', '${dbRegisterUrl}', ${seq}, ${seqBase}
                 )
             ;
         `;
     },
-    updateCourse: (pageId, name, description1, description2, registerUrl,
+    updateCourse: (
+        pageId, courseName, thumbImageId, bannderImageId, bannerImageBlur, bannerColor, 
+        description1, description2, registerUrl,
         fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6,
-        field1, field2, field3, field4, field5, field6, pageImageId, thumbImageId) => {
-        
-        const eName = sqlStringEscape(name);
-        const eDescription1 = sqlStringEscape(description1);
-        const eDescription2 = sqlStringEscape(description2);
-        const eRegisterUrl = sqlStringEscape(registerUrl);
-        const eFieldTitle1 = sqlStringEscape(fieldTitle1);
-        const eFieldTitle2 = sqlStringEscape(fieldTitle2);
-        const eFieldTitle3 = sqlStringEscape(fieldTitle3);
-        const eFieldTitle4 = sqlStringEscape(fieldTitle4);
-        const eFieldTitle5 = sqlStringEscape(fieldTitle5);
-        const eFieldTitle6 = sqlStringEscape(fieldTitle6);
-        const eField1 = sqlStringEscape(field1);
-        const eField2 = sqlStringEscape(field2);
-        const eField3 = sqlStringEscape(field3);
-        const eField4 = sqlStringEscape(field4);
-        const eField5 = sqlStringEscape(field5);
-        const eField6 = sqlStringEscape(field6);
+        field1, field2, field3, field4, field5, field6
+    ) => {
+        const defalutImageId = 1;
+
+        const dbPageName = sqlStringEscape(courseName);
+
+        const dbBannerImageId = bannderImageId ? bannderImageId : defalutImageId;
+        const dbBannerImageBlur = bannerImageBlur ? bannerImageBlur : 20;
+        const dbBannerColor = bannerColor ? `'${bannerColor}'` : 'NULL';
+
+        const dbDescription1 = description1 ? sqlStringEscape(description1) : 'NULL';
+        const dbDescription2 = description2 ? sqlStringEscape(description2) : 'NULL';
+        const dbRegisterUrl = sqlStringEscape(registerUrl);
+        const dbFieldTitle1 = fieldTitle1 ? sqlStringEscape(fieldTitle1) : 'NULL';
+        const dbFieldTitle2 = fieldTitle2 ? sqlStringEscape(fieldTitle2) : 'NULL';
+        const dbFieldTitle3 = fieldTitle3 ? sqlStringEscape(fieldTitle3) : 'NULL';
+        const dbFieldTitle4 = fieldTitle4 ? sqlStringEscape(fieldTitle4) : 'NULL';
+        const dbFieldTitle5 = fieldTitle5 ? sqlStringEscape(fieldTitle5) : 'NULL';
+        const dbFieldTitle6 = fieldTitle6 ? sqlStringEscape(fieldTitle6) : 'NULL';
+        const dbField1 = field1 ? sqlStringEscape(field1) : 'NULL';
+        const dbField2 = field2 ? sqlStringEscape(field2) : 'NULL';
+        const dbField3 = field3 ? sqlStringEscape(field3) : 'NULL';
+        const dbField4 = field4 ? sqlStringEscape(field4) : 'NULL';
+        const dbField5 = field5 ? sqlStringEscape(field5) : 'NULL';
+        const dbField6 = field6 ? sqlStringEscape(field6) : 'NULL';
 
         return `
-            update
+            UPDATE
                 dbibridge.page a
-                INNER JOIN dbibridge.course b ON a.page_id=b.page_id
-                INNER JOIN dbibridge.page_image c ON a.page_id=c.page_id
-                INNER JOIN dbibridge.course_image d ON a.page_id=d.page_id
-            set
-                a.name='${eName}',
-                b.description1='${eDescription1}',
-                b.description2='${eDescription2}',
-                b.field_title1='${eFieldTitle1}',
-                b.field_title2='${eFieldTitle2}',
-                b.field_title3='${eFieldTitle3}',
-                b.field_title4='${eFieldTitle4}',
-                b.field_title5='${eFieldTitle5}',
-                b.field_title6='${eFieldTitle6}',
-                b.field1='${eField1}',
-                b.field2='${eField2}',
-                b.field3='${eField3}',
-                b.field4='${eField4}',
-                b.field5='${eField5}',
-                b.field6='${eField6}',
-                b.register_url='${eRegisterUrl}',
-                c.image_id=${pageImageId},
-                d.image_id=${thumbImageId}
+                INNER JOIN dbibridge.courseInfo b ON a.pageId=b.courseId
+            SET
+                a.pageName='${dbPageName}',
+                b.thumbnailImageId=${thumbImageId},
+                b.bannerImageId=${dbBannerImageId},
+                b.bannerImageBlur=${dbBannerImageBlur},
+                b.bannerColor=${dbBannerColor},
+                b.description1='${dbDescription1}',
+                b.description2='${dbDescription2}',
+                b.fieldTitle1='${dbFieldTitle1}',
+                b.fieldTitle2='${dbFieldTitle2}',
+                b.fieldTitle3='${dbFieldTitle3}',
+                b.fieldTitle4='${dbFieldTitle4}',
+                b.fieldTitle5='${dbFieldTitle5}',
+                b.fieldTitle6='${dbFieldTitle6}',
+                b.field1='${dbField1}',
+                b.field2='${dbField2}',
+                b.field3='${dbField3}',
+                b.field4='${dbField4}',
+                b.field5='${dbField5}',
+                b.field6='${dbField6}',
+                b.registerUrl='${dbRegisterUrl}',
             where 
                 a.page_id=${pageId};
         `;

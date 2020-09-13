@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon server.js",
     "dev": "nodemon -x \"mocha && node server.js\"",
-    "test": "mocha"
+    "test": "mocha --exit"
   },
   "keywords": [],
   "author": "",
@@ -28,6 +28,7 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "mocha": "^8.1.1",
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.4",
+    "supertest": "^4.0.2"
   }
 }

@@ -51,8 +51,8 @@ course.get('/', (req, res) => {
 
 course.post('/', (req, res) => {
     const {
-        courseName, registerUrl,
-        thumbImageId, bannerImageId, 
+        courseName, registerUrl, thumbImageId, 
+        bannerImageId, bannerImageBlur, bannerColor,
         description1, description2, 
         fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6, 
         field1, field2, field3, field4, field5, field6
@@ -127,7 +127,7 @@ course.post('/', (req, res) => {
                     }
 
                     connection.query(queryStatement.createCourseTransactionCreateCourseInfo(
-                        pageId, thumbImageId, bannerImageId, description1, description2, seq, seqBase, registerUrl,
+                        pageId, thumbImageId, bannerImageId, bannerImageBlur, bannerColor, description1, description2, seq, seqBase, registerUrl,
                         fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6,
                         field1, field2, field3, field4, field5, field6), (err3, result3) => {
                         if (err3) { 
@@ -275,9 +275,8 @@ course.get('/:pageId', (req, res) => {
 course.put('/:pageId', (req, res) => {
     const {pageId} = req.params;
     const {
-        courseName, registerUrl,
-        thumbImageId, bannerImageId, 
-        description1, description2, 
+        courseName, thumbImageId, bannerImageId, bannerImageBlur, bannerColor, 
+        description1, description2, registerUrl,
         fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6, 
         field1, field2, field3, field4, field5, field6
     } = req.body;
@@ -306,9 +305,11 @@ course.put('/:pageId', (req, res) => {
         }
 
         connection.query(queryStatement.updateCourse(
-            pageId, courseName, description1, description2, registerUrl, 
+            pageId, courseName, thumbImageId, bannerImageId, bannerImageBlur, bannerColor, 
+            description1, description2, registerUrl,
             fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6, 
-            field1, field2, field3, field4, field5, field6, bannerImageId, thumbImageId), (err1, rows1) => {
+            field1, field2, field3, field4, field5, field6
+        ), (err1, rows1) => {
             connection.release();
 
             if (err1) {
@@ -345,7 +346,7 @@ course.delete('/:pageId', (req, res) => {
             return;
         }
 
-        connection.query(queryStatement.deleteCourse(courseId), (err1, rows1) => {
+        connection.query(queryStatement.deleteCourse(pageId), (err1, rows1) => {
             connection.release();
             if (err1) {
                 res.send({
