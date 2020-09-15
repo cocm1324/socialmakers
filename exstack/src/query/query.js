@@ -48,31 +48,19 @@ const query = {
     },
     selectPageImage: (pageCount, pageNo, increment) => {
         const start = pageCount * (pageNo - 1);
-        if (increment) {
-            return `
-                SELECT 
-                    a.*, b.*
-                FROM 
-                    dbibridge.image a
-                    CROSS JOIN (SELECT COUNT(*) as rowCount FROM dbibridge.image) b
-                LIMIT 
-                    ${start},${pageCount}
-                ;
-            `;
-        } else {
-            return `
-                SELECT 
-                    a.*, b.*
-                FROM 
-                    dbibridge.image a
-                    CROSS JOIN (SELECT COUNT(*) as rowCount FROM dbibridge.image) b
-                ORDER BY
-                    imageId DESC
-                LIMIT 
-                    ${start},${pageCount}
-                ;
-            `;
-        }
+        const order = increment ? "" : "ORDER BY imageId DESC";
+
+        return `
+            SELECT 
+                a.*, b.*
+            FROM 
+                dbibridge.image a
+                CROSS JOIN (SELECT COUNT(*) as rowCount FROM dbibridge.image) b
+            ${order}
+            LIMIT 
+                ${start}, ${pageCount}
+            ;
+        `;
     },
     selectAllImage: (increment) => {
         if (increment) {
@@ -287,8 +275,8 @@ const query = {
         const course = 1;
         return `
             SELECT
-                b.courseId, a.pageName as courseName, b.seq, b.seqBase,
-                c.imageId AS thumbnailImageId, c.messageDigest AS thumbnailMessageDigest, c.extension AS thumbnailExtension,
+                b.courseId, a.pageName as courseName, b.seq, b.seqBase, b.bannerColor, b.bannerImageBlur,
+                c.imageId AS thumbImageId, c.messageDigest AS thumbMessageDigest, c.extension AS thumbExtension,
                 d.imageId AS bannerImageId, d.messageDigest AS bannerMessageDigest, d.extension AS bannerExtension,
                 a.pageName, b.description1, b.description2, b.fieldTitle1, b.fieldTitle2, b.fieldTitle3, b.fieldTitle4, b.fieldTitle5, b.fieldTitle6,
                 b.field1, b.field2, b.field3, b.field4, b.field5, b.field6, b.registerUrl
@@ -368,7 +356,7 @@ const query = {
         `;
     },
     updateCourse: (
-        pageId, courseName, thumbImageId, bannderImageId, bannerImageBlur, bannerColor, 
+        pageId, courseName, thumbImageId, bannerImageId, bannerImageBlur, bannerColor, 
         description1, description2, registerUrl,
         fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6,
         field1, field2, field3, field4, field5, field6
@@ -377,7 +365,7 @@ const query = {
 
         const dbPageName = sqlStringEscape(courseName);
 
-        const dbBannerImageId = bannderImageId ? bannderImageId : defalutImageId;
+        const dbBannerImageId = bannerImageId ? bannerImageId : defalutImageId;
         const dbBannerImageBlur = bannerImageBlur ? bannerImageBlur : 20;
         const dbBannerColor = bannerColor ? `'${bannerColor}'` : 'NULL';
 
@@ -421,13 +409,12 @@ const query = {
                 b.field4='${dbField4}',
                 b.field5='${dbField5}',
                 b.field6='${dbField6}',
-                b.registerUrl='${dbRegisterUrl}',
-            where 
-                a.page_id=${pageId};
+                b.registerUrl='${dbRegisterUrl}'
+            WHERE
+                a.pageId=${pageId};
         `;
     },
     deleteCourse: (pageId) => {
-        const course = 1;
         return `
             DELETE
                 a, b, c
@@ -436,7 +423,7 @@ const query = {
                 INNER JOIN dbibridge.courseInfo b ON a.pageId=b.courseId 
                 LEFT JOIN dbibridge.pageContent c ON a.pageId=c.pageId
             WHERE 
-                a.pageId=${pageId} AND a.pageType=${course}
+                a.pageId=${pageId}
             ;
         `;
     },
@@ -450,6 +437,108 @@ const query = {
                 courseId=${courseId}
             ;
         `;
+    },
+    selectPageNotice: (pageCount, pageNo, increment) => {
+        const start = pageCount * (pageNo - 1);
+        const order = increment ? "" : "ORDER BY creationDateTime DESC";
+
+        return `
+            SELECT
+                b.noticeId, a.pageName AS noticeName, c.rowCount,
+                b.creationDateTime, b.updateDateTime, b.featured, b.published
+            FROM
+                dbibridge.page a
+                INNER JOIN dbibridge.noticeInfo b ON a.pageId=b.noticeId
+                CROSS JOIN (SELECT COUNT(*) as rowCount FROM dbibridge.noticeInfo) c
+            ${order}
+            LIMIT
+                ${start}, ${pageCount}
+            ;
+        `;
+    },
+    selectNoticeInfo: (noticeId) => {
+        return `
+            SELECT
+                b.noticeId, a.pageName AS noticeName,
+                b.bannerImageId, c.messageDigest AS bannerMessageDigest, c.extension AS bannerExtension, 
+                b.bannerImageBlur, b.bannerColor,
+                b.creationDateTime, b.updateDateTime, b.published, b.featured
+            FROM
+                dbibridge.page a
+                INNER JOIN dbibridge.noticeInfo b ON a.pageId=b.noticeId
+                LEFT JOIN dbibridge.image c ON b.bannerImageId=c.imageId
+            WHERE
+                b.noticeId=${noticeId}
+            ;
+        `;
+    },
+    createNoticeTransactionCreatePage: (pageName) => {
+        const notice = 2;
+        const dbPageName = sqlStringEscape(pageName);
+
+        return `
+            INSERT INTO 
+                dbibridge.page (pageName, pageType)
+            VALUES 
+                ('${dbPageName}', ${notice})
+            ;
+        `;
+    },
+    createNoticeTransactionCreateNoticeInfo: (pageId, bannerImageId, bannerImageBlur, bannerColor) => {
+        const defalutImageId = 1;
+        const defaultFeatured = 0;
+        const defaultPublished = 1;
+
+        const dbBannerImageId = bannerImageId ? bannerImageId : defalutImageId;
+        const dbBannerImageBlur = bannerImageBlur ? bannerImageBlur : 20;
+        const dbBannerColor = bannerColor ? `'${bannerColor}'` : 'NULL';
+
+        return `
+            INSERT INTO
+                dbibridge.noticeInfo (
+                    noticeId, bannerImageId, bannerImageBlur, bannerColor, 
+                    creationDateTime, updateDateTime, featured, published
+                )
+            VALUES
+                (
+                    ${pageId}, ${dbBannerImageId}, ${dbBannerImageBlur}, ${dbBannerColor},
+                    NOW(), NOW(), ${defaultFeatured}, ${defaultPublished}
+                )
+            ;
+        `;
+    },
+    updateNoticeInfo: (noticeId, noticeName, bannerImageId, bannerImageBlur, bannerColor) => {
+        const dbNoticeName = noticeName ? sqlStringEscape(noticeName) : 'Default';
+        const dbBannerImageId = bannerImageId ? bannerImageId : defalutImageId;
+        const dbBannerImageBlur = bannerImageBlur ? bannerImageBlur : 20;
+        const dbBannerColor = bannerColor ? `'${bannerColor}'` : 'NULL';
+
+        return `
+            UPDATE
+                dbibridge.page a
+                INNER JOIN dbibridge.noticeInfo b ON a.pageId=b.noticeId
+            SET
+                a.pageName='${dbNoticeName}',
+                b.bannerImageId=${dbBannerImageId},
+                b.bannerImageBlur=${dbBannerImageBlur},
+                b.bannerColor=${dbBannerColor},
+                b.updateDateTime=NOW()
+            WHERE
+                b.noticeId=${noticeId}
+            ;
+        `;
+    },
+    deleteNotice: (noticeId) => {
+        return `
+            DELETE
+                a, b
+            FROM
+                dbibridge.page a
+                INNER JOIN dbibridge.noticeInfo b ON a.pageId=b.noticeId
+            WHERE
+                b.noticeId=${noticeId}
+            ;
+        `
     }
 }
 

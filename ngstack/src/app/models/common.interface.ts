@@ -136,8 +136,7 @@ export interface ICourseInfo {
 }
 
 export interface ICreateCourseReq extends ICourseInfo {
-    bannerImageId: number;
-    thumbImageId: number;
+    
 }
 
 export interface ICreateCourseRes extends ICommonRes {
@@ -157,8 +156,6 @@ export interface ICourseInfoWithContents extends ICourseInfo {
 
 export interface IUpdateCourseInfoReq extends ICourseInfo {
     courseId: number;
-    thumbImageId: number;
-    bannerImageId: number;
 }
 
 export interface IUpdateCourseSeqReq {

@@ -1,13 +1,14 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ICourseInfo, DATA_LENGTH, BANNER_TYPE } from '@app/models/';
+import { Subscription } from 'rxjs';
 
 @Component({
 	selector: 'app-course-editor',
 	templateUrl: './course-editor.component.html',
 	styleUrls: ['./course-editor.component.scss']
 })
-export class CourseEditorComponent implements OnInit {
+export class CourseEditorComponent implements OnInit, OnDestroy {
 
 	@Input() courseInfoData: ICourseInfo;
 	@Input() disabledByParent: boolean;
@@ -24,6 +25,8 @@ export class CourseEditorComponent implements OnInit {
 	courseInfoForm: FormGroup;
 	isEdit: boolean = false;
 	lock: boolean = false;
+
+	subscription: Subscription[] = [];
 
 	get courseName() {return this.courseInfoForm.get('courseName');}
 	get description1() {return this.courseInfoForm.get('description1');}
@@ -71,14 +74,26 @@ export class CourseEditorComponent implements OnInit {
 			field5: ["", Validators.required],
 			field6: ["", Validators.required],
 			bannerImageId: [null, Validators.required],
-			bannerImageUrl: ["", Validators.required],
-			bannerType: [this.bannerTypes[0].value],
+			bannerImageUrl: [""],
 			bannerImageBlur: [0],
+			bannerType: [this.bannerTypes[0].value],
 			bannerColor: ["#ffffff"],
 			thumbImageId: [null, Validators.required],
-			thumbImageUrl: ["", Validators.required],
+			thumbImageUrl: [""],
 			registerUrl: ["", Validators.required]
 		});
+
+		const bannerTypeChange = this.bannerType.valueChanges.subscribe(value => {
+			if (this.isImage()) {
+				this.bannerImageId.setValidators(Validators.required);
+				this.bannerImageId.updateValueAndValidity();
+			} else {
+				this.bannerImageId.clearValidators();
+				this.bannerImageId.updateValueAndValidity();
+			}
+		});
+
+		this.subscription.push(bannerTypeChange);
 
 		if (this.isNewPage) {
 			this.isEdit = true;
@@ -190,28 +205,42 @@ export class CourseEditorComponent implements OnInit {
 
 	mapFormControls() {
 		if (this.courseInfoData) {
+			const {
+				courseName, thumbImageId, thumbImageUrl, registerUrl,
+				bannerColor, bannerImageBlur, bannerImageId, bannerImageUrl, 
+				description1, description2, field1, field2, field3, field4, field5, field6, 
+				fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6
+			} = this.courseInfoData;
+
 			this.courseInfoForm.patchValue({
-				courseName: this.courseInfoData.courseName,
-				description1: this.courseInfoData.description1,
-				description2: this.courseInfoData.description2,
-				fieldTitle1: this.courseInfoData.fieldTitle1,
-				fieldTitle2: this.courseInfoData.fieldTitle2,
-				fieldTitle3: this.courseInfoData.fieldTitle3,
-				fieldTitle4: this.courseInfoData.fieldTitle4,
-				fieldTitle5: this.courseInfoData.fieldTitle5,
-				fieldTitle6: this.courseInfoData.fieldTitle6,
-				field1: this.courseInfoData.field1,
-				field2: this.courseInfoData.field2,
-				field3: this.courseInfoData.field3,
-				field4: this.courseInfoData.field4,
-				field5: this.courseInfoData.field5,
-				field6: this.courseInfoData.field6,
-				bannerImageId: this.courseInfoData.bannerImageId,
-				bannerImageUrl: this.courseInfoData.bannerImageUrl,
-				thumbImageId: this.courseInfoData.thumbImageId,
-				thumbImageUrl: this.courseInfoData.thumbImageUrl,
-				registerUrl: this.courseInfoData.registerUrl
+				courseName: courseName,
+				description1: description1,
+				description2: description2,
+				fieldTitle1: fieldTitle1,
+				fieldTitle2: fieldTitle2,
+				fieldTitle3: fieldTitle3,
+				fieldTitle4: fieldTitle4,
+				fieldTitle5: fieldTitle5,
+				fieldTitle6: fieldTitle6,
+				field1: field1,
+				field2: field2,
+				field3: field3,
+				field4: field4,
+				field5: field5,
+				field6: field6,
+				thumbImageId: thumbImageId,
+				thumbImageUrl: thumbImageUrl,
+				registerUrl: registerUrl
 			});
+
+			if (bannerColor) {
+				this.bannerType.patchValue(this.bannerTypes[1].value);
+				this.bannerColor.patchValue(bannerColor);
+			} else {
+				this.bannerImageId.patchValue(bannerImageId);
+				this.bannerImageUrl.patchValue(bannerImageUrl);
+				this.bannerImageBlur.patchValue(bannerImageBlur);
+			}
 		}
 	}
 
@@ -239,14 +268,14 @@ export class CourseEditorComponent implements OnInit {
 				fieldTitle5: this.fieldTitle5.value,
 				fieldTitle6: this.fieldTitle6.value,
 				bannerImageId: this.bannerImageId.value,
-				bannerImageUrl: this.bannerImageUrl.value,
 				bannerImageBlur: this.bannerImageBlur.value,
 				thumbImageId: this.thumbImageId.value,
-				thumbImageUrl: this.thumbImageUrl.value,
 				registerUrl: this.registerUrl.value
 			};
 			if (!this.isImage()) {
 				formData['bannerColor'] = this.bannerColor.value;
+				delete formData.bannerImageId;
+				delete formData.bannerImageBlur;
 			}
 			this.onFinish.emit(formData);
 			this.isEdit = false;
@@ -268,5 +297,11 @@ export class CourseEditorComponent implements OnInit {
 			this.isEdit = false;
 			this.onEditStateChange.emit(this.isEdit);
 		}
+	}
+
+	ngOnDestroy() {
+		this.subscription.forEach(elem => {
+			elem.unsubscribe();
+		});
 	}
 }

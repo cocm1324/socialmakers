@@ -4,8 +4,8 @@ const queryStatement = require('../../../query/query');
 const seqeunce = require('../../../helpers/seqHelper');
 
 course.get('/', (req, res) => {
-    mysqlPool.getConnection((err, connection) => {
-        if (err) {
+    mysqlPool.getConnection((connectionErr, connection) => {
+        if (connectionErr) {
             res.send({
                 status: false,
                 error: {
@@ -111,8 +111,8 @@ course.post('/', (req, res) => {
                         });
                     }
 
-                    const pageId = result2.insertId;
-                    if (!pageId) {
+                    const {insertId} = result2;
+                    if (!insertId) {
                         connection.rollback(() => {
                             connection.release();
                             res.send({
@@ -127,7 +127,7 @@ course.post('/', (req, res) => {
                     }
 
                     connection.query(queryStatement.createCourseTransactionCreateCourseInfo(
-                        pageId, thumbImageId, bannerImageId, bannerImageBlur, bannerColor, description1, description2, seq, seqBase, registerUrl,
+                        insertId, thumbImageId, bannerImageId, bannerImageBlur, bannerColor, description1, description2, seq, seqBase, registerUrl,
                         fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6,
                         field1, field2, field3, field4, field5, field6), (err3, result3) => {
                         if (err3) { 
@@ -162,9 +162,7 @@ course.post('/', (req, res) => {
                             connection.release();
                             res.status(200).send({
                                 status: true,
-                                data: {
-                                    courseId: pageId
-                                }
+                                data: {courseId: insertId}
                             });
                         });
                     });
@@ -202,30 +200,43 @@ course.get('/:pageId', (req, res) => {
                 return;
             }
 
-            const row = rows1[0];
+            const {
+                courseId, bannerImageId, bannerMessageDigest, bannerExtension, bannerImageBlur, bannerColor,
+                thumbImageId, thumbMessageDigest, thumbExtension, courseName, description1, description2, 
+                fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6,
+                field1, field2, field3, field4, field5, field6, registerUrl
+            } = rows1[0];
 
             const coursePage = {
-                courseId: row.courseId,
-                bannerImageId: row.bannerImageId,
-                bannerImageUrl: `/api/static/image/${row.bannerMessageDigest}.${row.bannerExtension}`,
-                thumbImageId: row.thumbnailImageId,
-                thumbImageUrl: `/api/static/image/${row.thumbnailMessageDigest}.${row.thumbnailExtension}`,
-                courseName: row.courseName,
-                description1: row.description1,
-                description2: row.description2,
-                fieldTitle1: row.fieldTitle1,
-                fieldTitle2: row.fieldTitle2,
-                fieldTitle3: row.fieldTitle3,
-                fieldTitle4: row.fieldTitle4,
-                fieldTitle5: row.fieldTitle5,
-                fieldTitle6: row.fieldTitle6,
-                field1: row.field1,
-                field2: row.field2,
-                field3: row.field3,
-                field4: row.field4,
-                field5: row.field5,
-                field6: row.field6,
-                registerUrl: row.registerUrl
+                courseId: courseId,
+                bannerImageId: bannerImageId,
+                bannerImageUrl: `/api/static/image/${bannerMessageDigest}.${bannerExtension}`,
+                bannerImageBlur: bannerImageBlur,
+                thumbImageId: thumbImageId,
+                thumbImageUrl: `/api/static/image/${thumbMessageDigest}.${thumbExtension}`,
+                courseName: courseName,
+                description1: description1,
+                description2: description2,
+                fieldTitle1: fieldTitle1,
+                fieldTitle2: fieldTitle2,
+                fieldTitle3: fieldTitle3,
+                fieldTitle4: fieldTitle4,
+                fieldTitle5: fieldTitle5,
+                fieldTitle6: fieldTitle6,
+                field1: field1,
+                field2: field2,
+                field3: field3,
+                field4: field4,
+                field5: field5,
+                field6: field6,
+                registerUrl: registerUrl
+            }
+
+            if (bannerColor) {
+                delete coursePage.bannerImageId;
+                delete coursePage.bannerImageUrl;
+                delete coursePage.bannerImageBlur;
+                coursePage['bannerColor'] = bannerColor;
             }
 
             connection.query(queryStatement.selectPageContent(pageId), (err2, rows2) => {
@@ -242,21 +253,28 @@ course.get('/:pageId', (req, res) => {
                 }
 
                 const contents = rows2.map(row2 => {
+                    const {
+                        contentId, seq, seqBase, width, type, background,
+                        messageDigest, extension, imageId, content
+                    } = row2;
+
                     const rowMap = {
-                        contentId: row2.contentId,
-                        seq: row2.seq,
-                        seqBase: row2.seqBase,
-                        width: row2.width,
-                        type: row2.type,
+                        contentId: contentId,
+                        seq: seq,
+                        seqBase: seqBase,
+                        width: width,
+                        type: type,
                     };
+                    
                     if (row2.background) {
-                        rowMap.background = row2.background;
+                        rowMap.background = background;
                     }
+                    
                     if (rowMap.type === 1) {
-                        rowMap.imageUrl = `/api/static/image/${row2.messageDigest}.${row2.extension}`;
-                        rowMap.imageId = row2.imageId;
+                        rowMap.imageUrl = `/api/static/image/${messageDigest}.${extension}`;
+                        rowMap.imageId = imageId;
                     } else {
-                        rowMap.content = row2.content;
+                        rowMap.content = content;
                     }
     
                     return rowMap;
@@ -285,7 +303,7 @@ course.put('/:pageId', (req, res) => {
         res.send({
             status: false,
             error: {
-                code:403,
+                code: 403,
                 message: 'Invalid Request'
             }
         });

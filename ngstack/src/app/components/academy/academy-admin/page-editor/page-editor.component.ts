@@ -186,6 +186,9 @@ export class PageEditorComponent implements OnInit {
 				const request: ICreateCourseReq = {
 					...e
 				};
+
+				console.log(request)
+
 				this.dataService.createCourse(request).toPromise().then(res => {
 					if (res.status) {
 						const {courseId} = res.data;

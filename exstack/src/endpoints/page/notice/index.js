@@ -1,42 +1,10 @@
 const notice = require('express').Router();
-const mysqlPool = require('../../../dbs/mysql');
-const queryStatement = require('../../../query/query');
-const seqeunce = require('../../../helpers/seqHelper');
+const noticeController = require('./notice.controller');
 
-notice.get('/', (req, res) => {
-    const {pageNo} = req.query;
-    let {pageCount, increment} = req.query;
-
-    if (!pageCount) {
-        pageCount = 20;
-    }
-    if (increment == undefined || increment == null || increment === 'true') {
-        increment = true;
-    } else if (increment === 'false') {
-        increment = false;
-    } else {
-        increment = true;
-    }
-
-
-});
-
-notice.post('/', (req, res) => {
-});
-
-notice.get('/:pageId', (req, res) => {
-    const {pageId} = req.params;
-
-});
-
-notice.put('/:pageId', (req, res) => {
-    const {pageId} = req.params;
-
-});
-
-notice.delete('/:pageId', (req, res) => {
-    const {pageId} = req.params;
-
-});
+notice.get('/', noticeController.get);
+notice.post('/', noticeController.post);
+notice.get('/:pageId', noticeController.getByPageId);
+notice.put('/:pageId', noticeController.putByPageId);
+notice.delete('/:pageId', noticeController.deleteByPageId);
 
 module.exports = notice;
