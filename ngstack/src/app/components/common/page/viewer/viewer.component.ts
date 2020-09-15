@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ISection } from '@app/models';
+import { ISectionWithContentId } from '@app/models';
 
 @Component({
 	selector: 'ple-viewer',
@@ -8,7 +8,7 @@ import { ISection } from '@app/models';
 })
 export class ViewerComponent implements OnInit {
 
-	@Input() pageData: ISection[];
+	@Input() pageData: ISectionWithContentId[];
 
 	constructor() { }
 

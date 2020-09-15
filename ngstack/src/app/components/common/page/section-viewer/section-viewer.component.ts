@@ -15,14 +15,30 @@ export class SectionViewerComponent implements OnInit {
 	typeWidth = TypeSectionWidth;
 	typeContent = TypeContent;
 	
-	get width() {return this.section.width;}
-	get type() {return this.section.type;}
-	get content() {return this.section.content;}
-	get background() {return this.section.background;}
-	get imageUrl() {return this.section.imageUrl;}
+	sectionData: ISectionWithContentId;
+
+	get width() {return this.sectionData.width;}
+	get type() {return this.sectionData.type;}
+	get content() {return this.sectionData.content;}
+	get imageUrl() {return this.sectionData.imageUrl;}
+	get background() {return this.sectionData.background;}
 
 	constructor() {}
-	ngOnInit() {}
+	ngOnInit() {
+		if (this.section) {
+			this.sectionData = {
+				...this.section
+			};
+		} else {
+			this.sectionData = {
+				contentId: -1,
+				width: this.typeWidth.NARROW,
+				type: this.typeContent.IMAGE,
+				content: "",
+				background: "#ffffff"
+			}
+		}
+	}
 
 	isImage() {return this.type == this.typeContent.IMAGE;}
 	isImageUrl() {return this.type == this.typeContent.IMAGE_URL;}

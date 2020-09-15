@@ -35,7 +35,24 @@
             </p-orderList>
         </p-panel>
         <p-panel header="Notice" [toggleable]="true" [style]="{'margin-bottom':'20px'}">
-            To Be Delivered
+            <p-table [value]="notices">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>제목</th>
+                        <th>작성일</th>
+                        <th>수정일</th>
+                        <th>관리</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-notice>
+                    <tr>
+                        <td>{{notice.noticeName}}</td>
+                        <td>{{notice.creationDateTime}}</td>
+                        <td>{{notice.updateDateTime}}</td>
+                        <td>Yay</td>
+                    </tr>
+                </ng-template>
+            </p-table>
         </p-panel>
         <p-panel header="이미지 관리" [toggleable]="true" [style]="{'margin-bottom':'20px'}">
             To Be Delivered

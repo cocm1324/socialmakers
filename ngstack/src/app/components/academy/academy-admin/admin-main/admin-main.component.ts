@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataService } from '@services/data/data.service';
-import * as _ from 'lodash';
 import { UtilService } from '@services/util/util.service';
-import { ACADEMY_ADMIN_URL } from '@app/models/';
+import { ACADEMY_ADMIN_URL, INotice } from '@app/models/';
+import * as _ from 'lodash';
 
 @Component({
 	selector: 'app-main',
@@ -13,6 +13,7 @@ import { ACADEMY_ADMIN_URL } from '@app/models/';
 export class AdminMainComponent implements OnInit {
 
 	courses;
+	notices: INotice[];
 	selectedCourseId = -1;
 
   	constructor(
@@ -23,10 +24,11 @@ export class AdminMainComponent implements OnInit {
 
 	ngOnInit() {
 		this.loadCourse();
+		this.loadNotice();
 	}
 
 	loadCourse() {
-		this.dataService.getCourseList().toPromise().then((res) => {
+		this.dataService.getCourseList().toPromise().then(res => {
 			if (res.status) {
 				this.courses = res.data.map(course => {
 					const mappedCourse = {
@@ -35,18 +37,36 @@ export class AdminMainComponent implements OnInit {
 					}
 					return mappedCourse;
 				});
-				this.courses.sort((a, b)=> {
-					const aVal = a.seq / a.seqBase;
-					const bVal = b.seq / b.seqBase;
+				this.courses.sort((bigger, smaller)=> {
+					const biggerValue = bigger.seq / bigger.seqBase;
+					const smallerValue = smaller.seq / smaller.seqBase;
 
-					if (aVal - bVal < 0) {
+					if (biggerValue < smallerValue) {
 						return -1;
 					}
-					if (aVal - bVal > 0) {
+					if (biggerValue > smallerValue) {
 						return 1;
 					}
 					return 0;
 				});
+			} else {
+				alert(`${res.error.code}: ${res.error.message}`);
+			}
+		});
+	}
+
+	loadNotice() {
+		this.dataService.getNoticeList().toPromise().then(res => {
+			if (res.status) {
+				this.notices = res.data.notices;
+				this.notices.sort((bigger, smaller) => {
+					if (bigger.creationDateTime < smaller.creationDateTime) {
+						return 1;
+					} else {
+						return -1;
+					}
+				});
+				console.log(this.notices)
 			} else {
 				alert(`${res.error.code}: ${res.error.message}`);
 			}

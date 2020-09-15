@@ -48,13 +48,25 @@ const noticeController = {
                 }
 
                 const {rowCount} = rows1[0];
+                const notices = rows1.map(row1 => {
+                    const {noticeId, noticeName, creationDateTime, updateDateTime, featured, published} = row1;
+                    return {
+                        noticeId: noticeId,
+                        noticeName: noticeName,
+                        creationDateTime: creationDateTime,
+                        updateDateTime: updateDateTime,
+                        featured: featured,
+                        published: published
+                    };
+                });
+
                 res.send({
                     status: true,
                     data: {
                         pageNo: pageNo,
                         pageCount: rows1.length,
                         rowCount: rowCount,
-                        notices: rows1
+                        notices: notices
                     }
                 });
             });

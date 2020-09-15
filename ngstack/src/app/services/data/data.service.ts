@@ -1,8 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {IRunLoginReq, IRunLoginRes, IRunVerifyLoginRes, ICreateImageReq, IGetAboutUsRes, ICreateSectionReq, IUpdateSectionReq, IDeleteSectionReq, ICommonRes, IGetCourseRes, IGetCourseListRes, IUpdateCourseSeqReq, IRunEyedropReq, IRunEyedropRes, IUpdateAboutUsReq, IUpdateCourseInfoReq, ICreateCourseReq, ICreateCourseRes, IUpdateSectionSeqReq, IGetImageListRes} from '../../models';
 import { map } from 'rxjs/operators';
+import { 
+	IRunLoginReq, IRunLoginRes, IRunVerifyLoginRes, ICreateImageReq, IGetAboutUsRes, 
+	ICreateSectionReq, IUpdateSectionReq, IDeleteSectionReq, ICommonRes, IGetCourseRes, 
+	IGetCourseListRes, IUpdateCourseSeqReq, IRunEyedropReq, IRunEyedropRes, IUpdateAboutUsReq, 
+	IUpdateCourseInfoReq, ICreateCourseReq, ICreateCourseRes, IUpdateSectionSeqReq, 
+	IGetImageListRes, IGetNoticeListRes 
+} from '../../models';
 
 @Injectable({
   	providedIn: 'root'
@@ -134,4 +140,31 @@ export class DataService {
 		const {courseId} = request;
 		return this.http.put<ICommonRes>(`${this.pageUrl}/course/${courseId}`, request);
 	}
+
+	getNoticeList(pageCount?: number, pageNo?: number, increment?: boolean): Observable<IGetNoticeListRes> {
+		let url = `${this.pageUrl}/notice`;
+		const queue = [];
+
+		if (pageCount) {
+			queue.push(`pageCount=${pageCount}`);
+		}
+		if (pageNo) {
+			queue.push(`pageNo=${pageNo}`);
+		}
+		if (increment != null && increment != undefined) {
+			queue.push(`increment=${increment}`);
+		}
+
+		if (queue.length > 0) {
+			url += '?';
+			for(let i = 0; i < queue.length; i++) {
+				if (i != 0) {
+					url += '&';
+				}
+				url += queue[i];
+			}
+		}
+
+		return this.http.get<IGetNoticeListRes>(url);
+	} 
 }

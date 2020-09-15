@@ -197,3 +197,25 @@ export interface IImage {
     thumbUrl?: string;
     url: string;
 }
+
+export interface INotice {
+    noticeId?: number;
+    noticeName: string;
+    bannerImageId?: number;
+    bannerImageUrl?: string;
+    bannerImageBlur?: number;
+    bannerColor?: string;
+    creationDateTime: string;
+    updateDateTime: string;
+    featured: number;
+    published: number;
+}
+
+export interface IGetNoticeListRes extends ICommonRes {
+    data: {
+        notices: INotice[];
+        pageCount: number;
+        pageNo: number;
+        rowCount: number;
+    }
+}

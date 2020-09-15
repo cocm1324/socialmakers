@@ -1,25 +1,30 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AcademyComponent } from './academy.component';
+import { AcademyRoutingModule } from './academy-routing.component';
 
 describe('AcademyComponent', () => {
-  let component: AcademyComponent;
-  let fixture: ComponentFixture<AcademyComponent>;
+	let component: AcademyComponent;
+	let fixture: ComponentFixture<AcademyComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ AcademyComponent ]
-    })
-    .compileComponents();
-  }));
+	beforeEach(async(() => {
+		TestBed.configureTestingModule({
+			declarations: [ 
+				AcademyComponent 
+			],
+			imports: [
+				AcademyRoutingModule
+			]
+		}).compileComponents();
+	}));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(AcademyComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+	beforeEach(() => {
+		fixture = TestBed.createComponent(AcademyComponent);
+		component = fixture.componentInstance;
+		fixture.detectChanges();
+	});
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+	it('should create', () => {
+		expect(component).toBeTruthy();
+	});
 });

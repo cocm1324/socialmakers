@@ -1,5 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, OnInit, Output, EventEmitter, Input, AfterViewInit } from '@angular/core';
 import { DataService } from '@services/data/data.service';
 import { IImage } from '@app/models/';
 
@@ -35,7 +34,7 @@ export class ImageUploadComponent implements OnInit, AfterViewInit {
 
 	display: boolean = false;
 
-	constructor(private fb: FormBuilder, private dataService: DataService) { }
+	constructor(private dataService: DataService) { }
 
 	ngOnInit() {
 
