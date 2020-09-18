@@ -1,6 +1,7 @@
 export enum ACADEMY_ADMIN_URL {
     PREFIX = 'academy/admin',
-    COURSE_FRAGMANT = 'course',
+    COURSE_FRAGMENT = 'course',
+    NOTICE_FRAGMENT = 'notice',
 
     ROOT = '',
     ADMIN_MAIN = '',

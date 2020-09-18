@@ -10,7 +10,7 @@ describe('AcademyComponent', () => {
 	beforeEach(async(() => {
 		TestBed.configureTestingModule({
 			declarations: [ 
-				AcademyComponent 
+				AcademyComponent
 			],
 			imports: [
 				AcademyRoutingModule

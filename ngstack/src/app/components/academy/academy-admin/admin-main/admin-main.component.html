@@ -9,7 +9,7 @@
         <p-panel header="Courses" [toggleable]="true" [style]="{'margin-bottom':'20px'}">
             <div class="p-d-flex p-justify-between p-mb-2">
                 <div>
-                    <button pButton label="새 Course만들기" (click)="onCreateCourse()"></button>
+                    <button pButton label="새 Course 만들기" (click)="onCreateCourse()"></button>
                 </div>
                 <div>
                     <button [disabled]="selectedCourseId==-1" class="p-mr-2 ui-button-secondary" pButton label="내용 수정하기" (click)="goToEditCourse($event)"></button>
@@ -35,20 +35,27 @@
             </p-orderList>
         </p-panel>
         <p-panel header="Notice" [toggleable]="true" [style]="{'margin-bottom':'20px'}">
-            <p-table [value]="notices">
+            <div class="p-d-flex p-justify-start p-mb-2">
+                <div>
+                    <button pButton label="새 Notice 작성하기" (click)="onCreateCourse()"></button>
+                </div>
+            </div>
+            <p-table [value]="notices" [paginator]="true" [rows]="10">
                 <ng-template pTemplate="header">
                     <tr>
-                        <th>제목</th>
-                        <th>작성일</th>
-                        <th>수정일</th>
-                        <th>관리</th>
+                        <th style="width: 10%">No</th>
+                        <th style="width: 40%">제목</th>
+                        <th style="width: 20%">작성일</th>
+                        <th style="width: 20%">수정일</th>
+                        <th style="width: 10%">관리</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-notice>
-                    <tr>
+                    <tr class="table-row p-pointer" (click)="gotoEditNotice(notice.noticeId)">
+                        <td>{{notice.noticeId}}</td>
                         <td>{{notice.noticeName}}</td>
-                        <td>{{notice.creationDateTime}}</td>
-                        <td>{{notice.updateDateTime}}</td>
+                        <td>{{notice.creationDateTime | userDatetime}}</td>
+                        <td>{{notice.updateDateTime | userDatetime}}</td>
                         <td>Yay</td>
                     </tr>
                 </ng-template>

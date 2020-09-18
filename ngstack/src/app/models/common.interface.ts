@@ -176,9 +176,9 @@ export interface IRunEyedropRes extends ICommonRes {
 
 export interface IAboutUsEditorInput {
     pageName: string;
-    bannerImageId: number;
-    bannerImageUrl: string;
-    bannerImageBlur: number;
+    bannerImageId?: number;
+    bannerImageUrl?: string;
+    bannerImageBlur?: number;
     bannerColor?: string;
 }
 
@@ -218,4 +218,31 @@ export interface IGetNoticeListRes extends ICommonRes {
         pageNo: number;
         rowCount: number;
     }
+}
+
+export interface IGetNoticeRes extends ICommonRes {
+    data: {
+        noticeId: number;
+        noticeName: string;
+        bannerImageId?: number;
+        bannerImageUrl?: string;
+        bannerImageBlur?: number;
+        bannerColor?: string;
+        contents: ISectionWithContentId[];
+        creationDateTime: string;
+        updateDateTime: string;
+        featured: number;
+        published: number;
+    }
+}
+
+export interface INoticeEditorInput {
+    noticeName: string;
+    bannerImageId?: number;
+    bannerImageUrl?: string;
+    bannerImageBlur?: number;
+    bannerColor?: string;
+    creationDateTime: string;
+    updateDateTime: string;
+    featured: number;
 }

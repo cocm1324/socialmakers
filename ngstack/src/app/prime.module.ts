@@ -1,11 +1,11 @@
 import {NgModule} from '@angular/core';
+
 import {ButtonModule} from "primeng/button";
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {CarouselModule} from 'primeng/carousel';
 import {CardModule} from 'primeng/card';
 import {DialogModule} from 'primeng/dialog';
 import {InputTextModule} from 'primeng/inputtext';
-import {FormsModule} from '@angular/forms';
 import {FileUploadModule} from 'primeng/fileupload';
 import {FieldsetModule} from 'primeng/fieldset';
 import {PanelModule} from 'primeng/panel';
@@ -20,8 +20,6 @@ import {SliderModule} from 'primeng/slider';
 
 @NgModule({
     imports: [
-        FormsModule,
-
         ButtonModule,
         ProgressSpinnerModule,
         CarouselModule,
@@ -41,8 +39,6 @@ import {SliderModule} from 'primeng/slider';
         SliderModule
     ],
     exports: [
-        FormsModule,
-        
         ButtonModule,
         ProgressSpinnerModule,
         CarouselModule,
@@ -62,4 +58,4 @@ import {SliderModule} from 'primeng/slider';
         SliderModule
     ]
 })
-export class AppCommonModule {}
+export class PrimeModule {}

@@ -1,1 +1,53 @@
-<p>notice-editor works!</p>
+<div class="p-grid p-nogutter p-relative item p-overflow-hidden">
+    <img *ngIf="isImage()" class="banner banner-image" [src]="bannerImageUrl.value" [ngStyle]="{'filter': blurValue, '-webkit-filter': blurValue}">
+    <div *ngIf="!isImage()" class="banner" [ngStyle]="{'background-color': bannerColor.value}"></div>
+    <div class="p-absolute p-d-flex p-justify-center p-align-center w-100 h-100" style="z-index: 1000;">
+        <div class="hero-content p-p-5 p-relative">
+            <h1>{{noticeName.value}}</h1>
+        </div>
+    </div>
+    <div *ngIf="!isEdit && !lock" class="p-absolute overlay p-d-flex p-justify-center p-align-center w-100 h-100">
+        <button (click)="edit()" pButton type="button" label="수정하기" icon="pi pi-check" class="ui-button-primary p-mr-2"></button>
+    </div>
+</div>
+<form [formGroup]="noticeForm">
+    <div *ngIf="isEdit" class="p-grid-medium">
+        <p-card class="w-100 p-my-2" styleClass="ui-card-shadow">
+            <div class="p-pb-3">
+                <h3>페이지 정보</h3>
+                <label>제목</label>
+                <span class="ui-inputgroup">
+                    <input [maxLength]="dataLength.SHORT" formControlName="noticeName" class="w-100" pInputText> 
+                </span>
+            </div>
+            <div class="">
+                <h3>배너</h3>
+                <span class="ui-inputgroup p-pb-2">
+                    <p-selectButton [options]="bannerTypes" formControlName="bannerType"></p-selectButton>
+                </span>
+                <div *ngIf="isImage()">
+                    <label>이미지 선택</label>
+                    <span class="ui-inputgroup p-pb-2">
+                        <input formControlName="bannerImageUrl" class="w-100" pInputText readonly>
+                        <app-image-upload label="수정" icon="pi pi-pencil" (onSubmit)="imageUploaded($event)"></app-image-upload>
+                    </span>
+                    <label>흐림 ({{bannerImageBlur.value}}%)</label>
+                    <span class="ui-inputgroup p-py-2">
+                        <p-slider formControlName="bannerImageBlur" [style]="{'width':'16em'}" [animate]="true"></p-slider>
+                    </span>
+                </div>
+                <div *ngIf="!isImage()">
+                    <span class="ui-inputgroup">
+                        <p-colorPicker formControlName="bannerColor" [inline]="false"></p-colorPicker>
+                    </span>
+                </div>
+            </div>
+            <p-footer>
+                <div class="p-d-flex p-justify-end w-100">
+                    <button (click)="save()" pButton type="button" label="수정하기" class="ui-button-primary p-mr-2"></button>
+                    <button (click)="cancel()" pButton type="button" label="취소하기" class="ui-button-secondary"></button>
+                </div>
+            </p-footer>
+        </p-card>
+    </div>
+</form>

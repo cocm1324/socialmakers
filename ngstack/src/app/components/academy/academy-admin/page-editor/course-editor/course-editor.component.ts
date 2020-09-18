@@ -169,10 +169,6 @@ export class CourseEditorComponent implements OnInit, OnDestroy {
 			return true;
 		}
 
-		if (this.isImage()) {
-			
-		}
-
 		const dataChanged = courseName !== this.courseInfoData.courseName 
 			|| description1 !== this.courseInfoData.description1 
 			|| description2 !== this.courseInfoData.description2 

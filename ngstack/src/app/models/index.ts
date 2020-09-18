@@ -4,3 +4,4 @@ export * from './common.interface';
 
 export * from './academy-admin-url.enum';
 export * from './academy-url.enum';
+export * from './api-url.enum';

@@ -14,7 +14,15 @@
         (onFinish)="onPageInfoFinished($event)" 
         (onEditStateChange)="onHeaderEditStateChange($event)"
     ></app-course-editor>
-    <app-notice-editor *ngIf="isNotice()"></app-notice-editor>
+    <app-notice-editor 
+        *ngIf="isNotice()"
+        [isNewPage]="isNewPage"
+        [disabledByParent]="childComponentEditState == 2" 
+        [noticeInfoData]="noticeInfoData" 
+        (onFinish)="onPageInfoFinished($event)" 
+        (onEditStateChange)="onHeaderEditStateChange($event)"
+    >
+    </app-notice-editor>
 </div>
 <div *ngIf="loaded && !isNewPage" class="w-100">
     <ple-editor

@@ -1,9 +1,10 @@
-import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common'; 
-import { AppCommonModule } from '@app/app-common.module';
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common'; 
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+
 import { ImageUploadComponent } from './image-upload/image-upload.component';
 import { ImageUrlComponent } from './image-url/image-url.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { PrimeModule } from '@app/prime.module';
 
 @NgModule({
     declarations: [
@@ -12,8 +13,9 @@ import { ReactiveFormsModule } from '@angular/forms';
     ],
     imports: [
         CommonModule,
-        AppCommonModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        FormsModule,
+        PrimeModule
     ],
     exports: [
         ImageUploadComponent,

@@ -105,10 +105,14 @@ export class AdminMainComponent implements OnInit {
 
 	goToEditCourse(e) {
 		e.preventDefault();
-		this.router.navigate([`${ACADEMY_ADMIN_URL.PREFIX}/${ACADEMY_ADMIN_URL.COURSE_FRAGMANT}/${this.selectedCourseId}`]);
+		this.router.navigate([`${ACADEMY_ADMIN_URL.PREFIX}/${ACADEMY_ADMIN_URL.COURSE_FRAGMENT}/${this.selectedCourseId}`]);
 	}
 
 	onCreateCourse() {
 		this.router.navigate([`${ACADEMY_ADMIN_URL.PREFIX}/${ACADEMY_ADMIN_URL.NEW_COURSE}`]);
+	}
+
+	gotoEditNotice(noticeId) {
+		this.router.navigate([`${ACADEMY_ADMIN_URL.PREFIX}/${ACADEMY_ADMIN_URL.NOTICE_FRAGMENT}/${noticeId}`]);
 	}
 }

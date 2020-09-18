@@ -7,29 +7,26 @@ import {
 	ICreateSectionReq, IUpdateSectionReq, IDeleteSectionReq, ICommonRes, IGetCourseRes, 
 	IGetCourseListRes, IUpdateCourseSeqReq, IRunEyedropReq, IRunEyedropRes, IUpdateAboutUsReq, 
 	IUpdateCourseInfoReq, ICreateCourseReq, ICreateCourseRes, IUpdateSectionSeqReq, 
-	IGetImageListRes, IGetNoticeListRes 
+	IGetImageListRes, IGetNoticeListRes, API_URL, IGetNoticeRes 
 } from '../../models';
 
 @Injectable({
   	providedIn: 'root'
 })
 export class DataService {
-	private userUrl = "/api/user";
-	private imageUrl = "/api/image";
-	private pageUrl = "/api/page";
 
 	constructor(private http: HttpClient) { }
 
 	runLogin(request: IRunLoginReq): Observable<IRunLoginRes> {
-		return this.http.post<IRunLoginRes>(`${this.userUrl}/login`, request);
+		return this.http.post<IRunLoginRes>(API_URL.USER_LOGIN, request);
 	}
 
 	runVerifyLogin(): Observable<IRunVerifyLoginRes> {
-		return this.http.get<IRunVerifyLoginRes>(`${this.userUrl}/login`);
+		return this.http.get<IRunVerifyLoginRes>(API_URL.USER_LOGIN);
 	}
 
 	createImage(request) {
-		return this.http.post<any>(this.imageUrl, request, {
+		return this.http.post<any>(API_URL.IMAGE, request, {
 			reportProgress: true,
 			observe: 'events'
 		}).pipe(map((event) => {
@@ -47,7 +44,7 @@ export class DataService {
 	}
 
 	getImageList(pageCount?: number, pageNo?: number, increment?: boolean): Observable<IGetImageListRes> {
-		let url = `${this.imageUrl}`;
+		let url = "";
 		const queue = [];
 
 		if (pageCount) {
@@ -70,79 +67,79 @@ export class DataService {
 			}
 		}
 
-		return this.http.get<IGetImageListRes>(url);
+		return this.http.get<IGetImageListRes>(API_URL.IMAGE + url);
 	}
 
 	runEyeDrop(request: IRunEyedropReq): Observable<IRunEyedropRes> {
-		return this.http.post<IRunEyedropRes>(`${this.imageUrl}/eyedrop/${request.imageId}`, request);
+		return this.http.post<IRunEyedropRes>(API_URL.IMAGE_EYEDROP + `/${request.imageId}`, request);
 	}
 
 	getAboutUs() {
-		return this.http.get<IGetAboutUsRes>(`${this.pageUrl}/aboutUs`);
+		return this.http.get<IGetAboutUsRes>(API_URL.PAGE_ABOUT_US);
 	}
 
 	updateAboutUs(request: IUpdateAboutUsReq): Observable<ICommonRes> {
-		return this.http.put<ICommonRes>(`${this.pageUrl}/aboutUs`, request);
+		return this.http.put<ICommonRes>(API_URL.PAGE_ABOUT_US, request);
 	}
 
 	createSection(request: ICreateSectionReq): Observable<ICommonRes> {
 		const {pageId} = request;
-		return this.http.post<ICommonRes>(`${this.pageUrl}/${pageId}`, request);
+		return this.http.post<ICommonRes>(API_URL.PAGE + `/${pageId}`, request);
 	}
 
 	updateSection(request: IUpdateSectionReq): Observable<ICommonRes> {
 		const {pageId, contentId} = request;
-		return this.http.put<ICommonRes>(`${this.pageUrl}/${pageId}/${contentId}`, request);
+		return this.http.put<ICommonRes>(API_URL.PAGE + `/${pageId}/${contentId}`, request);
 	}
 
 	deleteSection(request: IDeleteSectionReq): Observable<ICommonRes> {
 		const {pageId, contentId} = request;
-		return this.http.delete<ICommonRes>(`${this.pageUrl}/${pageId}/${contentId}`);
+		return this.http.delete<ICommonRes>(API_URL.PAGE + `/${pageId}/${contentId}`);
 	}
 
 	updateSectionSeqUp(request: IUpdateSectionSeqReq): Observable<ICommonRes> {
 		const {pageId, contentId} = request;
-		return this.http.put<ICommonRes>(`${this.pageUrl}/${pageId}/${contentId}`, request);
+		return this.http.put<ICommonRes>(API_URL.PAGE + `/${pageId}/${contentId}`, request);
 	}
 
 	updateSectionSeqDown(request): Observable<ICommonRes> {
 		const {pageId, contentId} = request;
-		return this.http.put<ICommonRes>(`${this.pageUrl}/${pageId}/${contentId}`, request);
+		return this.http.put<ICommonRes>(API_URL.PAGE + `/${pageId}/${contentId}`, request);
 	}
 
 	getCourseList(): Observable<IGetCourseListRes> {
-		return this.http.get<IGetCourseListRes>(`${this.pageUrl}/course`);
+		return this.http.get<IGetCourseListRes>(API_URL.PAGE_COURSE);
 	}
 
 	getCourse(courseId: number): Observable<IGetCourseRes> {
-		return this.http.get<IGetCourseRes>(`${this.pageUrl}/course/${courseId}`);
+		return this.http.get<IGetCourseRes>(API_URL.PAGE_COURSE + `/${courseId}`);
 	}
 
 	createCourse(request: ICreateCourseReq): Observable<ICreateCourseRes> {
-		return this.http.post<ICreateCourseRes>(`${this.pageUrl}/course`, request);
+		return this.http.post<ICreateCourseRes>(API_URL.PAGE_COURSE, request);
 	}
 
 	deleteCourse(courseId: number): Observable<ICommonRes> {
-		return this.http.delete<ICommonRes>(`${this.pageUrl}/course/${courseId}`);
+		return this.http.delete<ICommonRes>(API_URL.PAGE_COURSE + `/${courseId}`);
 	}
 
 	updateCourseSeqUp(request: IUpdateCourseSeqReq): Observable<ICommonRes> {
 		const {courseId} = request;
-		return this.http.put<ICommonRes>(`${this.pageUrl}/course/upSeq/${courseId}`, request);
+		return this.http.put<ICommonRes>(API_URL.PAGE_COURSE_UPSEQ + `/${courseId}`, request);
 	}
 
 	updateCourseSeqDown(request: IUpdateCourseSeqReq): Observable<ICommonRes> {
 		const {courseId} = request;
-		return this.http.put<ICommonRes>(`${this.pageUrl}/course/downSeq/${courseId}`, request);
+		return this.http.put<ICommonRes>(API_URL.PAGE_COURSE_DOWNSEQ + `/${courseId}`, request);
 	}
 
 	updateCourseInfo(request: IUpdateCourseInfoReq): Observable<ICommonRes> {
 		const {courseId} = request;
-		return this.http.put<ICommonRes>(`${this.pageUrl}/course/${courseId}`, request);
+		return this.http.put<ICommonRes>(API_URL.PAGE_COURSE + `/${courseId}`, request);
 	}
 
 	getNoticeList(pageCount?: number, pageNo?: number, increment?: boolean): Observable<IGetNoticeListRes> {
-		let url = `${this.pageUrl}/notice`;
+		let url = '';
 		const queue = [];
 
 		if (pageCount) {
@@ -165,6 +162,10 @@ export class DataService {
 			}
 		}
 
-		return this.http.get<IGetNoticeListRes>(url);
+		return this.http.get<IGetNoticeListRes>(API_URL.PAGE_NOTICE + url);
 	} 
+
+	getNotice(noticeId: number): Observable<IGetNoticeRes> {
+		return this.http.get<IGetNoticeRes>(API_URL.PAGE_NOTICE + `/${noticeId}`);
+	}
 }

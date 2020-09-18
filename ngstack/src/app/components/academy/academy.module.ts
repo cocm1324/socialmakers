@@ -1,4 +1,5 @@
-import {NgModule} from '@angular/core';
+import { NgModule } from '@angular/core';
+
 import { AcademyComponent } from './academy.component';
 import { AcademyRoutingModule } from './academy-routing.component';
 import { PageModule } from '@components/common/page/page.module';
@@ -8,8 +9,8 @@ import { CourseComponent } from './pages/course/course.component';
 import { ReviewComponent } from './pages/review/review.component';
 import { NoticeComponent } from './pages/notice/notice.component';
 import { AnnounceComponent } from './pages/announce/announce.component';
-import { AppCommonModule } from '@app/app-common.module';
 import { ImageModule } from '@components/common/image/image.module';
+import { PrimeModule } from '@app/prime.module';
 
 @NgModule({
     declarations: [
@@ -23,7 +24,7 @@ import { ImageModule } from '@components/common/image/image.module';
     ],
     imports: [
         AcademyRoutingModule,
-        AppCommonModule,
+        PrimeModule,
         PageModule,
         ImageModule
     ]

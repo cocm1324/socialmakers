@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { IAboutUsEditorInput, IUpdateAboutUsReq, ICourseInfo, IUpdateCourseInfoReq, ICreateCourseReq, ISectionWithContentId, ACADEMY_ADMIN_URL, PAGE_TYPE } from '@app/models';
+import { 
+	IAboutUsEditorInput, IUpdateAboutUsReq, ICourseInfo, IUpdateCourseInfoReq, 
+	ICreateCourseReq, ISectionWithContentId, ACADEMY_ADMIN_URL, PAGE_TYPE, INoticeEditorInput 
+} from '@app/models';
 import { Router } from '@angular/router';
 import { DataService } from '@services/data/data.service';
 
@@ -15,7 +18,8 @@ export class PageEditorComponent implements OnInit {
 	contents: ISectionWithContentId[] = null;
 	aboutUsData: IAboutUsEditorInput;
 	courseInfoData: ICourseInfo;
-	
+	noticeInfoData: INoticeEditorInput;
+
 	loaded: boolean = false;
 	childComponentEditState = 0;
 
@@ -27,6 +31,11 @@ export class PageEditorComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
+		this.parseUrl();
+		this.loadPage();
+	}
+
+	parseUrl() {
 		const parsedUrl = this.router.url.split('/');
 		const possibleId = parsedUrl[parsedUrl.length - 1];
 		const curUrl = this.router.url;
@@ -36,13 +45,15 @@ export class PageEditorComponent implements OnInit {
 		} else if (curUrl === `/${ACADEMY_ADMIN_URL.PREFIX}/${ACADEMY_ADMIN_URL.NEW_COURSE}`) {
 			this.pageType = PAGE_TYPE.COURSE;
 			this.isNewPage = true;
-		} else if (curUrl === `/${ACADEMY_ADMIN_URL.PREFIX}/${ACADEMY_ADMIN_URL.COURSE_FRAGMANT}/${parsedUrl[parsedUrl.length - 1]}`) {
+		} else if (curUrl === `/${ACADEMY_ADMIN_URL.PREFIX}/${ACADEMY_ADMIN_URL.COURSE_FRAGMENT}/${parsedUrl[parsedUrl.length - 1]}`) {
 			this.pageType = PAGE_TYPE.COURSE;
 			this.isNewPage = false;
 			this.pageId = parseInt(possibleId);
+		} else if (curUrl === `/${ACADEMY_ADMIN_URL.PREFIX}/${ACADEMY_ADMIN_URL.NOTICE_FRAGMENT}/${parsedUrl[parsedUrl.length - 1]}`) {
+			this.pageType = PAGE_TYPE.NOTICE;
+			this.isNewPage = false;
+			this.pageId = parseInt(possibleId);
 		}
-
-		this.loadPage();
 	}
 
 	loadPage() {
@@ -65,6 +76,16 @@ export class PageEditorComponent implements OnInit {
 						const {courseId, contents} = res.data;
 						this.pageId = courseId;
 						this.courseInfoData = res.data;
+						this.initContent(contents);
+						this.loaded = true;
+					}
+				});
+			} else if (this.isNotice()) {
+				this.dataService.getNotice(this.pageId).toPromise().then(res => {
+					if (res.status) {
+						const {noticeId, contents} = res.data;
+						this.pageId = noticeId;
+						this.noticeInfoData = res.data;
 						this.initContent(contents);
 						this.loaded = true;
 					}
@@ -192,7 +213,7 @@ export class PageEditorComponent implements OnInit {
 				this.dataService.createCourse(request).toPromise().then(res => {
 					if (res.status) {
 						const {courseId} = res.data;
-						this.router.navigate([`${ACADEMY_ADMIN_URL.PREFIX}/${ACADEMY_ADMIN_URL.COURSE_FRAGMANT}/${courseId}`]);
+						this.router.navigate([`${ACADEMY_ADMIN_URL.PREFIX}/${ACADEMY_ADMIN_URL.COURSE_FRAGMENT}/${courseId}`]);
 					}
 				});
 			} else {
@@ -205,6 +226,12 @@ export class PageEditorComponent implements OnInit {
 						this.loadPage();
 					}
 				});
+			}
+		} else if (this.isNotice()) {
+			if (this.isNewPage) {
+
+			} else {
+				
 			}
 		}
 	}
