@@ -1,7 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { INoticeEditorInput, DATA_LENGTH, BANNER_TYPE } from '@app/models/';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
+import { UtilService } from '@services/util/util.service';
 
 @Component({
 	selector: 'app-notice-editor',
@@ -26,6 +27,8 @@ export class NoticeEditorComponent implements OnInit, OnDestroy {
 		{label: "단색", value: BANNER_TYPE.COLOR}
 	];
 
+	showImageUploadDialogEvent: Subject<void> = new Subject<void>();
+
 	subscription: Subscription[] = [];
 
 	get noticeName() {return this.noticeForm.get('noticeName');}
@@ -36,7 +39,7 @@ export class NoticeEditorComponent implements OnInit, OnDestroy {
 	get bannerColor() {return this.noticeForm.get('bannerColor');}
 	get blurValue() {return `blur(${this.bannerImageBlur.value}px)`;}
 
-	constructor(private fb: FormBuilder) { }
+	constructor(private fb: FormBuilder, private utilService: UtilService) { }
 
 	ngOnInit() {
 		this.isEdit = false;
@@ -59,8 +62,15 @@ export class NoticeEditorComponent implements OnInit, OnDestroy {
 				this.bannerImageId.updateValueAndValidity();
 			}
 		});
-
 		this.subscription.push(bannerTypeChange);
+
+		const bannerColorChange = this.bannerColor.valueChanges.subscribe(value => {
+			if (!this.isImage()) {
+				const inversedColor = this.utilService.backgroundReactiveFontColor(value);
+				console.log(inversedColor);
+			}
+		});
+		this.subscription.push(bannerColorChange);
 
 		if (this.isNewPage) {
 			this.isEdit = true;
@@ -84,10 +94,15 @@ export class NoticeEditorComponent implements OnInit, OnDestroy {
 		return this.bannerType.value == this.bannerTypes[0].value;
 	}
 
+	showImageUploadDialog() {
+		this.showImageUploadDialogEvent.next();
+	}
+
 	imageUploaded(e) {
 		const {url, imageId} = e;
-		
+
 		if (url && imageId) {
+			this.bannerType.patchValue(this.bannerTypes[0].value);
 			this.bannerImageId.patchValue(imageId);
 			this.bannerImageUrl.patchValue(url);
 		}

@@ -143,6 +143,10 @@ $color-bisque: bisque;
     align-items: center;
 }
 
+.p-align-top {
+    align-items: flex-start;
+}
+
 .p-cursor-pointer {
     cursor: pointer !important;
 }

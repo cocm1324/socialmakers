@@ -8,8 +8,26 @@
     transform: scale(1.1);
 }
 
-.hero-content {
-    background-color: rgba($color: #ffffff, $alpha: 0.4);
+.h1-input-text {
+    display: block;
+    width: 100%;
+    background: rgba($color: #000000, $alpha: 0.0);
+    color: #000000;
+    border: 0px;
+    border-bottom: 1px solid rgba($color: #000000, $alpha: 0.0);
+    padding: 0;
+    margin: 0.67em 0;
+    font-size: 2em;
+    font-weight: bold;
+
+    &:hover, &:focus {
+        border-bottom: 1px solid #000000;
+    }
+
+    &.ng-dirty.ng-invalid {
+        border: 0px;
+        border-bottom: 1px solid #a80000;
+    }
 }
 
 .editable {
@@ -32,11 +50,14 @@ input {
 
 .overlay {
     z-index: 5000;
-    display: none;
+    visibility: hidden;
+    opacity: 0;
     background-color: rgba($color: #000000, $alpha: 0); 
+    transition: visibility 0.3s, opacity 0.3s linear;
 }
 
 .item:hover .overlay{
-    display: inherit;
-    background-color: rgba($color: #000000, $alpha: 0.3);    
+    visibility: visible;
+    opacity: 1;
+    // background-color: rgba($color: #000000, $alpha: 0.3);    
 }

@@ -35,4 +35,4 @@
     </p-footer>
 </p-dialog>
 
-<button type="button" (click)="showDialog()" pButton [icon]="icon" [label]="label" style="width: 12em;" class="ui-button-secondary"></button>
+<button *ngIf="button" type="button" (click)="showDialog()" pButton [icon]="icon" [label]="label" style="width: 12em;" class="ui-button-secondary"></button>

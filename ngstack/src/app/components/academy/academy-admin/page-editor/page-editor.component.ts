@@ -49,6 +49,9 @@ export class PageEditorComponent implements OnInit {
 			this.pageType = PAGE_TYPE.COURSE;
 			this.isNewPage = false;
 			this.pageId = parseInt(possibleId);
+		} else if (curUrl === `/${ACADEMY_ADMIN_URL.PREFIX}/${ACADEMY_ADMIN_URL.NEW_NOTICE}`) {
+			this.pageType = PAGE_TYPE.NOTICE;
+			this.isNewPage = true;
 		} else if (curUrl === `/${ACADEMY_ADMIN_URL.PREFIX}/${ACADEMY_ADMIN_URL.NOTICE_FRAGMENT}/${parsedUrl[parsedUrl.length - 1]}`) {
 			this.pageType = PAGE_TYPE.NOTICE;
 			this.isNewPage = false;
