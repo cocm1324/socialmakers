@@ -149,6 +149,8 @@ export class PageEditorComponent implements OnInit {
 			...e
 		};
 
+		console.log(request)
+
 		if (this.contents.some(section => {return section.contentId == request.contentId})) {
 			this.dataService.updateSection(request).toPromise().then((response) => {
 				if (response.status) {

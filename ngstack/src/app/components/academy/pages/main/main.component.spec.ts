@@ -19,8 +19,7 @@ describe('MainComponent', () => {
 				CarouselModule,
 				RouterTestingModule
 			]
-		})
-		.compileComponents();
+		}).compileComponents();
 	}));
 
 	beforeEach(() => {

@@ -239,7 +239,7 @@ export class SectionEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 	}
 
 	isFormModified() {
-		const {width, type, content, background, imageId} = this.sectionForm.getRawValue();
+		const {width, type, content, background, imageId, imageUrl} = this.sectionForm.getRawValue();
 
 		if (this.section) {
 			if (width != this.section.width) {return true;}
@@ -248,11 +248,19 @@ export class SectionEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
 			if (this.isImage()) {
 				return this.section.imageId != imageId;
+			} else if (this.isImageUrl()) {
+				return this.section.imageUrl != imageUrl;
 			} else {
 				return this.section.content != content;
 			}
 		} else {
-			return content !== "" || background !== "#FFFFFF";
+			if (this.isImage()) {
+				return imageId !== null || background !== "#FFFFFF";
+			} else if (this.isImageUrl()) {
+				return imageUrl !== "" || background !== "#FFFFFF";
+			} else {
+				return content !== "" || background !== "#FFFFFF";
+			}
 		}
 	}
 
@@ -270,7 +278,7 @@ export class SectionEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
 	save() {
 		this.eyedrop = false;
-		
+
 		if (this.isFormModified()) {
 			const {background, content, type, width, imageId} = this.sectionForm.getRawValue();
 			const sectionData = {
