@@ -42,10 +42,12 @@ export class ImageUploadComponent implements OnInit, AfterViewInit, OnDestroy {
 	constructor(private dataService: DataService) { }
 
 	ngOnInit() {
-		const onShowEvent = this.showEvent.subscribe(() => {
-			this.showDialog();
-		});
-		this.subscriptions.push(onShowEvent);
+		if (this.showEvent) {
+			const onShowEvent = this.showEvent.subscribe(() => {
+				this.showDialog();
+			});
+			this.subscriptions.push(onShowEvent);
+		}
 	}
 
 	ngAfterViewInit() {

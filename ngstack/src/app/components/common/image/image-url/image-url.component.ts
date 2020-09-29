@@ -22,10 +22,12 @@ export class ImageUrlComponent implements OnInit, OnDestroy {
 	constructor() { }
 
 	ngOnInit() {
-		const onShowEvent = this.showEvent.subscribe(() => {
-			this.showDialog();
-		});
-		this.subscriptions.push(onShowEvent);
+		if (this.showEvent) {
+			const onShowEvent = this.showEvent.subscribe(() => {
+				this.showDialog();
+			});
+			this.subscriptions.push(onShowEvent);
+		}
 	}
 
 	showDialog() {

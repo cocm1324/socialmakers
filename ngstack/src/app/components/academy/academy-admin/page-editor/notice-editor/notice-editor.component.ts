@@ -20,6 +20,9 @@ export class NoticeEditorComponent implements OnInit, OnDestroy {
 	noticeForm: FormGroup;
 	isEdit: boolean;
 	lock: boolean = false;
+	colorPicker: boolean = false;
+
+	fontColor: string = '#000000';
 
 	dataLength = DATA_LENGTH;
 	bannerTypes = [
@@ -96,6 +99,10 @@ export class NoticeEditorComponent implements OnInit, OnDestroy {
 
 	showImageUploadDialog() {
 		this.showImageUploadDialogEvent.next();
+	}
+
+	toggleColorPicker() {
+		this.colorPicker = !this.colorPicker;
 	}
 
 	imageUploaded(e) {

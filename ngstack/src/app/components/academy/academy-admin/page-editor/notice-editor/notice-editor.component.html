@@ -1,5 +1,5 @@
 <form [formGroup]="noticeForm">
-    <div class="p-grid p-nogutter p-relative item p-overflow-hidden">
+    <div class="banner-container p-grid p-nogutter p-relative p-overflow-hidden">
         <img 
             *ngIf="isImage()" 
             class="banner banner-image" 
@@ -10,20 +10,31 @@
         <div *ngIf="!isImage()" class="banner" [ngStyle]="{'background-color': bannerColor.value}"></div>
         <div class="p-absolute p-d-flex p-justify-center p-align-center w-100 h-100" style="z-index: 1000;">
             <div class="header p-grid-medium">
-                <span *ngIf="isEdit" class="ui-inputgroup w-100">
+                <span *ngIf="!isEdit" class="ui-inputgroup w-100">
                     <input [maxLength]="dataLength.SHORT" formControlName="noticeName" class="h1-input-text" placeholder="제목" pInputText> 
                 </span>
                 <h1 *ngIf="!isEdit">{{noticeName.value}}</h1>
             </div>
         </div>
-        <div class="p-absolute overlay p-d-flex p-justify-end p-align-top w-100 h-100">
-            <div>
-                <span pTooltip="이미지 가져오기" tooltipPosition="bottom" (click)="showImageUploadDialog()">
-                    <i class="pi pi-images" style="font-size: 2em;"></i>
-                </span>
-                <span class="p-mr-2" pTooltip="배경색" tooltipPosition="bottom">
-                    <i class="pi pi-palette" style="font-size: 2em;"></i>
-                </span>
+        <div #bannerOverlay class="p-absolute overlay p-d-flex p-justify-end p-align-top">
+            <div class="p-grid toolbar p-p-1 p-mt-2 p-mr-3">
+                <div>
+                    <span pTooltip="이미지 가져오기" tooltipPosition="bottom" (click)="showImageUploadDialog()">
+                        <i class="pi pi-images" style="font-size: 2em;"></i>
+                    </span>
+                </div>
+                <div class="toolbar-divider p-m-1"></div>
+                <div>
+                    <span pTooltip="이미지 가져오기" tooltipPosition="bottom" (click)="showImageUploadDialog()">
+                        <i class="pi pi-images" style="font-size: 2em;"></i>
+                    </span>
+                    <span class="p-relative" pTooltip="배경색" tooltipPosition="bottom">
+                        <i class="pi pi-palette" style="font-size: 2em;" (click)="toggleColorPicker()"></i>
+                        <div *ngIf="colorPicker" class="p-absolute inline-color-picker">
+                            <p-colorPicker formControlName="bannerColor" [inline]="true"></p-colorPicker>
+                        </div>
+                    </span>
+                </div>
             </div>
             <!-- <button (click)="edit()" pButton type="button" label="수정하기" icon="pi pi-check" class="ui-button-primary p-mr-2"></button> -->
         </div>
