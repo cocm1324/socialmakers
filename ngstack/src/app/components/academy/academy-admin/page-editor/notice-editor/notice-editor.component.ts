@@ -68,6 +68,7 @@ export class NoticeEditorComponent implements OnInit, OnDestroy {
 		this.subscription.push(bannerTypeChange);
 
 		const bannerColorChange = this.bannerColor.valueChanges.subscribe(value => {
+			console.log('yeet')
 			if (!this.isImage()) {
 				const inversedColor = this.utilService.backgroundReactiveFontColor(value);
 				console.log(inversedColor);
