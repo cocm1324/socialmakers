@@ -1,7 +1,7 @@
 <form [formGroup]="noticeForm">
     <div class="banner-container p-grid p-nogutter p-relative p-overflow-hidden">
         <img 
-            *ngIf="isImage()" 
+            *ngIf="isImage()"
             class="banner banner-image" 
             [src]="bannerImageUrl.value" 
             [ngStyle]="{'filter': blurValue, '-webkit-filter': blurValue}"
