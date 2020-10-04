@@ -12,6 +12,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ImageModule } from '@components/common/image/image.module';
 import { PrimeModule } from '@app/prime.module';
 import { SharedModule } from '@app/shared.module';
+import { BannerEditorComponent } from './page-editor/banner-editor/banner-editor.component';
 
 @NgModule({
     declarations: [
@@ -20,7 +21,8 @@ import { SharedModule } from '@app/shared.module';
         AdminMainComponent,
         AboutUsEditorComponent,
         CourseEditorComponent,
-        NoticeEditorComponent
+        NoticeEditorComponent,
+        BannerEditorComponent
     ],
     imports: [
         AcademyAdminRoutingModule,

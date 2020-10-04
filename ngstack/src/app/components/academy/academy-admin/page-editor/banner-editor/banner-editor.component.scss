@@ -8,28 +8,6 @@
     transform: scale(1.1);
 }
 
-.h1-input-text {
-    display: block;
-    width: 100%;
-    background: rgba($color: #000000, $alpha: 0.0);
-    color: #000000;
-    border: 0px;
-    border-bottom: 1px solid rgba($color: #000000, $alpha: 0.0);
-    padding: 0;
-    margin: 0.67em 0;
-    font-size: 2em;
-    font-weight: bold;
-
-    &:hover, &:focus {
-        border-bottom: 1px solid #000000;
-    }
-
-    &.ng-dirty.ng-invalid {
-        border: 0px;
-        border-bottom: 1px solid #a80000;
-    }
-}
-
 .toolbar {
     background-color: rgba($color: #000000, $alpha: 0.4);
     border-radius: 1em;
@@ -43,10 +21,20 @@
 .pi {
     transition: 0.3s;
     font-size: 2em;
+    cursor: pointer;
 
     &:hover {
         color: #0091ff;
     }
+}
+
+.pi.highlight {
+    color: #0091ff;
+}
+
+.pi.disabled {
+    cursor: default !important;
+    color: #d9d9d9;
 }
 
 .editable {
@@ -58,6 +46,10 @@
 
 .inline-color-picker {
     right: 0;
+}
+
+.image-pannel-container {
+    width: 100px;
 }
 
 input {

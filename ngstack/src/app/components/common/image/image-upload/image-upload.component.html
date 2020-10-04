@@ -1,4 +1,10 @@
-<p-dialog header="이미지 선택하기" [(visible)]="display" [style]="{width: '50vw'}" [baseZIndex]="10000">
+<p-dialog 
+    header="이미지 선택하기" 
+    [(visible)]="display" 
+    [style]="{width: '50vw'}" 
+    [baseZIndex]="10000"
+    [dismissableMask]="true"
+>
     <div class="p-grid">
         <div *ngFor="let image of imageList" class="p-col-3">
             <img 

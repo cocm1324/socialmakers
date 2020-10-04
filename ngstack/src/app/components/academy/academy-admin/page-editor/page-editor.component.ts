@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { 
-	IAboutUsEditorInput, IUpdateAboutUsReq, ICourseInfo, IUpdateCourseInfoReq, 
-	ICreateCourseReq, ISectionWithContentId, ACADEMY_ADMIN_URL, PAGE_TYPE, INoticeEditorInput 
+	AboutUsEditorInput, IUpdateAboutUsReq, ICourseInfo, IUpdateCourseInfoReq, 
+	ICreateCourseReq, ISectionWithContentId, ACADEMY_ADMIN_URL, PAGE_TYPE, NoticeEditorInput, BannerInput 
 } from '@app/models';
 import { Router } from '@angular/router';
 import { DataService } from '@services/data/data.service';
@@ -16,9 +16,10 @@ export class PageEditorComponent implements OnInit {
 	pageType: PAGE_TYPE;
 	pageId: number;
 	contents: ISectionWithContentId[] = null;
-	aboutUsData: IAboutUsEditorInput;
+	bannerData: BannerInput;
+	aboutUsData: AboutUsEditorInput;
 	courseInfoData: ICourseInfo;
-	noticeInfoData: INoticeEditorInput;
+	noticeInfoData: NoticeEditorInput;
 
 	loaded: boolean = false;
 	childComponentEditState = 0;
@@ -89,6 +90,7 @@ export class PageEditorComponent implements OnInit {
 						const {noticeId, contents} = res.data;
 						this.pageId = noticeId;
 						this.noticeInfoData = res.data;
+						this.initBanner(res.data);
 						this.initContent(contents);
 						this.loaded = true;
 					}
@@ -107,6 +109,20 @@ export class PageEditorComponent implements OnInit {
 	}
 	isNotice() {
 		return this.pageType === PAGE_TYPE.NOTICE;
+	}
+
+	initBanner(data: AboutUsEditorInput | ICourseInfo | NoticeEditorInput) {
+		if (data.bannerImageId) {
+			this.bannerData = {
+				bannerImageId: data.bannerImageId,
+				bannerImageUrl: data.bannerImageUrl,
+				bannerImageBlur: data.bannerImageBlur
+			};
+		} else {
+			this.bannerData = {
+				bannerColor: data.bannerColor
+			};
+		}
 	}
 
 	initContent(data: ISectionWithContentId[]) {
@@ -151,8 +167,6 @@ export class PageEditorComponent implements OnInit {
 			pageId: this.pageId,
 			...e
 		};
-
-		console.log(request)
 
 		if (this.contents.some(section => {return section.contentId == request.contentId})) {
 			this.dataService.updateSection(request).toPromise().then((response) => {
@@ -212,8 +226,6 @@ export class PageEditorComponent implements OnInit {
 				const request: ICreateCourseReq = {
 					...e
 				};
-
-				console.log(request)
 
 				this.dataService.createCourse(request).toPromise().then(res => {
 					if (res.status) {

@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { IAboutUsEditorInput, DATA_LENGTH, BANNER_TYPE } from '@app/models';
+import { AboutUsEditorInput, DATA_LENGTH, BANNER_TYPE } from '@app/models';
 
 @Component({
 	selector: 'app-about-us-editor',
@@ -9,10 +9,10 @@ import { IAboutUsEditorInput, DATA_LENGTH, BANNER_TYPE } from '@app/models';
 })
 export class AboutUsEditorComponent implements OnInit, OnChanges {
 
-	@Input() aboutUsData: IAboutUsEditorInput;
+	@Input() aboutUsData: AboutUsEditorInput;
 	@Input() disabledByParent: boolean;
 	@Output() onEditStateChange: EventEmitter<boolean> = new EventEmitter();
-	@Output() onFinish: EventEmitter<IAboutUsEditorInput> = new EventEmitter();
+	@Output() onFinish: EventEmitter<AboutUsEditorInput> = new EventEmitter();
 	
 	aboutUsForm: FormGroup;
 	isEdit: boolean;
@@ -101,7 +101,7 @@ export class AboutUsEditorComponent implements OnInit, OnChanges {
 
 	save() {
 		if (this.isChanged()) {
-			const formData: IAboutUsEditorInput = {
+			const formData: AboutUsEditorInput = {
 				pageName: this.pageName.value,
 				bannerImageId: this.bannerImageId.value,
 				bannerImageUrl: this.bannerImageUrl.value,

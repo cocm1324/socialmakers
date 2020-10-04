@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
-import { INoticeEditorInput, DATA_LENGTH, BANNER_TYPE } from '@app/models/';
+import { NoticeEditorInput, DATA_LENGTH, BANNER_TYPE } from '@app/models/';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Subject, Subscription } from 'rxjs';
 import { UtilService } from '@services/util/util.service';
@@ -11,11 +11,11 @@ import { UtilService } from '@services/util/util.service';
 })
 export class NoticeEditorComponent implements OnInit, OnDestroy {
 
-	@Input() noticeInfoData: INoticeEditorInput;
+	@Input() noticeInfoData: NoticeEditorInput;
 	@Input() disabledByParent: boolean;
 	@Input() isNewPage: boolean = false;
 	@Output() onEditStateChange: EventEmitter<boolean> = new EventEmitter();
-	@Output() onFinish: EventEmitter<INoticeEditorInput> = new EventEmitter();
+	@Output() onFinish: EventEmitter<NoticeEditorInput> = new EventEmitter();
 	
 	noticeForm: FormGroup;
 	isEdit: boolean;
@@ -165,7 +165,7 @@ export class NoticeEditorComponent implements OnInit, OnDestroy {
 
 	save() {
 		if (this.isChanged()) {
-			const formData: INoticeEditorInput = {
+			const formData: NoticeEditorInput = {
 				...this.noticeInfoData,
 				noticeName: this.noticeName.value,
 				bannerImageId: this.bannerImageId.value,
