@@ -17,6 +17,8 @@ import {TableModule} from 'primeng/table';
 import {PaginatorModule} from 'primeng/paginator';
 import {SelectButtonModule} from 'primeng/selectbutton';
 import {SliderModule} from 'primeng/slider';
+import {TooltipModule} from 'primeng/tooltip';
+import {OverlayPanelModule} from 'primeng/overlaypanel';
 
 @NgModule({
     imports: [
@@ -36,7 +38,9 @@ import {SliderModule} from 'primeng/slider';
         TableModule,
         PaginatorModule,
         SelectButtonModule,
-        SliderModule
+        SliderModule,
+        TooltipModule,
+        OverlayPanelModule
     ],
     exports: [
         ButtonModule,
@@ -55,7 +59,9 @@ import {SliderModule} from 'primeng/slider';
         TableModule,
         PaginatorModule,
         SelectButtonModule,
-        SliderModule
+        SliderModule,
+        TooltipModule,
+        OverlayPanelModule
     ]
 })
 export class PrimeModule {}

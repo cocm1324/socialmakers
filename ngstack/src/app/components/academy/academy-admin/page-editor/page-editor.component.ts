@@ -1,33 +1,42 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { 
-	IAboutUsEditorInput, IUpdateAboutUsReq, ICourseInfo, IUpdateCourseInfoReq, 
-	ICreateCourseReq, ISectionWithContentId, ACADEMY_ADMIN_URL, PAGE_TYPE, INoticeEditorInput 
+	AboutUsEditorInput, IUpdateAboutUsReq, ICourseInfo, IUpdateCourseInfoReq, 
+	ICreateCourseReq, ISectionWithContentId, ACADEMY_ADMIN_URL, PAGE_TYPE, 
+	NoticeEditorInput, BannerInput, NoticeBanner, IUpdateNoticeReq, AboutUsBanner, Banner 
 } from '@app/models';
 import { Router } from '@angular/router';
 import { DataService } from '@services/data/data.service';
+import { PageEditorService } from './page-editor.service';
+import { Subscription } from 'rxjs';
+import { skip } from 'rxjs/operators';
 
 @Component({
   selector: 'app-page-editor',
   templateUrl: './page-editor.component.html',
   styleUrls: ['./page-editor.component.scss']
 })
-export class PageEditorComponent implements OnInit {
+export class PageEditorComponent implements OnInit, OnDestroy {
 
 	pageType: PAGE_TYPE;
 	pageId: number;
 	contents: ISectionWithContentId[] = null;
-	aboutUsData: IAboutUsEditorInput;
+	bannerMeta: BannerInput;
+	bannerContent: AboutUsEditorInput | ICourseInfo | NoticeEditorInput;
+	aboutUsData: AboutUsEditorInput;
 	courseInfoData: ICourseInfo;
-	noticeInfoData: INoticeEditorInput;
+	noticeInfoData: NoticeEditorInput;
 
 	loaded: boolean = false;
 	childComponentEditState = 0;
 
 	isNewPage = false;
 
+	subscriptions: Subscription[] = [];
+
 	constructor(
 		private router: Router,
-		private dataService: DataService
+		private dataService: DataService,
+		private pageEditorService: PageEditorService
 	) { }
 
 	ngOnInit() {
@@ -49,6 +58,9 @@ export class PageEditorComponent implements OnInit {
 			this.pageType = PAGE_TYPE.COURSE;
 			this.isNewPage = false;
 			this.pageId = parseInt(possibleId);
+		} else if (curUrl === `/${ACADEMY_ADMIN_URL.PREFIX}/${ACADEMY_ADMIN_URL.NEW_NOTICE}`) {
+			this.pageType = PAGE_TYPE.NOTICE;
+			this.isNewPage = true;
 		} else if (curUrl === `/${ACADEMY_ADMIN_URL.PREFIX}/${ACADEMY_ADMIN_URL.NOTICE_FRAGMENT}/${parsedUrl[parsedUrl.length - 1]}`) {
 			this.pageType = PAGE_TYPE.NOTICE;
 			this.isNewPage = false;
@@ -61,10 +73,40 @@ export class PageEditorComponent implements OnInit {
 			if (this.isAboutUs()) {
 				this.dataService.getAboutUs().toPromise().then(res => {
 					if (res.status) {
-						const {pageId, contents} = res.data;
+						const {
+							pageId, contents, pageName,
+							bannerImageBlur, bannerImageId, bannerImageUrl, bannerColor,
+						} = res.data;
+						
 						this.pageId = pageId;
-						this.aboutUsData = res.data;
 						this.initContent(contents);
+
+						const aboutUsBanner: AboutUsBanner = {
+							bannerImageId: bannerImageId,
+							bannerImageUrl: bannerImageUrl,
+							bannerImageBlur: bannerImageBlur,
+							bannerColor: bannerColor,
+							pageName: pageName
+						}
+
+						if (bannerImageId) {
+							delete aboutUsBanner.bannerColor;
+						} else {
+							delete aboutUsBanner.bannerImageId;
+							delete aboutUsBanner.bannerImageUrl;
+							delete aboutUsBanner.bannerImageBlur;
+						}
+
+						this.pageEditorService.nextBanner(aboutUsBanner);
+
+						const aboutUsBannerChange = this.pageEditorService.getBanner().pipe(
+							skip(1)
+						).subscribe(next => {
+							this.onAboutUsChanged(next);
+						});
+						this.subscriptions.push(aboutUsBannerChange);
+
+						this.aboutUsData = res.data;
 						this.loaded = true;
 					}
 				}, reject => {
@@ -83,10 +125,42 @@ export class PageEditorComponent implements OnInit {
 			} else if (this.isNotice()) {
 				this.dataService.getNotice(this.pageId).toPromise().then(res => {
 					if (res.status) {
-						const {noticeId, contents} = res.data;
+						const {
+							noticeId, contents, 
+							bannerColor, bannerImageBlur, bannerImageUrl, bannerImageId,
+							noticeName, creationDateTime, updateDateTime
+						} = res.data;
+
 						this.pageId = noticeId;
-						this.noticeInfoData = res.data;
 						this.initContent(contents);
+
+						const noticeBanner: NoticeBanner = {
+							bannerImageId: bannerImageId,
+							bannerImageUrl: bannerImageUrl,
+							bannerImageBlur: bannerImageBlur,
+							bannerColor: bannerColor,
+							noticeName: noticeName,
+							creationDateTime: creationDateTime,
+							updateDateTime: updateDateTime
+						}
+
+						if (bannerImageId) {
+							delete noticeBanner.bannerColor;
+						} else {
+							delete noticeBanner.bannerImageId;
+							delete noticeBanner.bannerImageUrl;
+							delete noticeBanner.bannerImageBlur;
+						}
+
+						this.pageEditorService.nextBanner(noticeBanner);
+
+						const noticeBannerChange = this.pageEditorService.getBanner().pipe(
+							skip(1)
+						).subscribe(next => {
+							this.onNoticeBannerChanged(next);
+						});
+						this.subscriptions.push(noticeBannerChange);
+
 						this.loaded = true;
 					}
 				});
@@ -149,8 +223,6 @@ export class PageEditorComponent implements OnInit {
 			...e
 		};
 
-		console.log(request)
-
 		if (this.contents.some(section => {return section.contentId == request.contentId})) {
 			this.dataService.updateSection(request).toPromise().then((response) => {
 				if (response.status) {
@@ -187,6 +259,10 @@ export class PageEditorComponent implements OnInit {
 		});
 	}
 
+	onBannerChange(e) {
+		console.log(e);
+	}
+
 	onPageInfoFinished(e) {
 		if (this.isAboutUs()) {
 			const request: IUpdateAboutUsReq = {
@@ -210,8 +286,6 @@ export class PageEditorComponent implements OnInit {
 					...e
 				};
 
-				console.log(request)
-
 				this.dataService.createCourse(request).toPromise().then(res => {
 					if (res.status) {
 						const {courseId} = res.data;
@@ -229,12 +303,57 @@ export class PageEditorComponent implements OnInit {
 					}
 				});
 			}
-		} else if (this.isNotice()) {
-			if (this.isNewPage) {
+		}
+	}
 
-			} else {
+	onAboutUsChanged(next: AboutUsBanner) {
+		const request: IUpdateAboutUsReq = {
+			pageName: next.pageName,
+			bannerImageId: next.bannerImageId,
+			bannerImageBlur: next.bannerImageBlur,
+			bannerColor: next.bannerColor
+		};
+
+		if (request.bannerImageId) {
+			delete request.bannerColor;
+		} else {
+			delete request.bannerImageId;
+			delete request.bannerImageBlur;
+		}
+
+		this.dataService.updateAboutUs(request).toPromise().then((res) => {
+			if (res.status) {
 				
+			} else {
+
 			}
+		});
+	}
+
+	onNoticeBannerChanged(next: NoticeBanner) {
+		if (!this.isNewPage) {
+			const request: IUpdateNoticeReq = {
+				noticeId: this.pageId,
+				noticeName: next.noticeName,
+				bannerImageId: next.bannerImageId,
+				bannerImageBlur: next.bannerImageBlur,
+				bannerColor: next.bannerColor
+			}
+
+			if (request.bannerImageId) {
+				delete request.bannerColor;
+			} else {
+				delete request.bannerImageId;
+				delete request.bannerImageBlur;
+			}
+
+			this.dataService.updateNotice(request).toPromise().then(res => {
+				if (res.status) {
+
+				} else {
+
+				}
+			});
 		}
 	}
 
@@ -252,5 +371,11 @@ export class PageEditorComponent implements OnInit {
 		} else {
 			this.childComponentEditState = 0;
 		}
+	}
+
+	ngOnDestroy() {
+		this.subscriptions.forEach(subscription => {
+			subscription.unsubscribe();
+		});
 	}
 }

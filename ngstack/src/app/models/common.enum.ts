@@ -32,3 +32,9 @@ export enum BANNER_TYPE {
 	IMAGE,
 	COLOR
 }
+
+export enum DELAY_TYPE {
+    LONG = 900,
+    MEDIUM = 600,
+    SHORT = 300
+}

@@ -1,11 +1,4 @@
-<div *ngIf="loaded" class="w-100">
-    <app-about-us-editor 
-        *ngIf="isAboutUs()" 
-        [disabledByParent]="childComponentEditState == 2" 
-        [aboutUsData]="aboutUsData" 
-        (onFinish)="onPageInfoFinished($event)" 
-        (onEditStateChange)="onHeaderEditStateChange($event)"
-    ></app-about-us-editor>
+<div *ngIf="loaded" class="w-100 p-relative">
     <app-course-editor 
         *ngIf="isCourse()" 
         [isNewPage]="isNewPage"
@@ -14,15 +7,7 @@
         (onFinish)="onPageInfoFinished($event)" 
         (onEditStateChange)="onHeaderEditStateChange($event)"
     ></app-course-editor>
-    <app-notice-editor 
-        *ngIf="isNotice()"
-        [isNewPage]="isNewPage"
-        [disabledByParent]="childComponentEditState == 2" 
-        [noticeInfoData]="noticeInfoData" 
-        (onFinish)="onPageInfoFinished($event)" 
-        (onEditStateChange)="onHeaderEditStateChange($event)"
-    >
-    </app-notice-editor>
+    <app-banner-editor [pageType]="pageType" [isNewPage]="isNewPage"></app-banner-editor>
 </div>
 <div *ngIf="loaded && !isNewPage" class="w-100">
     <ple-editor

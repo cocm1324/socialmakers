@@ -66,7 +66,6 @@ export class AdminMainComponent implements OnInit {
 						return -1;
 					}
 				});
-				console.log(this.notices)
 			} else {
 				alert(`${res.error.code}: ${res.error.message}`);
 			}
@@ -114,5 +113,9 @@ export class AdminMainComponent implements OnInit {
 
 	gotoEditNotice(noticeId) {
 		this.router.navigate([`${ACADEMY_ADMIN_URL.PREFIX}/${ACADEMY_ADMIN_URL.NOTICE_FRAGMENT}/${noticeId}`]);
+	}
+
+	onCreateNotice() {
+		this.router.navigate([`${ACADEMY_ADMIN_URL.PREFIX}/${ACADEMY_ADMIN_URL.NEW_NOTICE}`]);
 	}
 }

@@ -1,4 +1,17 @@
-<div class="p-grid p-nogutter p-relative item p-overflow-hidden">
+<div class="p-grid-medium h-100 p-nogutter p-align-center">
+    <form [formGroup]="aboutUsForm"></form>
+    <textarea 
+        pInputTextarea
+        formControlName="pageName"
+        class="h1-input-text" 
+        type="text"
+        placeholder="제목"
+        [maxlength]="dataLength.SHORT"
+        autoResize="autoResize"
+        rows="1"
+    ></textarea>
+</div>
+<!-- <div class="p-grid p-nogutter p-relative item p-overflow-hidden">
     <img *ngIf="isImage()" class="banner banner-image" [src]="bannerImageUrl.value" [ngStyle]="{'filter': blurValue, '-webkit-filter': blurValue}">
     <div *ngIf="!isImage()" class="banner" [ngStyle]="{'background-color': bannerColor.value}"></div>
     <div class="p-absolute p-d-flex p-justify-center p-align-center w-100 h-100" style="z-index: 1000;">
@@ -50,4 +63,4 @@
             </p-footer>
         </p-card>
     </div>
-</form>
+</form> -->

@@ -143,6 +143,10 @@ $color-bisque: bisque;
     align-items: center;
 }
 
+.p-align-top {
+    align-items: flex-start;
+}
+
 .p-cursor-pointer {
     cursor: pointer !important;
 }
@@ -307,6 +311,10 @@ $color-bisque: bisque;
     margin: 0 !important;
 }
 
+.p-m-1 {
+    margin: 5px !important;
+}
+
 .p-m-2 {
     margin: 10px !important;
 }
@@ -390,6 +398,11 @@ $color-bisque: bisque;
 .p-mx {
     margin-left: 0;
     margin-right: 0;
+}
+
+.p-mx-1 {
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 .p-my {

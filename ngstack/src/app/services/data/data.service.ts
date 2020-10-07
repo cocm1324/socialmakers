@@ -3,12 +3,12 @@ import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { 
-	IRunLoginReq, IRunLoginRes, IRunVerifyLoginRes, ICreateImageReq, IGetAboutUsRes, 
+	IRunLoginReq, IRunLoginRes, IRunVerifyLoginRes, IGetAboutUsRes, 
 	ICreateSectionReq, IUpdateSectionReq, IDeleteSectionReq, ICommonRes, IGetCourseRes, 
 	IGetCourseListRes, IUpdateCourseSeqReq, IRunEyedropReq, IRunEyedropRes, IUpdateAboutUsReq, 
 	IUpdateCourseInfoReq, ICreateCourseReq, ICreateCourseRes, IUpdateSectionSeqReq, 
-	IGetImageListRes, IGetNoticeListRes, API_URL, IGetNoticeRes 
-} from '../../models';
+	IGetImageListRes, IGetNoticeListRes, API_URL, IGetNoticeRes, IUpdateNoticeReq 
+} from '@app/models';
 
 @Injectable({
   	providedIn: 'root'
@@ -167,5 +167,9 @@ export class DataService {
 
 	getNotice(noticeId: number): Observable<IGetNoticeRes> {
 		return this.http.get<IGetNoticeRes>(API_URL.PAGE_NOTICE + `/${noticeId}`);
+	}
+
+	updateNotice(request: IUpdateNoticeReq): Observable<ICommonRes> {
+		return this.http.put<ICommonRes>(API_URL.PAGE_NOTICE + `/${request.noticeId}`, request);
 	}
 }
