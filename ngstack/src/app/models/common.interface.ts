@@ -227,3 +227,11 @@ export interface IGetNoticeRes extends ICommonRes {
         published: number;
     }
 }
+
+export interface IUpdateNoticeReq {
+    noticeId: number;
+    noticeName: string;
+    bannerImageId?: number;
+    bannerImageBlur?: number;
+    bannerColor?: string;
+}

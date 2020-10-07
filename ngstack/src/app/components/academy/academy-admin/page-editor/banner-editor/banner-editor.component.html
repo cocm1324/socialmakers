@@ -16,7 +16,7 @@
         [ngStyle]="{'background-color': bannerColor.value}"
     >
     </div>
-    <div class="p-absolute overlay p-d-flex p-justify-end p-align-top">
+    <div class="p-absolute overlay">
         <div class="p-grid toolbar p-p-1 p-mt-2 p-mr-4">
             <div *ngIf="isImage()">
                 <span
@@ -31,7 +31,7 @@
                     tooltipPosition="bottom"
                     (click)="toggleImageBlurPannel()"
                 >
-                    <i class="pi pi-sliders-h" [ngClass]="{'disabled': !isEdit}"></i>
+                    <i class="pi pi-sliders-h" [ngClass]="{'disabled': isNewPage}"></i>
                 </span>
                 <div *ngIf="imageBlurPannel" class="p-absolute">
                     <p-card>
@@ -62,7 +62,8 @@
             <div>
                 <span 
                     pTooltip="이미지 배너" 
-                    tooltipPosition="bottom" 
+                    tooltipPosition="bottom"
+                    (click)="imageBannerSelected()"
                 >
                     <i class="pi pi-images" [ngClass]="{'highlight': isImage()}" style="font-size: 2em;"></i>
                 </span>
@@ -70,11 +71,16 @@
                     class="p-relative" 
                     pTooltip="단색 배너" 
                     tooltipPosition="bottom"
+                    (click)="colorBannerSelected()"
                 >
-                    <i class="pi pi-palette" [ngClass]="{'highlight': !isImage()}" style="font-size: 2em;" (click)="colorBannerSelected()"></i>
+                    <i class="pi pi-palette" [ngClass]="{'highlight': !isImage()}" style="font-size: 2em;"></i>
                 </span>
             </div>
         </div>
+    </div>
+    <div class="p-absolute w-100 h-100">
+        <app-about-us-editor *ngIf="pageType == pageTypes.ABOUT_US"></app-about-us-editor>
+        <app-notice-editor *ngIf="pageType == pageTypes.NOTICE"></app-notice-editor>
     </div>
 </div>
 <app-image-upload 

@@ -25,7 +25,7 @@ export class UtilService {
 		const curDateTime = new Date();
 
 		// 방금, 1분전~59분전, 1시간전 ~ 23시간전(하루가 지나기 전까지), YYYY년 MM월 DD일
-		const difference = dateTime.valueOf() - curDateTime.valueOf();
+		const difference = curDateTime.valueOf() - dateTime.valueOf();
 
 		if (difference < MINUTE) {
 			return '조금 전';

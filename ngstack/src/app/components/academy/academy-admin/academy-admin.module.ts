@@ -13,6 +13,7 @@ import { ImageModule } from '@components/common/image/image.module';
 import { PrimeModule } from '@app/prime.module';
 import { SharedModule } from '@app/shared.module';
 import { BannerEditorComponent } from './page-editor/banner-editor/banner-editor.component';
+import { PageEditorService } from './page-editor/page-editor.service';
 
 @NgModule({
     declarations: [
@@ -32,6 +33,9 @@ import { BannerEditorComponent } from './page-editor/banner-editor/banner-editor
         ReactiveFormsModule,
         ImageModule,
         PageModule
+    ],
+    providers: [
+        PageEditorService
     ]
 })
 export class AcademyAdminModule { }

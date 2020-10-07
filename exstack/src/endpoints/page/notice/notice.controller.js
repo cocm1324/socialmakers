@@ -2,7 +2,6 @@ const mysqlPool = require('../../../dbs/mysql');
 const queryStatement = require('../../../query/query');
 const seqeunce = require('../../../helpers/seqHelper');
 
-
 const noticeController = {
     get: (req, res) => {
         let {pageNo, pageCount, increment} = req.query;
