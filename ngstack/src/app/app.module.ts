@@ -41,7 +41,7 @@ import { SharedModule } from './shared.module';
 			provide: HTTP_INTERCEPTORS,
 			useClass: DataInterceptorService,
 			multi: true
-		},
+		}
 	],
   	bootstrap: [AppComponent]
 })

@@ -1,0 +1,9 @@
+<p-dialog 
+    [(visible)]="display"
+    [dismissableMask]="true"
+    appendTo="body"
+    [focusTrap]="true"
+>
+    <p-header></p-header>
+    <ng-container [ngTemplateOutlet]="content"></ng-container>
+</p-dialog>

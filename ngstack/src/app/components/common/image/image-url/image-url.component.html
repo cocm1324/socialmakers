@@ -8,4 +8,4 @@
     </p-footer>
 </p-dialog>
 
-<button type="button" (click)="showDialog()" pButton icon="pi pi-external-link" [label]="label" style="width: 12em;"></button>
+<button *ngIf="button" type="button" (click)="showDialog()" pButton icon="pi pi-external-link" [label]="label" style="width: 12em;"></button>

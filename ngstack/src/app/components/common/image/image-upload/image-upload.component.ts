@@ -1,6 +1,7 @@
-import { Component, OnInit, Output, EventEmitter, Input, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, AfterViewInit, OnDestroy } from '@angular/core';
 import { DataService } from '@services/data/data.service';
 import { IImage } from '@app/models/';
+import { Observable, Subscription } from 'rxjs';
 
 const MAX_SIZE = 1024 * 1024 * 40;
 
@@ -9,10 +10,12 @@ const MAX_SIZE = 1024 * 1024 * 40;
 	templateUrl: './image-upload.component.html',
 	styleUrls: ['./image-upload.component.scss']
 })
-export class ImageUploadComponent implements OnInit, AfterViewInit {
+export class ImageUploadComponent implements OnInit, AfterViewInit, OnDestroy {
 	
 	@Input() label: string = "Image Upload";
 	@Input() icon: string = "pi pi-check";
+	@Input() button: boolean = true;
+	@Input() showEvent: Observable<void>;
 	@Output() onSubmit = new EventEmitter();
 
 	imageList: IImage[];
@@ -34,10 +37,17 @@ export class ImageUploadComponent implements OnInit, AfterViewInit {
 
 	display: boolean = false;
 
+	subscriptions: Subscription[] = [];
+
 	constructor(private dataService: DataService) { }
 
 	ngOnInit() {
-
+		if (this.showEvent) {
+			const onShowEvent = this.showEvent.subscribe(() => {
+				this.showDialog();
+			});
+			this.subscriptions.push(onShowEvent);
+		}
 	}
 
 	ngAfterViewInit() {
@@ -93,5 +103,11 @@ export class ImageUploadComponent implements OnInit, AfterViewInit {
 
 	cancel() {
 		this.display = false;
+	}
+
+	ngOnDestroy() {
+		this.subscriptions.forEach(subscription => {
+			subscription.unsubscribe();
+		});
 	}
 }
