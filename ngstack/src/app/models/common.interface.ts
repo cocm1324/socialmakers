@@ -154,9 +154,30 @@ export interface ICourseInfoWithContents extends ICourseInfo {
     contents: Array<ISectionWithContentId>;
 }
 
-export interface IUpdateCourseInfoReq extends ICourseInfo {
+export interface IUpdateCourseInfoReq {
     courseId: number;
+    courseName: string;
+    description1: string;
+    description2: string;
+    field1: string;
+    field2: string;
+    field3: string;
+    field4: string;
+    field5: string;
+    field6: string;
+    fieldTitle1: string;
+    fieldTitle2: string;
+    fieldTitle3: string;
+    fieldTitle4: string;
+    fieldTitle5: string;
+    fieldTitle6: string;
+    bannerImageId?: number;
+    bannerImageUrl?: string;
+    bannerImageBlur?: number;
+    bannerColor?: string;
+    registerUrl: string;
 }
+
 
 export interface IUpdateCourseSeqReq {
     courseId: number;

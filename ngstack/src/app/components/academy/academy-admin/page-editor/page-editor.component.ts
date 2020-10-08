@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { 
 	AboutUsEditorInput, IUpdateAboutUsReq, ICourseInfo, IUpdateCourseInfoReq, 
 	ICreateCourseReq, ISectionWithContentId, ACADEMY_ADMIN_URL, PAGE_TYPE, 
-	NoticeEditorInput, BannerInput, NoticeBanner, IUpdateNoticeReq, AboutUsBanner 
+	NoticeEditorInput, BannerInput, NoticeBanner, IUpdateNoticeReq, AboutUsBanner, CourseBanner 
 } from '@app/models';
 import { Router } from '@angular/router';
 import { DataService } from '@services/data/data.service';
@@ -73,15 +73,7 @@ export class PageEditorComponent implements OnInit, OnDestroy {
 			if (this.isAboutUs()) {
 				this.loadAboutUs();
 			} else if (this.isCourse()) {
-				this.dataService.getCourse(this.pageId).toPromise().then(res => {
-					if (res.status) {
-						const {courseId, contents} = res.data;
-						this.pageId = courseId;
-						this.courseInfoData = res.data;
-						this.initContent(contents);
-						this.loaded = true;
-					}
-				});
+				this.loadCourse();
 			} else if (this.isNotice()) {
 				this.loadNotice();
 			}
@@ -141,6 +133,63 @@ export class PageEditorComponent implements OnInit, OnDestroy {
 			}
 		}, reject => {
 			console.log(reject);
+		});
+	}
+
+	loadCourse() {
+		this.dataService.getCourse(this.pageId).toPromise().then(res => {
+			if (res.status) {
+				const {
+					courseId, contents, bannerImageId, bannerImageUrl, bannerImageBlur, bannerColor,
+					courseName, description1, description2, field1, field2, field3, field4, field5, field6,
+					fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6, registerUrl
+				} = res.data;
+
+				this.pageId = courseId;
+				this.initContent(contents);
+
+				const courseBanner: CourseBanner = {
+					bannerImageId: bannerImageId,
+					bannerImageUrl: bannerImageUrl,
+					bannerImageBlur: bannerImageBlur,
+					bannerColor: bannerColor,
+					courseName: courseName,
+					description1: description1,
+					description2: description2,
+					field1: field1,
+					field2: field2,
+					field3: field3,
+					field4: field4,
+					field5: field5,
+					field6: field6,
+					fieldTitle1: fieldTitle1,
+					fieldTitle2: fieldTitle2,
+					fieldTitle3: fieldTitle3,
+					fieldTitle4: fieldTitle4,
+					fieldTitle5: fieldTitle5,
+					fieldTitle6: fieldTitle6,
+					registerUrl: registerUrl
+				};
+
+				if (bannerImageId) {
+					delete courseBanner.bannerColor;
+				} else {
+					delete courseBanner.bannerImageId;
+					delete courseBanner.bannerImageUrl;
+					delete courseBanner.bannerImageBlur;
+				}
+
+				this.pageEditorService.nextBanner(courseBanner);
+
+				const courseBannerChange = this.pageEditorService.getBanner().pipe(
+					skip(1)
+				).subscribe(next => {
+					this.onCourseBannerChanged(next);
+				});
+				this.subscriptions.push(courseBannerChange);
+
+				this.loaded = true;
+			}
 		});
 	}
 
@@ -272,23 +321,7 @@ export class PageEditorComponent implements OnInit, OnDestroy {
 	}
 
 	onPageInfoFinished(e) {
-		if (this.isAboutUs()) {
-			const request: IUpdateAboutUsReq = {
-				pageName: e.pageName,
-				bannerImageId: e.bannerImageId,
-				bannerImageBlur: e.bannerImageBlur
-			};
-
-			if (e.bannerColor) {
-				request['bannerColor'] = e.bannerColor;
-			}
-
-			this.dataService.updateAboutUs(request).toPromise().then((res) => {
-				if (res.status) {
-					this.loadPage();
-				}
-			});
-		} else if (this.isCourse()) {
+		if (this.isCourse()) {
 			if (this.isNewPage) {
 				const request: ICreateCourseReq = {
 					...e
@@ -336,6 +369,54 @@ export class PageEditorComponent implements OnInit, OnDestroy {
 
 			}
 		});
+	}
+
+	onCourseBannerChanged(next: CourseBanner) {
+		if (!this.isNewPage) {
+			const {
+				bannerImageId, bannerImageBlur, bannerColor,
+				courseName, description1, description2, field1, field2, field3, field4, field5, field6,
+				fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6, registerUrl
+			} = next;
+
+			const request: IUpdateCourseInfoReq = {
+				courseId: this.pageId,
+				courseName: courseName,
+				bannerImageId: bannerImageId,
+				bannerImageBlur: bannerImageBlur,
+				bannerColor: bannerColor,
+				description1: description1,
+				description2: description2,
+				field1: field1,
+				field2: field2,
+				field3: field3,
+				field4: field4,
+				field5: field5,
+				field6: field6,
+				fieldTitle1: fieldTitle1,
+				fieldTitle2: fieldTitle2,
+				fieldTitle3: fieldTitle3,
+				fieldTitle4: fieldTitle4,
+				fieldTitle5: fieldTitle5,
+				fieldTitle6: fieldTitle6,
+				registerUrl: registerUrl
+			};
+
+			if (request.bannerImageId) {
+				delete request.bannerColor;
+			} else {
+				delete request.bannerImageId;
+				delete request.bannerImageBlur;
+			}
+
+			this.dataService.updateCourseInfo(request).toPromise().then((res) => {
+				if (res.status) {
+				
+				} else {
+	
+				}
+			});
+		}
 	}
 
 	onNoticeBannerChanged(next: NoticeBanner) {

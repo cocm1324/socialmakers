@@ -25,11 +25,19 @@ export class AboutUsEditorComponent implements OnInit, OnDestroy {
 	get pageName() {return this.aboutUsForm.get('pageName');}
 
 	ngOnInit() {
+		this.initializeForm();
+		this.getBannerAndPatchForm();
+		this.registerFormValueChange();
+	}
+
+	initializeForm() {
 		this.aboutUsForm = this.fb.group({
 			pageName: ""
 		});
+	}
 
-		const initialAboutUsBanner = this.pageEditorService.getBanner().pipe(
+	getBannerAndPatchForm() {
+		const getOnce = this.pageEditorService.getBanner().pipe(
 			take(1)
 		).subscribe(next => {
 			const {pageName} = <AboutUsBanner>next;
@@ -37,23 +45,22 @@ export class AboutUsEditorComponent implements OnInit, OnDestroy {
 				this.pageName.patchValue(pageName);
 			}
 		});
-		this.subscriptions.push(initialAboutUsBanner);
+		this.subscriptions.push(getOnce);
+	}
 
+	registerFormValueChange() {
 		const pageNameChange = this.pageName.valueChanges.pipe(
 			skip(1),
 			distinctUntilChanged(),
 			debounceTime(DELAY_TYPE.MEDIUM)
 		).subscribe(nextPageName => {
-			const nextBannerOnce = this.pageEditorService.getBanner().pipe(
-				take(1)
-			).subscribe(nextBanner => {
+			this.pageEditorService.getBanner().toPromise().then(nextBanner => {
 				const aboutUsBanner: AboutUsBanner = {
 					...nextBanner,
 					pageName: nextPageName
 				};
 				this.pageEditorService.nextBanner(aboutUsBanner);
 			});
-			this.subscriptions.push(nextBannerOnce);
 		});
 		this.subscriptions.push(pageNameChange);
 	}

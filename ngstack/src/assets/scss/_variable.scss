@@ -55,7 +55,13 @@ $color-bisque: bisque;
     }
 }
 
-.p-grid-narrow, .p-grid-narrow .p-nogutter {
+@mixin max-sm {
+    @media (max-width: #{$screen-sm-min}) {
+        @content;
+    }
+}
+
+.p-grid-narrow, .p-grid-narrow.p-nogutter {
     width: 92vw;
 
     margin-left: auto !important;
@@ -73,7 +79,7 @@ $color-bisque: bisque;
     }
 }
 
-.p-grid-medium, .p-grid-medium .p-nogutter {
+.p-grid-medium, .p-grid-medium.p-nogutter {
     width: 100vw;
 
     margin-left: auto !important;
@@ -186,27 +192,37 @@ $color-bisque: bisque;
 }
 
 .p-p-0{
-    padding:0;
+    padding:0 !important;
 }
 
 .p-p-1{
-    padding:5px;
+    padding:5px !important;
 }
 
 .p-p-2{
-    padding:10px;
+    padding:10px !important;
 }
 
 .p-p-3{
-    padding:15px;
+    padding:15px !important;
 }
 
 .p-p-4{
-    padding:20px;
+    padding:20px !important;
 }
 
 .p-p-5{
-    padding:25px;
+    padding:25px !important;
+}
+
+.p-px-5 {
+    padding-left: 25px !important;
+    padding-right: 25px !important;
+}
+
+.p-py-10 {
+    padding-top: 50px !important;
+    padding-bottom: 50px !important;
 }
 
 .p-pt-0 {
@@ -480,7 +496,6 @@ $color-bisque: bisque;
     opacity: 0 !important;
 }
 
-
 .p-bold {
     font-weight: bold;
 }
@@ -495,4 +510,21 @@ $color-bisque: bisque;
 
 .p-pre-wrap {
     white-space: pre-wrap;
+}
+
+.p-sm-hide {
+    @include max-sm {
+        display: none;
+    }
+}
+
+.p-sm-no-py {
+    @include max-sm {
+        padding-bottom: 0px !important;
+        padding-top: 0px !important;
+    }
+}
+
+.p-p-default {
+    padding: 0.429em;
 }
