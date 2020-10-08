@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { 
 	AboutUsEditorInput, IUpdateAboutUsReq, ICourseInfo, IUpdateCourseInfoReq, 
 	ICreateCourseReq, ISectionWithContentId, ACADEMY_ADMIN_URL, PAGE_TYPE, 
-	NoticeEditorInput, BannerInput, NoticeBanner, IUpdateNoticeReq, AboutUsBanner, Banner 
+	NoticeEditorInput, BannerInput, NoticeBanner, IUpdateNoticeReq, AboutUsBanner 
 } from '@app/models';
 import { Router } from '@angular/router';
 import { DataService } from '@services/data/data.service';

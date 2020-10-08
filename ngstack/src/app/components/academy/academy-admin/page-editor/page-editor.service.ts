@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AboutUsBanner, Banner, NoticeBanner } from '@app/models/';
+import { Banner } from '@app/models/';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable()

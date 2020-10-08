@@ -1,6 +1,6 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnChanges, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AboutUsEditorInput, DATA_LENGTH, BANNER_TYPE, AboutUsBanner, DELAY_TYPE } from '@app/models';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { DATA_LENGTH, AboutUsBanner, DELAY_TYPE } from '@app/models';
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, skip, take } from 'rxjs/operators';
 import { PageEditorService } from '../page-editor.service';
