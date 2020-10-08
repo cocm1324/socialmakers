@@ -71,47 +71,7 @@ export class PageEditorComponent implements OnInit, OnDestroy {
 	loadPage() {
 		if (!this.isNewPage) {
 			if (this.isAboutUs()) {
-				this.dataService.getAboutUs().toPromise().then(res => {
-					if (res.status) {
-						const {
-							pageId, contents, pageName,
-							bannerImageBlur, bannerImageId, bannerImageUrl, bannerColor,
-						} = res.data;
-						
-						this.pageId = pageId;
-						this.initContent(contents);
-
-						const aboutUsBanner: AboutUsBanner = {
-							bannerImageId: bannerImageId,
-							bannerImageUrl: bannerImageUrl,
-							bannerImageBlur: bannerImageBlur,
-							bannerColor: bannerColor,
-							pageName: pageName
-						}
-
-						if (bannerImageId) {
-							delete aboutUsBanner.bannerColor;
-						} else {
-							delete aboutUsBanner.bannerImageId;
-							delete aboutUsBanner.bannerImageUrl;
-							delete aboutUsBanner.bannerImageBlur;
-						}
-
-						this.pageEditorService.nextBanner(aboutUsBanner);
-
-						const aboutUsBannerChange = this.pageEditorService.getBanner().pipe(
-							skip(1)
-						).subscribe(next => {
-							this.onAboutUsChanged(next);
-						});
-						this.subscriptions.push(aboutUsBannerChange);
-
-						this.aboutUsData = res.data;
-						this.loaded = true;
-					}
-				}, reject => {
-					console.log(reject);
-				});
+				this.loadAboutUs();
 			} else if (this.isCourse()) {
 				this.dataService.getCourse(this.pageId).toPromise().then(res => {
 					if (res.status) {
@@ -123,47 +83,7 @@ export class PageEditorComponent implements OnInit, OnDestroy {
 					}
 				});
 			} else if (this.isNotice()) {
-				this.dataService.getNotice(this.pageId).toPromise().then(res => {
-					if (res.status) {
-						const {
-							noticeId, contents, 
-							bannerColor, bannerImageBlur, bannerImageUrl, bannerImageId,
-							noticeName, creationDateTime, updateDateTime
-						} = res.data;
-
-						this.pageId = noticeId;
-						this.initContent(contents);
-
-						const noticeBanner: NoticeBanner = {
-							bannerImageId: bannerImageId,
-							bannerImageUrl: bannerImageUrl,
-							bannerImageBlur: bannerImageBlur,
-							bannerColor: bannerColor,
-							noticeName: noticeName,
-							creationDateTime: creationDateTime,
-							updateDateTime: updateDateTime
-						}
-
-						if (bannerImageId) {
-							delete noticeBanner.bannerColor;
-						} else {
-							delete noticeBanner.bannerImageId;
-							delete noticeBanner.bannerImageUrl;
-							delete noticeBanner.bannerImageBlur;
-						}
-
-						this.pageEditorService.nextBanner(noticeBanner);
-
-						const noticeBannerChange = this.pageEditorService.getBanner().pipe(
-							skip(1)
-						).subscribe(next => {
-							this.onNoticeBannerChanged(next);
-						});
-						this.subscriptions.push(noticeBannerChange);
-
-						this.loaded = true;
-					}
-				});
+				this.loadNotice();
 			}
 		} else {
 			this.loaded = true;
@@ -178,6 +98,94 @@ export class PageEditorComponent implements OnInit, OnDestroy {
 	}
 	isNotice() {
 		return this.pageType === PAGE_TYPE.NOTICE;
+	}
+
+	loadAboutUs() {
+		this.dataService.getAboutUs().toPromise().then(res => {
+			if (res.status) {
+				const {
+					pageId, contents, pageName,
+					bannerImageBlur, bannerImageId, bannerImageUrl, bannerColor,
+				} = res.data;
+				
+				this.pageId = pageId;
+				this.initContent(contents);
+
+				const aboutUsBanner: AboutUsBanner = {
+					bannerImageId: bannerImageId,
+					bannerImageUrl: bannerImageUrl,
+					bannerImageBlur: bannerImageBlur,
+					bannerColor: bannerColor,
+					pageName: pageName
+				}
+
+				if (bannerImageId) {
+					delete aboutUsBanner.bannerColor;
+				} else {
+					delete aboutUsBanner.bannerImageId;
+					delete aboutUsBanner.bannerImageUrl;
+					delete aboutUsBanner.bannerImageBlur;
+				}
+
+				this.pageEditorService.nextBanner(aboutUsBanner);
+
+				const aboutUsBannerChange = this.pageEditorService.getBanner().pipe(
+					skip(1)
+				).subscribe(next => {
+					this.onAboutUsBannerChanged(next);
+				});
+				this.subscriptions.push(aboutUsBannerChange);
+
+				this.aboutUsData = res.data;
+				this.loaded = true;
+			}
+		}, reject => {
+			console.log(reject);
+		});
+	}
+
+	loadNotice() {
+		this.dataService.getNotice(this.pageId).toPromise().then(res => {
+			if (res.status) {
+				const {
+					noticeId, contents, 
+					bannerColor, bannerImageBlur, bannerImageUrl, bannerImageId,
+					noticeName, creationDateTime, updateDateTime
+				} = res.data;
+
+				this.pageId = noticeId;
+				this.initContent(contents);
+
+				const noticeBanner: NoticeBanner = {
+					bannerImageId: bannerImageId,
+					bannerImageUrl: bannerImageUrl,
+					bannerImageBlur: bannerImageBlur,
+					bannerColor: bannerColor,
+					noticeName: noticeName,
+					creationDateTime: creationDateTime,
+					updateDateTime: updateDateTime
+				}
+
+				if (bannerImageId) {
+					delete noticeBanner.bannerColor;
+				} else {
+					delete noticeBanner.bannerImageId;
+					delete noticeBanner.bannerImageUrl;
+					delete noticeBanner.bannerImageBlur;
+				}
+
+				this.pageEditorService.nextBanner(noticeBanner);
+
+				const noticeBannerChange = this.pageEditorService.getBanner().pipe(
+					skip(1)
+				).subscribe(next => {
+					this.onNoticeBannerChanged(next);
+				});
+				this.subscriptions.push(noticeBannerChange);
+
+				this.loaded = true;
+			}
+		});
 	}
 
 	initContent(data: ISectionWithContentId[]) {
@@ -306,7 +314,7 @@ export class PageEditorComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	onAboutUsChanged(next: AboutUsBanner) {
+	onAboutUsBannerChanged(next: AboutUsBanner) {
 		const request: IUpdateAboutUsReq = {
 			pageName: next.pageName,
 			bannerImageId: next.bannerImageId,
