@@ -1,6 +1,6 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { BANNER_TYPE, DELAY_TYPE, PAGE_TYPE } from '@app/models/';
+import { Banner, BANNER_TYPE, DELAY_TYPE, PAGE_TYPE } from '@app/models/';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, take } from 'rxjs/operators';
 import { PageEditorService } from '../page-editor.service';
@@ -40,11 +40,12 @@ export class BannerEditorComponent implements OnInit, OnDestroy {
 	) { }
 
     ngOnInit() {
-		this.initForm();
-		this.initSubscription();
+		this.initializeForm();
+		this.getBannerAndPatchForm();
+		this.registerFormChange();
 	}
 
-	initForm() {
+	initializeForm() {
 		this.bannerForm = this.fb.group({
 			bannerImageId: null,
 			bannerImageUrl: "",
@@ -52,9 +53,11 @@ export class BannerEditorComponent implements OnInit, OnDestroy {
 			bannerColor: "#ffffff",
 			bannerType: this.bannerTypes.IMAGE
 		});
+	}
 
+	getBannerAndPatchForm() {
 		if (!this.isNewPage) {
-			this.pageEditorService.getBanner().pipe(
+			const getOnce = this.pageEditorService.getBanner().pipe(
 				take(1)
 			).subscribe(next => {
 				const {bannerImageId, bannerImageUrl, bannerImageBlur, bannerColor} = next;
@@ -69,18 +72,45 @@ export class BannerEditorComponent implements OnInit, OnDestroy {
 					this.bannerType.patchValue(this.bannerTypes.COLOR);
 				}
 			});
+			this.subscriptions.push(getOnce);
 		}
 	}
 
-	initSubscription() {
+	registerFormChange() {
 		const formChange = this.bannerForm.valueChanges.pipe(
 			distinctUntilChanged(),
 			debounceTime(DELAY_TYPE.MEDIUM)
 		).subscribe(next => {
-			this.emitChange();
-		});
+			const {bannerImageId, bannerImageUrl, bannerImageBlur, bannerColor} = <Banner>next;
+			const current = this.pageEditorService.getBanner().pipe(
+				take(1)
+			).subscribe(next => {
+				const banner = {
+					...next,
+					bannerImageId: bannerImageId,
+					bannerImageUrl: bannerImageUrl,
+					bannerImageBlur: bannerImageBlur,
+					bannerColor: bannerColor
+				};
 
+				if (this.isImage()) {
+					delete banner.bannerColor;
+				} else {
+					delete banner.bannerImageId;
+					delete banner.bannerImageUrl;
+					delete banner.bannerImageBlur;
+				}
+
+				this.closeAllPannel();
+				this.pageEditorService.nextBanner(banner);
+			});
+			this.subscriptions.push(current);
+		});
 		this.subscriptions.push(formChange);
+	}
+
+	isImage() {
+		return this.bannerType.value == this.bannerTypes.IMAGE;
 	}
 
 	imageBannerSelected() {
@@ -95,10 +125,6 @@ export class BannerEditorComponent implements OnInit, OnDestroy {
 			this.bannerType.patchValue(this.bannerTypes.COLOR);
 		}
 		this.closeAllPannel();
-	}
-	
-	isImage() {
-		return this.bannerType.value == this.bannerTypes.IMAGE;
 	}
 
 	showImageUploadDialog() {
@@ -124,32 +150,6 @@ export class BannerEditorComponent implements OnInit, OnDestroy {
 	closeAllPannel() {
 		this.colorPickerPannel = false;
 		this.imageBlurPannel = false;
-	}
-
-	emitChange() {
-		const {bannerImageId, bannerImageUrl, bannerImageBlur, bannerColor} = this.bannerForm.getRawValue();
-
-		this.pageEditorService.getBanner().pipe(
-			take(1)
-		).subscribe(next => {
-			const banner = {
-				...next,
-				bannerImageId: bannerImageId,
-				bannerImageUrl: bannerImageUrl,
-				bannerImageBlur: bannerImageBlur,
-				bannerColor: bannerColor
-			};
-
-			if (this.isImage()) {
-				delete banner.bannerColor;
-			} else {
-				delete banner.bannerImageId;
-				delete banner.bannerImageUrl;
-				delete banner.bannerImageBlur;
-			}
-
-			this.pageEditorService.nextBanner(banner);
-		});
 	}
 
 	ngOnDestroy() {

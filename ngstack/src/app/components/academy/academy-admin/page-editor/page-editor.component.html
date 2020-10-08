@@ -1,12 +1,12 @@
 <div *ngIf="loaded" class="w-100 p-relative">
-    <app-course-editor 
+    <!-- <app-course-editor 
         *ngIf="isCourse()" 
         [isNewPage]="isNewPage"
         [disabledByParent]="childComponentEditState == 2" 
         [courseInfoData]="courseInfoData" 
         (onFinish)="onPageInfoFinished($event)" 
         (onEditStateChange)="onHeaderEditStateChange($event)"
-    ></app-course-editor>
+    ></app-course-editor> -->
     <app-banner-editor [pageType]="pageType" [isNewPage]="isNewPage"></app-banner-editor>
 </div>
 <div *ngIf="loaded && !isNewPage" class="w-100">

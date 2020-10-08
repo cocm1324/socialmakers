@@ -356,7 +356,7 @@ const query = {
         `;
     },
     updateCourse: (
-        pageId, courseName, thumbImageId, bannerImageId, bannerImageBlur, bannerColor, 
+        pageId, courseName, bannerImageId, bannerImageBlur, bannerColor, 
         description1, description2, registerUrl,
         fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6,
         field1, field2, field3, field4, field5, field6
@@ -391,7 +391,6 @@ const query = {
                 INNER JOIN dbibridge.courseInfo b ON a.pageId=b.courseId
             SET
                 a.pageName='${dbPageName}',
-                b.thumbnailImageId=${thumbImageId},
                 b.bannerImageId=${dbBannerImageId},
                 b.bannerImageBlur=${dbBannerImageBlur},
                 b.bannerColor=${dbBannerColor},

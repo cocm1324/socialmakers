@@ -1,130 +1,89 @@
-<div class="p-grid p-nogutter p-relative p-overflow-hidden item" style="background-color: black;">
-    <img 
-        *ngIf="isImage()" 
-        class="banner banner-image" 
-        [src]="bannerImageUrl.value" 
-        [ngStyle]="{'filter': blurValue, '-webkit-filter': blurValue}"
-        onerror="this.src='./assets/img/notfound.jpg';"
-    >
-    <div *ngIf="!isImage()" class="banner" [ngStyle]="{'background-color': bannerColor.value}"></div>
-    <div class="p-absolute p-d-flex p-justify-center p-align-center w-100 h-100">
-        <div class="p-grid-narrow p-nogutter">
-            <div class="p-col-12 p-md-6 p-lg-6">
-                <div class="title-panel">
-                    <div class="p-pre-wrap">{{description1.value}}</div>
-                    <h1>{{courseName.value}}</h1>
-                    <div class="p-pre-wrap">{{description2.value}}</div>
+<form [formGroup]="courseForm" class="h-100 offset-dark">
+<div class="p-grid-narrow p-nogutter h-100">
+    <div class="p-col-12 p-md-6 p-grid p-nogutter p-dir-col p-px-5 p-py-10 p-sm-no-py">
+        <div class="p-col p-sm-hide">
+            <textarea
+                pInputTextarea
+                formControlName="description1"
+                class="presentable-input bright-text w-100"
+                placeholder="설명"
+                [maxlength]="dataLength.LONG"
+                autoResize="autoResize"
+                rows="1"
+            ></textarea>
+        </div>
+        <div class="p-col">
+            <input
+                pInputText
+                formControlName="courseName"
+                class="h1 presentable-input bright-text w-100" 
+                placeholder="제목"
+                [max]="dataLength.SHORT"
+            >
+        </div>
+        <div class="p-col p-sm-hide">
+            <textarea
+                pInputTextarea
+                formControlName="description2"
+                class="presentable-input bright-text w-100"
+                placeholder="설명"
+                [maxlength]="dataLength.LONG"
+                autoResize="autoResize"
+                rows="1"
+            ></textarea>
+        </div>
+    </div>
+    <div class="p-col-12 p-md-6 p-px-5 p-py-10 p-sm-no-py">
+        <div class="w-100 h-100 pannel p-p-3">
+            <div *ngFor="let i of [1, 2, 3, 4, 5, 6]" class="p-grid p-nogutter">
+                <div class="p-col-3">
+                    <input
+                        pInputText
+                        [formControlName]="'fieldTitle' + i"
+                        class="presentable-input bright-text w-100" 
+                        style="text-align: end;"
+                        placeholder="제목"
+                        [max]="dataLength.SHORT"
+                    >
+                </div>
+                <div class="p-col-9">
+                    <input
+                        pInputText
+                        [formControlName]="'field' + i"
+                        class="presentable-input bright-text w-100" 
+                        placeholder="내용"
+                        [max]="dataLength.SHORT"
+                    >
                 </div>
             </div>
-            <div class="p-col-12 p-md-6 p-lg-6">
-                <div class="info-panel">
-                    <table>
-                        <tr>
-                            <td class="field-title">{{fieldTitle1.value}}</td>
-                            <td class="field">{{field1.value}}</td>
-                        </tr>
-                        <tr>
-                            <td class="field-title">{{fieldTitle2.value}}</td>
-                            <td class="field">{{field2.value}}</td>
-                        </tr>
-                        <tr>
-                            <td class="field-title">{{fieldTitle3.value}}</td>
-                            <td class="field">{{field3.value}}</td>
-                        </tr>
-                        <tr>
-                            <td class="field-title">{{fieldTitle4.value}}</td>
-                            <td class="field">{{field4.value}}</td>
-                        </tr>
-                        <tr>
-                            <td class="field-title">{{fieldTitle5.value}}</td>
-                            <td class="field">{{field5.value}}</td>
-                        </tr>
-                        <tr>
-                            <td class="field-title">{{fieldTitle6.value}}</td>
-                            <td class="field">{{field6.value}}</td>
-                        </tr>
-                    </table>
-                    <button pButton label="참가신청하기"></button>
-                </div>
+            <div class="h-divider"></div>
+            <div 
+                *ngIf="!urlEdit"
+                class="p-p-2 button p-grid p-nogutter p-justify-center p-align-center"
+                pTooltip="URL 수정하기"
+                tooltipPosition="bottom"
+                (click)="toggleUrl()"
+            >
+                <span class="p-p-default">참가 신청하기</span>
+            </div>
+            <div 
+                *ngIf="urlEdit"
+                class="p-p-2 button p-grid p-nogutter p-justify-center p-align-center"
+                pTooltip="완료(Enter|ESC)"
+                tooltipPosition="bottom"
+                (keydown)="completeUrl($event)"
+                (blur)="toggleUrl()"
+            >
+                <input
+                    pInputText
+                    formControlName="registerUrl"
+                    class="presentable-input w-100" 
+                    style="font-size: 1em;"
+                    placeholder="URL"
+                    [max]="dataLength.LONG"
+                >
             </div>
         </div>
     </div>
-    <div *ngIf="!isEdit && !lock" class="p-absolute overlay p-d-flex p-justify-center p-align-center w-100 h-100">
-        <button (click)="edit()" pButton type="button" label="수정하기" icon="pi pi-check" class="ui-button-primary p-mr-2"></button>
-    </div>
 </div>
-<form [formGroup]="courseInfoForm">
-    <div *ngIf="isEdit" class="p-grid-medium">
-        <p-card class="w-100 p-my-2" styleClass="ui-card-shadow">
-            <div class="p-py-3">
-                <h3>페이지 정보</h3>
-                <label>Course 이름</label>
-                <span class="ui-inputgroup p-pb-2">
-                    <input [maxLength]="dataLength.SHORT" formControlName="courseName" class="w-100" pInputText> 
-                </span>
-                <label>썸네일 이미지</label>
-                <span class="ui-inputgroup">
-                    <input formControlName="thumbImageUrl" class="w-100" pInputText readonly>
-                    <app-image-upload label="수정" icon="pi pi-pencil" (onSubmit)="thumbImageUploaded($event)"></app-image-upload>
-                </span>
-            </div>
-            <div class="p-py-3">
-                <h3>배너</h3>
-                <span class="ui-inputgroup p-pb-2">
-                    <p-selectButton [options]="bannerTypes" formControlName="bannerType"></p-selectButton>
-                </span>
-                <div *ngIf="isImage()">
-                    <label>이미지 선택</label>
-                    <span class="ui-inputgroup p-pb-2">
-                        <input formControlName="bannerImageUrl" class="w-100" pInputText readonly>
-                        <app-image-upload label="수정" icon="pi pi-pencil" (onSubmit)="bannerImageUploaded($event)"></app-image-upload>
-                    </span>
-                    <label>흐림 ({{bannerImageBlur.value}}%)</label>
-                    <span class="ui-inputgroup p-py-2">
-                        <p-slider formControlName="bannerImageBlur" [style]="{'width':'16em'}" [animate]="true"></p-slider>
-                    </span>
-                </div>
-                <div *ngIf="!isImage()">
-                    <span class="ui-inputgroup">
-                        <p-colorPicker formControlName="bannerColor" [inline]="false"></p-colorPicker>
-                    </span>
-                </div>
-            </div>
-            <div class="p-py-3">
-                <h3>Course 정보</h3>
-                <label>제목 위쪽 설명</label>
-                <span class="ui-inputgroup p-pb-2">
-                    <textarea [maxLength]="dataLength.LONG" formControlName="description1" class="w-100" [autoResize]="false" [rows]="2" pInputTextarea></textarea>
-                </span>
-                <label>제목 아래쪽 설명</label>
-                <span class="ui-inputgroup p-pb-2">
-                    <textarea [maxLength]="dataLength.LONG" formControlName="description2" class="w-100" [autoResize]="false" [rows]="2" pInputTextarea></textarea>
-                </span>
-                <label>Register URL</label>
-                <span class="ui-inputgroup p-pb-2">
-                    <input [maxLength]="dataLength.LONG" formControlName="registerUrl" class="w-100" pInputText> 
-                </span>
-            </div>
-            <div *ngFor="let i of [1, 2, 3, 4, 5, 6]" class="p-grid">
-                <div class="p-col p-pb-2">
-                    <label>정보{{i}} 제목</label>
-                    <span class="ui-inputgroup">
-                        <input [maxLength]="dataLength.SHORT" [formControlName]="'fieldTitle'+i" class="w-100" pInputText> 
-                    </span>
-                </div>
-                <div class="p-col p-pb-2">
-                    <label>정보{{i}} 내용</label>
-                    <span class="ui-inputgroup">
-                        <input [maxLength]="dataLength.LONG" [formControlName]="'field'+i" class="w-100" pInputText> 
-                    </span>
-                </div>
-            </div>
-            <p-footer>
-                <div class="p-d-flex p-justify-end w-100">
-                    <button (click)="save()" pButton type="button" [label]="isNewPage ? '새로 만들기': '수정하기'" class="ui-button-primary p-mr-2" [disabled]="courseInfoForm.invalid"></button>
-                    <button (click)="cancel()" pButton type="button" label="취소하기" class="ui-button-secondary"></button>
-                </div>
-            </p-footer>
-        </p-card>
-    </div>
 </form>

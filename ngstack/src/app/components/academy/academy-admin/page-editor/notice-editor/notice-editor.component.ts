@@ -30,6 +30,12 @@ export class NoticeEditorComponent implements OnInit, OnDestroy {
 	) { }
 
 	ngOnInit() {
+		this.initializeForm();
+		this.getBannerAndPatchForm();
+		this.registerFormValueChange();
+	}
+
+	initializeForm() {
 		const updateDefaultTimeString = this.utilService.dbDateTimeStringToUserReadable((new Date()).toISOString())
 		const createDefaultTimeString = this.utilService.dbDateTimeStringToUserReadable((new Date('2019-12-31')).toISOString())
 
@@ -38,8 +44,10 @@ export class NoticeEditorComponent implements OnInit, OnDestroy {
 			creationDateTime: createDefaultTimeString,
 			updateDateTime: updateDefaultTimeString
 		});
+	}
 
-		const initialNoticeBanner = this.pageEditorService.getBanner().pipe(
+	getBannerAndPatchForm() {
+		const getOnce = this.pageEditorService.getBanner().pipe(
 			take(1)
 		).subscribe(next => {
 			const {noticeName} = <NoticeBanner>next;
@@ -47,23 +55,22 @@ export class NoticeEditorComponent implements OnInit, OnDestroy {
 				this.noticeName.patchValue(noticeName);
 			}
 		});
-		this.subscriptions.push(initialNoticeBanner);
+		this.subscriptions.push(getOnce);
+	}
 
+	registerFormValueChange() {
 		const noticeNameChange = this.noticeName.valueChanges.pipe(
 			skip(1),
 			distinctUntilChanged(),
 			debounceTime(DELAY_TYPE.MEDIUM)
 		).subscribe(nextNoticeName => {
-			const nextBannerOnce = this.pageEditorService.getBanner().pipe(
-				take(1)
-			).subscribe(nextBanner => {
+			this.pageEditorService.getBanner().toPromise().then(nextBanner => {
 				const noticeBanner: NoticeBanner = {
 					...nextBanner,
 					noticeName: nextNoticeName
 				};
 				this.pageEditorService.nextBanner(noticeBanner);
 			});
-			this.subscriptions.push(nextBannerOnce);
 		});
 		this.subscriptions.push(noticeNameChange);
 	}
