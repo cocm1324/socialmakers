@@ -1,9 +1,8 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Banner, BANNER_TYPE, DELAY_TYPE, PAGE_TYPE } from '@app/models/';
+import { BANNER_TYPE, PAGE_TYPE, DELAY_TYPE, Banner } from '@models';
 import { Subject, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged, take } from 'rxjs/operators';
-import { PageEditorService } from '../page-editor.service';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
 	selector: 'app-banner-editor',
@@ -14,6 +13,7 @@ export class BannerEditorComponent implements OnInit, OnDestroy {
 
 	@Input() pageType: PAGE_TYPE;
 	@Input() isNewPage: boolean;
+	@Output() onEdit: EventEmitter<any> = new EventEmitter();
 
 	bannerTypes = BANNER_TYPE;
 	pageTypes = PAGE_TYPE;
@@ -35,14 +35,13 @@ export class BannerEditorComponent implements OnInit, OnDestroy {
 	get blurValue() {return `blur(${this.bannerImageBlur.value}px)`;}
 
     constructor(
-		private fb: FormBuilder,
-		private pageEditorService: PageEditorService
+		private fb: FormBuilder
 	) { }
 
     ngOnInit() {
 		this.initializeForm();
-		this.getBannerAndPatchForm();
-		this.registerFormChange();
+		// this.getBannerAndPatchForm();
+		// this.registerFormChange();
 	}
 
 	initializeForm() {
@@ -55,59 +54,59 @@ export class BannerEditorComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	getBannerAndPatchForm() {
-		if (!this.isNewPage) {
-			const getOnce = this.pageEditorService.getBanner().pipe(
-				take(1)
-			).subscribe(next => {
-				const {bannerImageId, bannerImageUrl, bannerImageBlur, bannerColor} = next;
+	// getBannerAndPatchForm() {
+	// 	if (!this.isNewPage) {
+	// 		const getOnce = this.pageEditorService.getBanner().pipe(
+	// 			take(1)
+	// 		).subscribe(next => {
+	// 			const {bannerImageId, bannerImageUrl, bannerImageBlur, bannerColor} = next;
 
-				if (bannerImageId) {
-					this.bannerImageId.patchValue(bannerImageId);
-					this.bannerImageUrl.patchValue(bannerImageUrl);
-					this.bannerImageBlur.patchValue(bannerImageBlur);
-					this.bannerType.patchValue(this.bannerTypes.IMAGE);
-				} else {
-					this.bannerColor.patchValue(bannerColor);
-					this.bannerType.patchValue(this.bannerTypes.COLOR);
-				}
-			});
-			this.subscriptions.push(getOnce);
-		}
-	}
+	// 			if (bannerImageId) {
+	// 				this.bannerImageId.patchValue(bannerImageId);
+	// 				this.bannerImageUrl.patchValue(bannerImageUrl);
+	// 				this.bannerImageBlur.patchValue(bannerImageBlur);
+	// 				this.bannerType.patchValue(this.bannerTypes.IMAGE);
+	// 			} else {
+	// 				this.bannerColor.patchValue(bannerColor);
+	// 				this.bannerType.patchValue(this.bannerTypes.COLOR);
+	// 			}
+	// 		});
+	// 		this.subscriptions.push(getOnce);
+	// 	}
+	// }
 
-	registerFormChange() {
-		const formChange = this.bannerForm.valueChanges.pipe(
-			distinctUntilChanged(),
-			debounceTime(DELAY_TYPE.MEDIUM)
-		).subscribe(next => {
-			const {bannerImageId, bannerImageUrl, bannerImageBlur, bannerColor} = <Banner>next;
-			const current = this.pageEditorService.getBanner().pipe(
-				take(1)
-			).subscribe(next => {
-				const banner = {
-					...next,
-					bannerImageId: bannerImageId,
-					bannerImageUrl: bannerImageUrl,
-					bannerImageBlur: bannerImageBlur,
-					bannerColor: bannerColor
-				};
+	// registerFormChange() {
+	// 	const formChange = this.bannerForm.valueChanges.pipe(
+	// 		distinctUntilChanged(),
+	// 		debounceTime(DELAY_TYPE.MEDIUM)
+	// 	).subscribe(next => {
+	// 		const { bannerImageId, bannerImageUrl, bannerImageBlur, bannerColor } = <Banner>next;
+	// 		const current = this.pageEditorService.getBanner().pipe(
+	// 			take(1)
+	// 		).subscribe(next => {
+	// 			const banner = {
+	// 				...next,
+	// 				bannerImageId: bannerImageId,
+	// 				bannerImageUrl: bannerImageUrl,
+	// 				bannerImageBlur: bannerImageBlur,
+	// 				bannerColor: bannerColor
+	// 			};
 
-				if (this.isImage()) {
-					delete banner.bannerColor;
-				} else {
-					delete banner.bannerImageId;
-					delete banner.bannerImageUrl;
-					delete banner.bannerImageBlur;
-				}
+	// 			if (this.isImage()) {
+	// 				delete banner.bannerColor;
+	// 			} else {
+	// 				delete banner.bannerImageId;
+	// 				delete banner.bannerImageUrl;
+	// 				delete banner.bannerImageBlur;
+	// 			}
 
-				this.closeAllPannel();
-				this.pageEditorService.nextBanner(banner);
-			});
-			this.subscriptions.push(current);
-		});
-		this.subscriptions.push(formChange);
-	}
+	// 			this.closeAllPannel();
+	// 			this.onEdit.emit(banner);
+	// 		});
+	// 		this.subscriptions.push(current);
+	// 	});
+	// 	this.subscriptions.push(formChange);
+	// }
 
 	isImage() {
 		return this.bannerType.value == this.bannerTypes.IMAGE;

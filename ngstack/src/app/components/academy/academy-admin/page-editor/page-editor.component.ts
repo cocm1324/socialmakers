@@ -26,6 +26,8 @@ export class PageEditorComponent implements OnInit, OnDestroy {
 	courseInfoData: ICourseInfo;
 	noticeInfoData: NoticeEditorInput;
 
+	pageTypes = PAGE_TYPE;
+
 	loaded: boolean = false;
 	childComponentEditState = 0;
 

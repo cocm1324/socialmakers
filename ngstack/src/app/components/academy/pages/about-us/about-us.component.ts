@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ISection, TypeSectionWidth, TypeContent } from '@app/models';
 import { DataService } from '@services/data/data.service';
+import { UtilService } from '@services/util/util.service';
 
 @Component({
 	selector: 'app-about-us',
@@ -11,22 +12,24 @@ export class AboutUsComponent implements OnInit {
 
 	page: ISection[];
 
-	constructor(private dataService: DataService) { }
+	constructor(
+		private dataService: DataService,
+		private util: UtilService
+	) { }
 
 	ngOnInit() {
+		this.loadData();
+	}
+
+	loadData() {
 		this.dataService.getAboutUs().toPromise().then(resolve => {
-			if (resolve.status) {
-				const {pageId, contents} = resolve.data;
-				contents.sort((a, b)=> {
-					const diff = a.seqBase != 0 && b.seqBase != 0 ? a.seq / a.seqBase - b.seq / b.seqBase : -1;
-					if (diff < 0) {
-						return -1;
-					}
-					if (diff > 0) {
-						return 1;
-					}
-					return 0;
-				});
+			console.log(resolve)
+
+			const { status, data } = resolve;
+
+			if (status) {
+				const { contents, bannerImageBlur, bannerImageUrl, bannerColor, bannerImageId } = data;
+				contents.sort(this.util.contentSerializer);
 				this.page = contents.map(content => {
 					const contentMap = {
 						width: content.width,

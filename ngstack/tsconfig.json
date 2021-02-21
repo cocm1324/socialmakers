@@ -5,7 +5,7 @@
     "paths": {
       "@assets/*": ["src/assets/*"],
       "@services/*": ["src/app/services/*"],
-      "@models/*": ["src/app/models/*"],
+      "@models": ["src/app/models/index.ts"],
       "@components/*": ["src/app/components/*"],
       "@app/*": ["src/app/*"]
     },

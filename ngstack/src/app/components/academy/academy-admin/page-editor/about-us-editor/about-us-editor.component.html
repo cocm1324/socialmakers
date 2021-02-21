@@ -1,14 +1,12 @@
-<div class="p-grid-medium h-100 p-nogutter p-justify-center p-align-center">
-    <form [formGroup]="aboutUsForm">
-        <div class="hero-content p-p-5 p-relative">
-            <input
-                pInputText
-                formControlName="pageName"
-                class="hero-header h1-input-text" 
-                type="text"
-                placeholder="제목"
-                [max]="dataLength.SHORT"
-            >
-        </div>
-    </form>
-</div>
+<form [formGroup]="aboutUsForm">
+    <div class="hero-content p-p-5 p-relative">
+        <input
+            pInputText
+            formControlName="pageName"
+            class="hero-header h1-input-text" 
+            type="text"
+            placeholder="제목"
+            [max]="dataLength.SHORT"
+        >
+    </div>
+</form>

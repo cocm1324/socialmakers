@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ISectionWithContentId } from '@models';
 
 @Injectable({
   	providedIn: 'root'
@@ -6,6 +7,17 @@ import { Injectable } from '@angular/core';
 export class UtilService {
 
 	constructor() { }
+
+	contentSerializer(a: ISectionWithContentId, b: ISectionWithContentId): number {
+		const diff = a.seqBase != 0 && b.seqBase != 0 ? a.seq / a.seqBase - b.seq / b.seqBase : -1;
+		if (diff < 0) {
+			return -1;
+		}
+		if (diff > 0) {
+			return 1;
+		}
+		return 0;
+	}
 	
 	smallImage(url: string): string {
 		const parsed = url.split('/');
