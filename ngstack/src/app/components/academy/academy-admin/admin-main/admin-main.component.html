@@ -9,7 +9,7 @@
         <p-panel header="Courses" [toggleable]="true" [style]="{'margin-bottom':'20px'}">
             <div class="p-d-flex p-justify-between p-mb-2">
                 <div>
-                    <button pButton label="새 Course 만들기" (click)="onCreateCourse()"></button>
+                    <button pButton label="새 Course 만들기" (click)="displayNewCourseDialog=true"></button>
                 </div>
                 <div>
                     <button [disabled]="selectedCourseId==-1" class="p-mr-2 ui-button-secondary" pButton label="내용 수정하기" (click)="goToEditCourse($event)"></button>
@@ -66,3 +66,24 @@
         </p-panel>
     </div>
 </div>
+
+<p-dialog [(visible)]="displayNewCourseDialog">
+    <p-header>
+        새 Course 만들기
+    </p-header>
+    <div style="width: 400px;">
+        <span>Course 이름</span>
+        <input [maxlength]="100" pInputText [(ngModel)]="courseName" class="w-100 p-mb-2" placeholder="입력"> 
+        <span>섬네일 이미지</span>
+        <img [src]="thumbImageUrl" class="w-100" onerror="this.src='./assets/img/notfound.jpg';">
+    </div>
+    <p-footer>
+        <div class="w-100 p-d-flex p-justify-between">
+            <app-image-upload [label]="'섬네일 이미지 선택'" (onSubmit)="onNewCourseThumbnailSelected($event)"></app-image-upload>
+            <div>
+                <button pButton label="취소하기" class="ui-button-secondary" (click)="displayNewCourseDialog=false"></button>
+                <button pButton label="생성하기" [disabled]='!newCourseValid' (click)="createNewCourse()" ></button>
+            </div>
+        </div>
+    </p-footer>
+</p-dialog>

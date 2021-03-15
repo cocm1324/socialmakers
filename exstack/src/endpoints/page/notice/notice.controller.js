@@ -1,4 +1,4 @@
-const mysqlPool = require('../../../dbs/mysql');
+const { dbConnectionPool } = require('../../../dbs/mysql');
 const queryStatement = require('../../../query/query');
 const seqeunce = require('../../../helpers/seqHelper');
 
@@ -22,7 +22,7 @@ const noticeController = {
             increment = false;
         }
 
-        mysqlPool.getConnection((connectionErr, connection) => {
+        dbConnectionPool.getConnection((connectionErr, connection) => {
             if (connectionErr) {
                 res.send({
                     status: false,
@@ -74,7 +74,7 @@ const noticeController = {
     post: (req, res) => {
         const {pageName, bannerImageId, bannerImageBlur, bannerColor} = req.body;
     
-        mysqlPool.getConnection((connectionErr, connection) => {
+        dbConnectionPool.getConnection((connectionErr, connection) => {
             if (connectionErr) {
                 res.send({
                     status: false,
@@ -168,7 +168,7 @@ const noticeController = {
     getByPageId: (req, res) => {
         const {pageId} = req.params;
     
-        mysqlPool.getConnection((connectionErr, connection) => {
+        dbConnectionPool.getConnection((connectionErr, connection) => {
             if (connectionErr) {
                 res.send({
                     status: false,
@@ -282,7 +282,7 @@ const noticeController = {
             return;
         }    
 
-        mysqlPool.getConnection((connectionErr, connection) => {
+        dbConnectionPool.getConnection((connectionErr, connection) => {
             if (connectionErr) {
                 res.send({
                     status: false,
@@ -317,7 +317,7 @@ const noticeController = {
     deleteByPageId: (req, res) => {
         const {pageId} = req.params;
     
-        mysqlPool.getConnection((connectionErr, connection) => {
+        dbConnectionPool.getConnection((connectionErr, connection) => {
             if (connectionErr) {
                 res.send({
                     status: false,

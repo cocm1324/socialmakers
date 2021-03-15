@@ -1,11 +1,20 @@
 <div *ngIf="loaded" class="w-100 p-relative p-d-flex p-justify-center p-align-center">
     <div class="w-100">
-        <app-banner-editor></app-banner-editor>
+        <app-banner-editor [banner]="banner" (onEdit)="onBannerChange($event)"></app-banner-editor>
     </div>
     <div class="p-absolute">
-        <app-about-us-editor *ngIf="pageType == pageTypes.ABOUT_US"></app-about-us-editor>
-        <app-course-editor *ngIf="pageType == pageTypes.COURSE"></app-course-editor>
-        <app-notice-editor *ngIf="pageType == pageTypes.NOTICE"></app-notice-editor>
+        <app-about-us-editor 
+            *ngIf="isAboutUs()" 
+            [aboutUs]="bannerContent"
+            (onEdit)="onBannerContentChange($event)"
+        ></app-about-us-editor>
+        <app-course-editor 
+            *ngIf="isCourse()"
+            [course]="bannerContent"
+            (onEdit)="onBannerContentChange($event)"
+            (valid)="isCourseMetaValid($event)"
+        ></app-course-editor>
+        <app-notice-editor *ngIf="isNotice()"></app-notice-editor>
     </div>
 </div>
 <div *ngIf="loaded && !isNewPage" class="w-100">

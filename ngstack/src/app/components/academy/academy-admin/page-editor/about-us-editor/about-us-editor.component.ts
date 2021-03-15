@@ -1,6 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { DATA_LENGTH, AboutUsBanner, DELAY_TYPE } from '@app/models';
+import { DATA_LENGTH, AboutUsBanner, DELAY_TYPE, AboutUsMeta } from '@app/models';
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, skip, take } from 'rxjs/operators';
 import { PageEditorService } from '../page-editor.service';
@@ -12,40 +12,30 @@ import { PageEditorService } from '../page-editor.service';
 })
 export class AboutUsEditorComponent implements OnInit, OnDestroy {
 
+	@Input() aboutUs: AboutUsMeta;
+	@Output() onEdit: EventEmitter<AboutUsMeta> = new EventEmitter();
+
 	dataLength = DATA_LENGTH;
 
 	aboutUsForm: FormGroup;
 	subscriptions: Subscription[] = [];
 
-	constructor(
-		private fb: FormBuilder,
-		private pageEditorService: PageEditorService	
-	) { }
+	constructor(private fb: FormBuilder ) { }
 
-	get pageName() {return this.aboutUsForm.get('pageName');}
+	get pageName() { return this.aboutUsForm.get('pageName') }
 
 	ngOnInit() {
 		this.initializeForm();
-		this.getBannerAndPatchForm();
 		this.registerFormValueChange();
 	}
 
 	initializeForm() {
-		this.aboutUsForm = this.fb.group({
-			pageName: ""
-		});
-	}
-
-	getBannerAndPatchForm() {
-		const getOnce = this.pageEditorService.getBanner().pipe(
-			take(1)
-		).subscribe(next => {
-			const {pageName} = <AboutUsBanner>next;
-			if (pageName) {
-				this.pageName.patchValue(pageName);
-			}
-		});
-		this.subscriptions.push(getOnce);
+		if (this.aboutUs) {
+			const { pageName } = this.aboutUs;
+			this.aboutUsForm = this.fb.group({ pageName });
+		} else {
+			this.aboutUsForm = this.fb.group({ pageName: "" });
+		}
 	}
 
 	registerFormValueChange() {
@@ -54,13 +44,8 @@ export class AboutUsEditorComponent implements OnInit, OnDestroy {
 			distinctUntilChanged(),
 			debounceTime(DELAY_TYPE.MEDIUM)
 		).subscribe(nextPageName => {
-			this.pageEditorService.getBanner().toPromise().then(nextBanner => {
-				const aboutUsBanner: AboutUsBanner = {
-					...nextBanner,
-					pageName: nextPageName
-				};
-				this.pageEditorService.nextBanner(aboutUsBanner);
-			});
+			const pageName = nextPageName;
+			this.onEdit.emit({ pageName })
 		});
 		this.subscriptions.push(pageNameChange);
 	}

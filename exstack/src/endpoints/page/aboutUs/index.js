@@ -1,9 +1,9 @@
 const aboutUs = require('express').Router();
-const mysqlPool = require('../../../dbs/mysql');
+const { dbConnectionPool } = require('../../../dbs/mysql');
 const queryStatement = require('../../../query/query');
 
 aboutUs.get('/', (req, res) => {
-    mysqlPool.getConnection((err, connection) => {
+    dbConnectionPool.getConnection((err, connection) => {
         if (err) {
             res.send({
                 status: false,
@@ -99,7 +99,7 @@ aboutUs.put('/', (req, res) => {
         return;
     }
 
-    mysqlPool.getConnection((err, connection) => {
+    dbConnectionPool.getConnection((err, connection) => {
         if (err) {
             res.send({
                 status: false,

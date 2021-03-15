@@ -1,4 +1,4 @@
-const mysqlPool = require('../../dbs/mysql');
+const { dbConnectionPool } = require('../../dbs/mysql');
 const queryStatement = require('../../query/query');
 const seqeunce = require('../../helpers/seqHelper');
 
@@ -25,7 +25,7 @@ const pageController = {
             return;
         }
     
-        mysqlPool.getConnection((connectionErr, connection) => {
+        dbConnectionPool.getConnection((connectionErr, connection) => {
             if (connectionErr) {
                 res.send({
                     status: false,
@@ -87,7 +87,7 @@ const pageController = {
             return;
         }
     
-        mysqlPool.getConnection((connectionErr, connection) => {
+        dbConnectionPool.getConnection((connectionErr, connection) => {
             if (connectionErr) {
                 res.send({
                     status: false,
@@ -121,7 +121,7 @@ const pageController = {
     deleteByPageIdContentId: (req, res) => {
         const {pageId, contentId} = req.params;
     
-        mysqlPool.getConnection((connectionErr, connection) => {
+        dbConnectionPool.getConnection((connectionErr, connection) => {
             if (connectionErr) {
                 rres.send({
                     status: false,
@@ -166,7 +166,7 @@ const pageController = {
             return;
         }
     
-        mysqlPool.getConnection((connectionErr, connection) => {
+        dbConnectionPool.getConnection((connectionErr, connection) => {
             if (connectionErr) {
                 rres.send({
                     status: false,
@@ -235,7 +235,7 @@ const pageController = {
             return;
         }
     
-        mysqlPool.getConnection((connectionErr, connection) => {
+        dbConnectionPool.getConnection((connectionErr, connection) => {
             if (connectionErr) {
                 rres.send({
                     status: false,

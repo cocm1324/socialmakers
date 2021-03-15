@@ -11,12 +11,8 @@ export interface NoticeEditorInput {
     updateDateTime?: string;
 }
 
-export interface AboutUsEditorInput {
+export interface AboutUsMeta {
     pageName?: string;
-    bannerImageId?: number;
-    bannerImageUrl?: string;
-    bannerImageBlur?: number;
-    bannerColor?: string;
 }
 
 export interface Banner {

@@ -16,6 +16,14 @@ export class AdminMainComponent implements OnInit {
 	notices: INotice[];
 	selectedCourseId = -1;
 
+	displayNewCourseDialog: boolean = false;
+	
+	courseName: string = '';
+	thumbImageId: number = null;
+	thumbImageUrl: string = null;
+
+	get newCourseValid() { return this.thumbImageId && this.courseName.length > 0 }
+
   	constructor(
 		private router: Router, 
 		private dataService: DataService,
@@ -117,5 +125,33 @@ export class AdminMainComponent implements OnInit {
 
 	onCreateNotice() {
 		this.router.navigate([`${ACADEMY_ADMIN_URL.PREFIX}/${ACADEMY_ADMIN_URL.NEW_NOTICE}`]);
+	}
+
+	onNewCourseThumbnailSelected(e) {
+		const { url, imageId } = e;
+		this.thumbImageId = imageId;
+		this.thumbImageUrl = url;
+	}
+
+	createNewCourse() {
+		if (this.newCourseValid) {
+			this.dataService.createCourse({
+				courseName: this.courseName,
+				thumbImageId: this.thumbImageId
+			}).toPromise().then(result => {
+				if (!result) {
+					alert('생성 실패');
+					return;
+				} else {
+					this.displayNewCourseDialog = false;
+					this.courseName = '';
+					this.thumbImageId = null;
+					this.thumbImageUrl = null;
+					alert('새 Course가 생성되었습니다');
+				}
+			}).catch(error => {
+				alert('생성 실패:' + error);
+			});
+		}
 	}
 }

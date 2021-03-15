@@ -299,59 +299,23 @@ const query = {
             ;
         `;
     },
-    createCourseTransactionCreatePage: (pageName) => {
-        const course = 1;
-        const dbPageName = sqlStringEscape(pageName);
-
+    createCourseTransactionCreatePage: () => {
         return `
             INSERT INTO 
                 dbibridge.page (pageName, pageType)
             VALUES 
-                ('${dbPageName}', ${course})
+                (?, 1)
             ;
         `;
     },
-    createCourseTransactionCreateCourseInfo: (
-        courseId, thumbImageId, bannderImageId, bannerImageBlur, bannerColor, 
-        description1, description2, seq, seqBase, registerUrl,
-        fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6,
-        field1, field2, field3, field4, field5, field6
-    ) => {
-        const defalutImageId = 1;
-
-        const dbBannerImageId = bannderImageId ? bannderImageId : defalutImageId;
-        const dbBannerImageBlur = bannerImageBlur ? bannerImageBlur : 20;
-        const dbBannerColor = bannerColor ? `'${bannerColor}'` : 'NULL';
-
-        const dbDescription1 = description1 ? sqlStringEscape(description1) : 'NULL';
-        const dbDescription2 = description2 ? sqlStringEscape(description2) : 'NULL';
-        const dbRegisterUrl = sqlStringEscape(registerUrl);
-        const dbFieldTitle1 = fieldTitle1 ? sqlStringEscape(fieldTitle1) : 'NULL';
-        const dbFieldTitle2 = fieldTitle2 ? sqlStringEscape(fieldTitle2) : 'NULL';
-        const dbFieldTitle3 = fieldTitle3 ? sqlStringEscape(fieldTitle3) : 'NULL';
-        const dbFieldTitle4 = fieldTitle4 ? sqlStringEscape(fieldTitle4) : 'NULL';
-        const dbFieldTitle5 = fieldTitle5 ? sqlStringEscape(fieldTitle5) : 'NULL';
-        const dbFieldTitle6 = fieldTitle6 ? sqlStringEscape(fieldTitle6) : 'NULL';
-        const dbField1 = field1 ? sqlStringEscape(field1) : 'NULL';
-        const dbField2 = field2 ? sqlStringEscape(field2) : 'NULL';
-        const dbField3 = field3 ? sqlStringEscape(field3) : 'NULL';
-        const dbField4 = field4 ? sqlStringEscape(field4) : 'NULL';
-        const dbField5 = field5 ? sqlStringEscape(field5) : 'NULL';
-        const dbField6 = field6 ? sqlStringEscape(field6) : 'NULL';
-
+    createCourseTransactionCreateCourseInfo: () => {
         return `
             INSERT INTO 
                 dbibridge.courseInfo (
-                    courseId, thumbnailImageId, bannerImageId, bannerImageBlur, bannerColor, description1, description2, 
-                    fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6, 
-                    field1, field2, field3, field4, field5, field6, registerUrl, seq, seqBase
+                    courseId, thumbnailImageId, seq, seqBase
                 )
             VALUES
-                (
-                    ${courseId}, ${thumbImageId}, ${dbBannerImageId}, ${dbBannerImageBlur}, ${dbBannerColor}, '${dbDescription1}', '${dbDescription2}',
-                    '${dbFieldTitle1}', '${dbFieldTitle2}', '${dbFieldTitle3}', '${dbFieldTitle4}', '${dbFieldTitle5}', '${dbFieldTitle6}',
-                    '${dbField1}', '${dbField2}', '${dbField3}', '${dbField4}', '${dbField5}', '${dbField6}', '${dbRegisterUrl}', ${seq}, ${seqBase}
-                )
+                ( ?, ?, ?, ? )
             ;
         `;
     },

@@ -10,14 +10,13 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 	styleUrls: ['./banner-editor.component.scss']
 })
 export class BannerEditorComponent implements OnInit, OnDestroy {
-
-	@Input() pageType: PAGE_TYPE;
-	@Input() isNewPage: boolean;
+	
+	@Input() banner: Banner;
 	@Output() onEdit: EventEmitter<any> = new EventEmitter();
 
-	bannerTypes = BANNER_TYPE;
-	pageTypes = PAGE_TYPE;
+	edit: boolean = false;
 
+	bannerTypes = BANNER_TYPE;
 	bannerForm: FormGroup;
 
 	showImageUploadDialogEvent: Subject<void> = new Subject<void>();
@@ -40,73 +39,48 @@ export class BannerEditorComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
 		this.initializeForm();
-		// this.getBannerAndPatchForm();
-		// this.registerFormChange();
+		this.registerFormChange();
 	}
 
 	initializeForm() {
-		this.bannerForm = this.fb.group({
-			bannerImageId: null,
-			bannerImageUrl: "",
-			bannerImageBlur: 0,
-			bannerColor: "#ffffff",
-			bannerType: this.bannerTypes.IMAGE
-		});
+		if (this.banner) {
+			const { bannerColor, bannerImageUrl, bannerImageBlur, bannerImageId } = this.banner;
+			console.log(this.banner);
+			this.bannerForm = this.fb.group({
+				bannerImageId,
+				bannerImageUrl,
+				bannerImageBlur,
+				bannerColor: bannerColor ? bannerColor : "#ffffff",
+				bannerType: bannerColor ? this.bannerTypes.COLOR : this.bannerTypes.IMAGE
+			});
+			this.edit = false;
+		} else {
+			this.bannerForm = this.fb.group({
+				bannerImageId: null,
+				bannerImageUrl: "",
+				bannerImageBlur: 0,
+				bannerColor: "#ffffff",
+				bannerType: this.bannerTypes.IMAGE
+			});
+			this.edit = false;
+		}
 	}
 
-	// getBannerAndPatchForm() {
-	// 	if (!this.isNewPage) {
-	// 		const getOnce = this.pageEditorService.getBanner().pipe(
-	// 			take(1)
-	// 		).subscribe(next => {
-	// 			const {bannerImageId, bannerImageUrl, bannerImageBlur, bannerColor} = next;
-
-	// 			if (bannerImageId) {
-	// 				this.bannerImageId.patchValue(bannerImageId);
-	// 				this.bannerImageUrl.patchValue(bannerImageUrl);
-	// 				this.bannerImageBlur.patchValue(bannerImageBlur);
-	// 				this.bannerType.patchValue(this.bannerTypes.IMAGE);
-	// 			} else {
-	// 				this.bannerColor.patchValue(bannerColor);
-	// 				this.bannerType.patchValue(this.bannerTypes.COLOR);
-	// 			}
-	// 		});
-	// 		this.subscriptions.push(getOnce);
-	// 	}
-	// }
-
-	// registerFormChange() {
-	// 	const formChange = this.bannerForm.valueChanges.pipe(
-	// 		distinctUntilChanged(),
-	// 		debounceTime(DELAY_TYPE.MEDIUM)
-	// 	).subscribe(next => {
-	// 		const { bannerImageId, bannerImageUrl, bannerImageBlur, bannerColor } = <Banner>next;
-	// 		const current = this.pageEditorService.getBanner().pipe(
-	// 			take(1)
-	// 		).subscribe(next => {
-	// 			const banner = {
-	// 				...next,
-	// 				bannerImageId: bannerImageId,
-	// 				bannerImageUrl: bannerImageUrl,
-	// 				bannerImageBlur: bannerImageBlur,
-	// 				bannerColor: bannerColor
-	// 			};
-
-	// 			if (this.isImage()) {
-	// 				delete banner.bannerColor;
-	// 			} else {
-	// 				delete banner.bannerImageId;
-	// 				delete banner.bannerImageUrl;
-	// 				delete banner.bannerImageBlur;
-	// 			}
-
-	// 			this.closeAllPannel();
-	// 			this.onEdit.emit(banner);
-	// 		});
-	// 		this.subscriptions.push(current);
-	// 	});
-	// 	this.subscriptions.push(formChange);
-	// }
+	registerFormChange() {
+		const formChange = this.bannerForm.valueChanges.pipe(
+			distinctUntilChanged(),
+			debounceTime(DELAY_TYPE.MEDIUM)
+		).subscribe(next => {
+			const { bannerImageId, bannerImageBlur, bannerColor, bannerType } = next;
+			const banner = { bannerImageId, bannerImageBlur };
+			if (bannerType == BANNER_TYPE.COLOR) {
+				banner['bannerColor'] = bannerColor;
+			}
+			this.closeAllPannel();
+			this.onEdit.emit(banner);
+		});
+		this.subscriptions.push(formChange);
+	}
 
 	isImage() {
 		return this.bannerType.value == this.bannerTypes.IMAGE;
@@ -141,7 +115,7 @@ export class BannerEditorComponent implements OnInit, OnDestroy {
 	}
 
 	toggleImageBlurPannel() {
-		if (!this.isNewPage) {
+		if (this.isImage()) {
 			this.imageBlurPannel = !this.imageBlurPannel;
 		}
 	}

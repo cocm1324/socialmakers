@@ -31,7 +31,7 @@
                     tooltipPosition="bottom"
                     (click)="toggleImageBlurPannel()"
                 >
-                    <i class="pi pi-sliders-h" [ngClass]="{'disabled': isNewPage}"></i>
+                    <i class="pi pi-sliders-h" [ngClass]="{'disabled': !isImage()}"></i>
                 </span>
                 <div *ngIf="imageBlurPannel" class="p-absolute">
                     <p-card>

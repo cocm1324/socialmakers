@@ -1,4 +1,4 @@
-const mysqlPool = require('../../dbs/mysql');
+const { dbConnectionPool } = require('../../dbs/mysql');
 const queryStatement = require('../../query/query');
 const fileHelper = require('../../helpers/fileHelper');
 const mdHelper = require('../../helpers/messageDigestHelper');
@@ -31,7 +31,7 @@ const imageController = {
             increment = true;
         }
     
-        mysqlPool.getConnection((connectionErr, connection) => {
+        dbConnectionPool.getConnection((connectionErr, connection) => {
             if (connectionErr) {
                 res.send({
                     status: false,
@@ -136,7 +136,7 @@ const imageController = {
                 if (file.mimetype.split('/')[0] === 'image') {
                     file.mv(`./assets/image/${fileName}`);
                     sharp(file.data).resize({width:THUMBNAIL_WIDTH, fit: sharp.fit.cover, format: fileNameSplit[1]}).toFile(`./assets/image/thumb/${fileName}`).then(info => {
-                        mysqlPool.getConnection((err, connection) => {
+                        dbConnectionPool.getConnection((err, connection) => {
                             if (err) {
                                 res.send({
                                     status: false,
@@ -208,7 +208,7 @@ const imageController = {
         const {id} = req.params;
         
         if (id) {
-            mysqlPool.getConnection((err, connection) => {
+            dbConnectionPool.getConnection((err, connection) => {
                 if (err) {
                     res.send({
                         status: false,
@@ -293,7 +293,7 @@ const imageController = {
             return;
         }
     
-        mysqlPool.getConnection((err, connection) => {
+        dbConnectionPool.getConnection((err, connection) => {
             if (err) {
                 console.log(err)
                 res.send({

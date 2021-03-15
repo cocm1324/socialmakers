@@ -1,6 +1,6 @@
 const sha256 = require('js-sha256');
 const jwtHelper = require('../../helpers/jwtHelper');
-const mysqlPool = require('../../dbs/mysql');
+const { dbConnectionPool } = require('../../dbs/mysql');
 const queryStatement = require('../../query/query');
 
 const TOKEN_EXPIRATION = 3;
@@ -15,7 +15,7 @@ const userController = {
     post: (req, res) => {
         const {login, password} = req.body;
     
-        mysqlPool.getConnection((err, connection) => {
+        dbConnectionPool.getConnection((err, connection) => {
             if (err) {
                 res.status(200).send({
                     status: false,
@@ -86,7 +86,7 @@ const userController = {
     put: (req, res) => {
         const {login, password} = req.body;
     
-        mysqlPool.getConnection((err, connection) => {
+        dbConnectionPool.getConnection((err, connection) => {
             if (err) {
                 res.status(200).send({
                     status: false,
@@ -157,7 +157,7 @@ const userController = {
     delete: (req, res) => {
         const {login} = req.body;
     
-        mysqlPool.getConnection((err, connection) => {
+        dbConnectionPool.getConnection((err, connection) => {
             if (err) {
                 res.status(200).send({
                     status: false,
@@ -290,7 +290,7 @@ const userController = {
         const {login, password} = req.body;
         const passwordHash = sha256.sha256(password);
     
-        mysqlPool.getConnection((err, connection) => {
+        dbConnectionPool.getConnection((err, connection) => {
             if (err) {
                 connection.release();
                 res.status(200).send({

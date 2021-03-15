@@ -1,181 +1,96 @@
-const mysqlPool = require('../../../dbs/mysql');
+const { dbConnectionPool, connect, query, startTransaction, rollbackTransaction, commitTransaction } = require('../../../dbs/mysql');
 const queryStatement = require('../../../query/query');
 const seqeunce = require('../../../helpers/seqHelper');
 
+
 const courseController = {
     get: (req, res) => {
-        mysqlPool.getConnection((connectionErr, connection) => {
-            if (connectionErr) {
-                res.send({
-                    status: false,
-                    error: {
-                        code: 500,
-                        message: 'Internal Server Error: \n' + err
-                    }
-                });
-                return;
-            }
-    
-            connection.query(queryStatement.selectCourse(), (err1, rows1) => {
-                connection.release();
-                if (err1) {
-                    res.send({
-                        status: false,
-                        error: {
-                            code: 500,
-                            message: 'Internal Server Error: \n' + err1
-                        }
-                    });
-                    return;
-                }
-    
-                const courses = rows1.map(row => {
-                    const {pageId, pageName, seq, seqBase, imageId, messageDigest, extension} = row;
-                    return {
-                        thumbImageUrl: `/api/static/image/${messageDigest}.${extension}`,
-                        thumbImageId: imageId,
-                        courseName: pageName,
-                        courseId: pageId,
-                        seq: seq,
-                        seqBase: seqBase
-                    };
-                });
-    
-                res.status(200).send({
-                    status: true,
-                    data: courses
-                });
+        let connection;
+
+        connect().then(conn => {
+            connection = conn;
+            return query(connection, queryStatement.selectCourse(), null);
+        }).then(result => {
+            const courses = result.map(row => {
+                const {pageId, pageName, seq, seqBase, imageId, messageDigest, extension} = row;
+                return {
+                    thumbImageUrl: `/api/static/image/${messageDigest}.${extension}`,
+                    thumbImageId: imageId,
+                    courseName: pageName,
+                    courseId: pageId,
+                    seq: seq,
+                    seqBase: seqBase
+                };
             });
+            res.status(200).send({
+                status: true,
+                data: courses
+            });
+        }).catch(error => {
+            res.send({
+                status: false,
+                error: {
+                    code: 500,
+                    message: 'Internal Server Error: \n' + error
+                }
+            });
+            return;
+        }).finally(() => {
+            connection.release();
         });
     },
     
     post: (req, res) => {
-        const {
-            courseName, registerUrl, thumbImageId, 
-            bannerImageId, bannerImageBlur, bannerColor,
-            description1, description2, 
-            fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6, 
-            field1, field2, field3, field4, field5, field6
-        } = req.body;
-    
-        mysqlPool.getConnection((connectionErr, connection) => {
-            if (connectionErr) {
+        const { courseName, thumbImageId } = req.body;
+        let connection;
+        let seq, seqBase;
+        let courseId;
+
+        connect().then(conn => {
+            connection = conn;
+            return startTransaction(connection);
+        }).then(_ => {
+            return query(connection, queryStatement.selectCourseObjectIdSeqSeqBase(), null);
+        }).then(result => {
+            const { seq: _seq, seqBase: _seqBase } = seqeunce.getNextSeq(result);
+            seq = _seq;
+            seqBase = _seqBase;
+
+            return query(connection, queryStatement.createCourseTransactionCreatePage(), [ courseName ]);
+        }).then(result => {
+            const { insertId } = result;
+            if (!insertId) {
+                throw 'transaction error';
+            }
+            courseId = insertId;
+            return query(connection, queryStatement.createCourseTransactionCreateCourseInfo(), [ insertId, thumbImageId, seq, seqBase ]);
+        }).then(result => {
+            if (result) {
+                commitTransaction(connection);
+            }
+            res.status(200).send({
+                status: true,
+                data: { courseId }
+            });
+        }).catch(error => {
+            rollbackTransaction(connection).then(_ => {
                 res.send({
                     status: false,
                     error: {
                         code: 500,
-                        message: 'Fail to Establish Connection with Database'
+                        message: 'Internal Server Error'
                     }
-                });
-                return;
-            }
-    
-            connection.beginTransaction((beginTransactionErr) => {
-                if (beginTransactionErr) {
-                    connection.release(); 
-                    res.send({
-                        status: false,
-                        error: {
-                            code: 500,
-                            message: 'Internal Server Error: \n' + beginTransactionErr
-                        }
-                    });
-                    return;
-                }
-                connection.query(queryStatement.selectCourseObjectIdSeqSeqBase(), (err1, result1) => {
-                    if (err1) {
-                        connection.release();
-                        res.send({
-                            status: false,
-                            error: {
-                                code: 500,
-                                message: 'Internal Server Error: \n' + err1
-                            }
-                        });
-                    }
-    
-                    const {seq, seqBase} = seqeunce.getNextSeq(result1);
-    
-                    connection.query(queryStatement.createCourseTransactionCreatePage(courseName), (err2, result2) => {
-                        if (err2) { 
-                            connection.rollback(() => {
-                                connection.release();
-                                res.send({
-                                    status: false,
-                                    error: {
-                                        code: 500,
-                                        message: 'Internal Server Error: \n' + err2
-                                    }
-                                });
-                                return;
-                            });
-                        }
-    
-                        const {insertId} = result2;
-                        if (!insertId) {
-                            connection.rollback(() => {
-                                connection.release();
-                                res.send({
-                                    status: false,
-                                    error: {
-                                        code: 500,
-                                        message: 'Internal Server Error'
-                                    }
-                                });
-                                return;
-                            });
-                        }
-    
-                        connection.query(queryStatement.createCourseTransactionCreateCourseInfo(
-                            insertId, thumbImageId, bannerImageId, bannerImageBlur, bannerColor, description1, description2, seq, seqBase, registerUrl,
-                            fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6,
-                            field1, field2, field3, field4, field5, field6), (err3, result3) => {
-                            if (err3) { 
-                                connection.rollback(() => {
-                                    connection.release();
-                                    res.send({
-                                        status: false,
-                                        error: {
-                                            code: 500,
-                                            message: 'Internal Server Error: \n' + err3
-                                        }
-                                    });
-                                    return;
-                                });
-                            }
-                        
-                            connection.commit(null, (err4) => {
-                                if (err4) { 
-                                    connection.rollback(() => {
-                                        connection.release();
-                                        res.send({
-                                            status: false,
-                                            error: {
-                                                code: 500,
-                                                message: 'Internal Server Error: \n' + err4
-                                            }
-                                        });
-                                        return;
-                                    });
-                                }
-    
-                                connection.release();
-                                res.status(200).send({
-                                    status: true,
-                                    data: {courseId: insertId}
-                                });
-                            });
-                        });
-                    });
                 });
             });
+        }).finally(() => {
+            connection.release();
         });
     },
     
     getByPageId: (req, res) => {
         const {pageId} = req.params;
     
-        mysqlPool.getConnection((connectionErr, connection) => {
+        dbConnectionPool.getConnection((connectionErr, connection) => {
             if (connectionErr) {
                 res.send({
                     status: false,
@@ -291,7 +206,7 @@ const courseController = {
     },
     
     putByPageId: (req, res) => {
-        const {pageId} = req.params;
+        const { pageId } = req.params;
         const {
             courseName, bannerImageId, bannerImageBlur, bannerColor, 
             description1, description2, registerUrl,
@@ -309,49 +224,107 @@ const courseController = {
             });
             return;
         }
-    
-        mysqlPool.getConnection((connectionErr, connection) => {
-            if (connectionErr) {
-                res.send({
-                    status: false,
-                    error: {
-                        code: 500,
-                        message: 'Fail to Establish Connection with Database'
-                    }
-                });
-                return;
-            }
-    
-            connection.query(queryStatement.updateCourse(
-                pageId, courseName, bannerImageId, bannerImageBlur, bannerColor, description1, description2, registerUrl,
-                fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6, 
-                field1, field2, field3, field4, field5, field6
-            ), (err1, rows1) => {
-                connection.release();
-    
-                if (err1) {
-                    res.send({
-                        status: false,
-                        error: {
-                            code: 500,
-                            message: err1
-                        }
-                    });
-                    return;
-                }
-    
-                res.status(200).send({
-                    status: true,
-                    data: rows1
-                });
+
+        let connection;
+
+        connect().then(conn => {
+            connection = conn;
+
+            const sql = `
+                UPDATE
+                    dbibridge.page a
+                    INNER JOIN dbibridge.courseInfo b ON a.pageId=b.courseId
+                SET
+                    a.pageName=?,
+                    b.bannerImageId=?,
+                    b.bannerImageBlur=?,
+                    b.bannerColor=?,
+                    b.description1=?,
+                    b.description2=?,
+                    b.fieldTitle1=?,
+                    b.fieldTitle2=?,
+                    b.fieldTitle3=?,
+                    b.fieldTitle4=?,
+                    b.fieldTitle5=?,
+                    b.fieldTitle6=?,
+                    b.field1=?,
+                    b.field2=?,
+                    b.field3=?,
+                    b.field4=?,
+                    b.field5=?,
+                    b.field6=?,
+                    b.registerUrl=?
+                WHERE
+                    a.pageId=?
+                ;
+            `
+            const variable = [
+                courseName, bannerImageId, bannerImageBlur, bannerColor, description1, description2,
+                fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6,
+                field1, field2, field3, field4, field5, field6, registerUrl, pageId
+            ];
+
+            return query(connection, sql, variable);
+        }).then(result => {
+            res.status(200).send({
+                status: true,
+                data: rows1
             });
+        }).catch(error => {
+            res.send({
+                status: false,
+                error: {
+                    code: 500,
+                    message: error
+                }
+            });
+        });
+    },
+
+    updateCourseThumbnail: (req, res) => {
+        const { pageId } = req.params;
+        const { courseName, thumbImageId } = req.body;
+        let connection;
+
+        connect().then(conn => {
+            connection = conn;
+
+            const sql = `
+                UPDATE
+                    dbibridge.page a
+                    INNER JOIN dbibridge.courseInfo b ON a.pageId=b.courseId
+                SET
+                    a.pageName=?,
+                    b.thumbnailImageId=?
+                WHERE
+                    a.pageId=?
+                ;
+            `;
+            const variable = [ courseName, thumbImageId, pageId ];
+
+            return query(connection, sql, variable);
+        }).then(result => {
+            res.status(200).send({
+                status: true,
+                data: result
+            });
+        }).catch(error => {
+            res.send({
+                status: false,
+                error: {
+                    code: 500,
+                    message: error
+                }
+            });
+        }).finally(() => {
+            connection.release();
         });
     },
     
     deleteByPageId: (req, res) => {
         const {pageId} = req.params;
     
-        mysqlPool.getConnection((connectionErr, connection) => {
+        dbConnectionPool.getConnection((connectionErr, connection) => {
             if (connectionErr) {
                 rres.send({
                     status: false,
@@ -398,7 +371,7 @@ const courseController = {
             return;
         }
     
-        mysqlPool.getConnection((err, connection) => {
+        dbConnectionPool.getConnection((err, connection) => {
             if (err) {
                 rres.send({
                     status: false,
@@ -469,7 +442,7 @@ const courseController = {
             return;
         }
     
-        mysqlPool.getConnection((connectionErr, connection) => {
+        dbConnectionPool.getConnection((connectionErr, connection) => {
             if (connectionErr) {
                 rres.send({
                     status: false,
