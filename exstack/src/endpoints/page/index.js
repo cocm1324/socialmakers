@@ -4,9 +4,11 @@ const pageController = require('./page.controller');
 const aboutUs = require('./aboutUs');
 const course = require('./course');
 const notice = require('./notice');
+const courseCategory = require('./course-category');
 
 page.use('/aboutUs', aboutUs);
 page.use('/course', course);
+page.use('/courseCategory', courseCategory);
 page.use('/notice', notice);
 
 page.get('/', pageController.get);

@@ -1,4 +1,11 @@
+function sortFn(a, b) {
+    const baseNumberA = a.seq / a.seqBase;
+    const baseNumberB = b.seq / b.seqBase;
+    return baseNumberA - baseNumberB;
+}
+
 const sequence = {
+    sortFn,
     getNextSeq: (seqSeqBaseObjectArray) => {
         if (!(seqSeqBaseObjectArray instanceof Array) || seqSeqBaseObjectArray.length == 0) {
             return {seq: 1, seqBase: 1};
@@ -24,11 +31,7 @@ const sequence = {
             return undefined;
         }
 
-        const orderList = objectIdSeqSeqBaseObjectArray.sort((a, b)=> {
-            const baseNumberA = a.seq / a.seqBase;
-            const baseNumberB = b.seq / b.seqBase;
-            return baseNumberA - baseNumberB;
-        });
+        const orderList = objectIdSeqSeqBaseObjectArray.sort(sortFn);
 
         let index = 0;
         for (let i = 0; i < orderList.length; i++) {
@@ -71,11 +74,7 @@ const sequence = {
             return undefined;
         }
 
-        const orderList = objectIdSeqSeqBaseObjectArray.sort((a, b)=> {
-            const baseNumberA = a.seq / a.seqBase;
-            const baseNumberB = b.seq / b.seqBase;
-            return baseNumberA - baseNumberB;
-        });
+        const orderList = objectIdSeqSeqBaseObjectArray.sort(sortFn);
 
         let index = 0;
         for (let i = 0; i < orderList.length; i++) {

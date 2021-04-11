@@ -73,8 +73,8 @@ const pageController = {
         });
     },
     putByPageIdContentId: (req, res) => {
-        const {pageId, contentId} = req.params;
-        const {type, width, content, imageId, background} = req.body;
+        const { pageId, contentId } = req.params;
+        const { type, width, content, imageId, background } = req.body;
     
         if (req.body.pageId != pageId || req.body.contentId != contentId) {
             res.send({

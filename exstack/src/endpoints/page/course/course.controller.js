@@ -2,7 +2,6 @@ const { dbConnectionPool, connect, query, startTransaction, rollbackTransaction,
 const queryStatement = require('../../../query/query');
 const seqeunce = require('../../../helpers/seqHelper');
 
-
 const courseController = {
     get: (req, res) => {
         let connection;
