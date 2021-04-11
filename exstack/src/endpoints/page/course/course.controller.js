@@ -1,6 +1,7 @@
 const { dbConnectionPool, connect, query, startTransaction, rollbackTransaction, commitTransaction } = require('../../../dbs/mysql');
 const queryStatement = require('../../../query/query');
 const seqeunce = require('../../../helpers/seqHelper');
+const { sortFn } = require('../../../helpers/seqHelper');
 
 const courseController = {
     get: (req, res) => {
@@ -21,7 +22,7 @@ const courseController = {
                     seq: seq,
                     seqBase: seqBase
                 };
-            });
+            }).sort(sortFn);
             res.status(200).send({
                 status: true,
                 data: courses
@@ -342,145 +343,130 @@ const courseController = {
         });
     },
     
-    putUpSeqByPageId: (req, res) => {
-        const {pageId} = req.params;
-        const {courseId} = req.body;
+    upSeq: (req, res) => {
+        const { pageId } = req.params;
     
-        if (courseId != pageId) {
+        let conn;
+
+        if (!pageId) {
             res.send({
                 status: false,
                 error: {
-                    code:403,
+                    code: 403,
                     message: 'Invalid Request'
                 }
             });
             return;
         }
     
-        dbConnectionPool.getConnection((err, connection) => {
-            if (err) {
-                rres.send({
-                    status: false,
-                    error: {
-                        code: 500,
-                        message: 'Internal Server Error'
-                    }
-                });
+        connect().then(_conn => {
+            conn = _conn;
+            return query(conn, queryStatement.selectCourseObjectIdSeqSeqBase(), []);
+        }).then(result => {
+            const { seq, seqBase } = seqeunce.incrementSeq(pageId, result);
+            if (seq == undefined || seqBase == undefined) {
                 return;
             }
-    
-            connection.query(queryStatement.selectCourseObjectIdSeqSeqBase(), (err1, rows1) => {
-                if (err1) {
-                    connection.release();
-                    res.send({
-                        status: false,
-                        error: {
-                            code: 500,
-                            message: 'Internal Server Error'
-                        }
-                    });
-                    return;
+            return query(conn, queryStatement.updateCourseSeq(pageId, seq, seqBase), []);
+        }).then(_ => {
+            res.status(200).send({ status: true });
+        }).catch(error => {
+            res.send({
+                status: false,
+                error: {
+                    code: 500,
+                    message: 'Internal Server Error: ' + error
                 }
-    
-                const {seq, seqBase} = seqeunce.incrementSeq(courseId, rows1);
-    
-                if (seq == undefined || seqBase == undefined) {
-                    connection.release();
-                    res.status(200).send({
-                        status: true,
-                    });
-                    return;
-                }
-    
-                connection.query(queryStatement.updateCourseSeq(courseId, seq, seqBase), (err2, rows2) => {
-                    connection.release();
-                    if (err2) {
-                        res.send({
-                            status: false,
-                            error: {
-                                code: 500,
-                                message: 'Internal Server Error'
-                            }
-                        });
-                        return;
-                    }
-        
-                    res.status(200).send({
-                        status: true,
-                    });
-                });
             });
+        }).finally(() => {
+            conn.release();
         });
     },
     
-    putDownSeqByPageId: (req, res) => {
-        const {pageId} = req.params;
-        const {courseId} = req.body;
+    downSeq: (req, res) => {
+        const { pageId } = req.params;
     
-        if (courseId != pageId) {
+        let conn;
+
+        if (!pageId) {
             res.send({
                 status: false,
                 error: {
-                    code:403,
+                    code: 403,
                     message: 'Invalid Request'
                 }
             });
             return;
         }
     
-        dbConnectionPool.getConnection((connectionErr, connection) => {
-            if (connectionErr) {
-                rres.send({
-                    status: false,
-                    error: {
-                        code: 500,
-                        message: 'Fail to Establish Connection with Database'
-                    }
-                });
+        connect().then(_conn => {
+            conn = _conn;
+            return query(conn, queryStatement.selectCourseObjectIdSeqSeqBase(), []);
+        }).then(result => {
+            const { seq, seqBase } = seqeunce.decrementSeq(pageId, result);
+            if (seq == undefined || seqBase == undefined) {
                 return;
             }
-    
-            connection.query(queryStatement.selectCourseObjectIdSeqSeqBase(), (err1, rows1) => {
-                if (err1) {
-                    connection.release();
-                    res.send({
-                        status: false,
-                        error: {
-                            code: 500,
-                            message: 'Internal Server Error'
-                        }
-                    });
-                    return;
+            return query(conn, queryStatement.updateCourseSeq(pageId, seq, seqBase), []);
+        }).then(_ => {
+            res.status(200).send({ status: true });
+        }).catch(error => {
+            res.send({
+                status: false,
+                error: {
+                    code: 500,
+                    message: 'Internal Server Error: ' + error
                 }
-    
-                const {seq, seqBase} = seqeunce.decrementSeq(courseId, rows1);
-    
-                if (seq == undefined || seqBase == undefined) {
-                    connection.release();
-                    res.status(200).send({
-                        status: true,
-                    });
-                    return;
-                }
-    
-                connection.query(queryStatement.updateCourseSeq(pageId, seq, seqBase), (err2, rows2) => {
-                    connection.release();
-                    if (err2) {
-                        res.send({
-                            status: false,
-                            error: {
-                                code: 500,
-                                message: 'Internal Server Error: \n' + err2
-                            }
-                        });
-                        return;
-                    }
-        
-                    res.status(200).send({
-                        status: true,
-                    });
-                });
             });
+        }).finally(() => {
+            conn.release();
+        });
+    },
+
+    updateCourseCategory: (req, res) => {
+        const { pageId } = req.params;
+        const { courseCategoryId } = req.body;
+    
+        if (!pageId || !courseCategoryId) {
+            res.send({
+                status: false,
+                error: {
+                    code: 403,
+                    message: 'Invalid Request'
+                }
+            });
+            return;
+        }
+
+        let conn;
+
+        connect().then(_conn => {
+            conn = _conn;
+
+            const statement = `
+                UPDATE
+                    dbibridge.courseInfo
+                SET
+                    courseCategoryId=?
+                WHERE
+                    courseId=?
+                ;
+            `;
+            const variables = [ courseCategoryId, pageId ];
+
+            return query(conn, statement, variables);
+        }).then(_ => {
+            res.status(200).send({ status: true });
+        }).catch(error => {
+            res.send({
+                status: false,
+                error: {
+                    code: 500,
+                    message: 'Internal Server Error: ' + error
+                }
+            });
+        }).finally(() => {
+            conn.release();
         });
     }
 }
