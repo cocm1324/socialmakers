@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { BANNER_TYPE, PAGE_TYPE, DELAY_TYPE, Banner } from '@models';
+import { BANNER_TYPE, DELAY_TYPE, Banner } from '@models';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
@@ -45,7 +45,6 @@ export class BannerEditorComponent implements OnInit, OnDestroy {
 	initializeForm() {
 		if (this.banner) {
 			const { bannerColor, bannerImageUrl, bannerImageBlur, bannerImageId } = this.banner;
-			console.log(this.banner);
 			this.bannerForm = this.fb.group({
 				bannerImageId,
 				bannerImageUrl,

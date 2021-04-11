@@ -13,6 +13,6 @@ export class ViewerComponent implements OnInit {
 	constructor() { }
 
 	ngOnInit() {
-		
+		// console.log(this.pageData);
 	}
 }

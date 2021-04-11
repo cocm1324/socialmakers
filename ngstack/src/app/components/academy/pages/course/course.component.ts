@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ISection } from '@app/models';
+import { ActivatedRoute } from '@angular/router';
+import { ISection, ISectionWithContentId } from '@app/models';
+import { DataService } from '@services/data/data.service';
 
 const courseData = {
 	status: true,
@@ -70,46 +72,96 @@ const courseData = {
 })
 export class CourseComponent implements OnInit {
 
-	pageName: string;
+	courseName: string;
 	description1: string;
 	description2: string;
-	pageHeader: string;
-	fieldTitle1: string;
-	fieldTitle2: string;
-	fieldTitle3: string;
-	fieldTitle4: string;
-	fieldTitle5: string;
-	fieldTitle6: string;
-	field1: string;
-	field2: string;
-	field3: string;
-	field4: string;
-	field5: string;
-	field6: string;
-	url: string;
+	fields: any[];
+	registerUrl: string;
 	contents: ISection[];
 
-	constructor() { }
+	banner;
+
+	loaded: boolean = false;
+
+	constructor(private dataService: DataService, private route: ActivatedRoute) { }
 
 	ngOnInit() {
-		this.pageName = courseData.data.pageName;
-		this.description1 = courseData.data.course.description1;
-		this.description2 = courseData.data.course.description2;
-		this.pageHeader = courseData.data.pageHeader;
-		this.field1 = courseData.data.course.field1;
-		this.field2 = courseData.data.course.field2;
-		this.field3 = courseData.data.course.field3;
-		this.field4 = courseData.data.course.field4;
-		this.field5 = courseData.data.course.field5;
-		this.field6 = courseData.data.course.field6;
-		this.fieldTitle1 = courseData.data.course.fieldTitle1;
-		this.fieldTitle2 = courseData.data.course.fieldTitle2;
-		this.fieldTitle3 = courseData.data.course.fieldTitle3;
-		this.fieldTitle4 = courseData.data.course.fieldTitle4;
-		this.fieldTitle5 = courseData.data.course.fieldTitle5;
-		this.fieldTitle6 = courseData.data.course.fieldTitle6;
-		this.url = courseData.data.course.url;
-		this.contents = courseData.data.contents;
+		this.getCourseId();
 	}
 
+	getCourseId() {
+		this.route.params.subscribe(next => {
+			const { id } = next;
+			this.loadData(id);
+		});
+	}
+
+	loadData(id: number) {
+		this.dataService.getCourse(id).toPromise().then(result => {
+			const { data, status } = result;
+			if (status) {
+				const { 
+					courseName, courseId, contents, description1, description2, registerUrl,
+					field1, field2, field3, field4, field5, field6, fieldTitle1, fieldTitle2,
+					fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6, bannerColor, bannerImageBlur,
+					bannerImageId, bannerImageUrl
+				} = data;
+
+				this.courseName = courseName;
+				this.description1 = description1;
+				this.description2 = description2;
+
+				this.fields = [
+					{field: field1, fieldTitle: fieldTitle1},
+					{field: field2, fieldTitle: fieldTitle2},
+					{field: field3, fieldTitle: fieldTitle3},
+					{field: field4, fieldTitle: fieldTitle4},
+					{field: field5, fieldTitle: fieldTitle5},
+					{field: field6, fieldTitle: fieldTitle6}
+				];
+				this.registerUrl = registerUrl;
+
+				this.banner = { bannerImageBlur, bannerImageUrl, bannerImageId, bannerColor };
+
+				this.initContent(contents);
+
+				this.loaded = true;
+			}
+		});
+	}
+
+	initContent(data: ISectionWithContentId[]) {
+		data.sort((a, b)=> {
+			if (a.seq - b.seq < 0) {
+				return -1;
+			}
+			if (a.seq - b.seq > 0) {
+				return 1;
+			}
+			return 0;
+		});
+
+		const mappedContent = data.map(content => {
+			const contentMap = {
+				contentId: content.contentId,
+				width: content.width,
+				type: content.type,
+				content: content.content,
+				seq: content.seq,
+				seqBase: content.seqBase,
+				background: content.background
+			};
+			if (content.imageId) {
+				contentMap['imageId'] = content.imageId;
+				contentMap['imageUrl'] = content.imageUrl;
+			}
+			return contentMap;
+		});
+
+		this.contents = mappedContent;
+	}
+
+	goToUrl() {
+		window.location.href = this.registerUrl;
+	}
 }

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataService } from '@services/data/data.service';
 import { UtilService } from '@services/util/util.service';
-import { ACADEMY_ADMIN_URL, INotice } from '@app/models/';
+import { ACADEMY_ADMIN_URL, INotice, IUpdateCourseThumbnailReq } from '@app/models/';
 import * as _ from 'lodash';
 
 @Component({
@@ -12,17 +12,18 @@ import * as _ from 'lodash';
 })
 export class AdminMainComponent implements OnInit {
 
-	courses;
+	courses: any[];
 	notices: INotice[];
 	selectedCourseId = -1;
 
 	displayNewCourseDialog: boolean = false;
 	
+	isCourseEdit: boolean = false;
 	courseName: string = '';
-	thumbImageId: number = null;
-	thumbImageUrl: string = null;
+	courseThumbImageId: number = null;
+	courseThumbImageUrl: string = null;
 
-	get newCourseValid() { return this.thumbImageId && this.courseName.length > 0 }
+	get newCourseValid() { return this.courseThumbImageId && this.courseName.length > 0 }
 
   	constructor(
 		private router: Router, 
@@ -104,7 +105,7 @@ export class AdminMainComponent implements OnInit {
 	onCourseSelected(e) {	
 		e.originalEvent ? e.originalEvent.preventDefault(): null;	
 		this.selectedCourseId = e.value[0].courseId;
-	}	
+	}
 
 	onCourseOrdered(e) {	
 		console.log(e)
@@ -112,7 +113,9 @@ export class AdminMainComponent implements OnInit {
 
 	goToEditCourse(e) {
 		e.preventDefault();
-		this.router.navigate([`${ACADEMY_ADMIN_URL.PREFIX}/${ACADEMY_ADMIN_URL.COURSE_FRAGMENT}/${this.selectedCourseId}`]);
+		if (this.selectedCourseId != -1) {
+			this.router.navigate([`${ACADEMY_ADMIN_URL.PREFIX}/${ACADEMY_ADMIN_URL.COURSE_FRAGMENT}/${this.selectedCourseId}`]);
+		}
 	}
 
 	onCreateCourse() {
@@ -129,29 +132,62 @@ export class AdminMainComponent implements OnInit {
 
 	onNewCourseThumbnailSelected(e) {
 		const { url, imageId } = e;
-		this.thumbImageId = imageId;
-		this.thumbImageUrl = url;
+		this.courseThumbImageId = imageId;
+		this.courseThumbImageUrl = url;
+	}
+
+	initializeCourseInfo() {
+		this.isCourseEdit = false;
+		this.displayNewCourseDialog = false;
+		this.courseName = '';
+		this.courseThumbImageId = null;
+		this.courseThumbImageUrl = null;
+	}
+
+	openCourseThumbnailEditDialog() {
+		if (this.selectedCourseId != -1) {
+			const { courseName, thumbImageId, thumbImageUrl } = this.courses.filter(element => element.courseId == this.selectedCourseId)[0];
+			this.isCourseEdit = true;
+			this.courseName = courseName;
+			this.courseThumbImageId = thumbImageId;
+			this.courseThumbImageUrl = thumbImageUrl;
+			this.displayNewCourseDialog = true;
+		}
 	}
 
 	createNewCourse() {
 		if (this.newCourseValid) {
 			this.dataService.createCourse({
 				courseName: this.courseName,
-				thumbImageId: this.thumbImageId
+				thumbImageId: this.courseThumbImageId
 			}).toPromise().then(result => {
 				if (!result) {
 					alert('생성 실패');
 					return;
 				} else {
-					this.displayNewCourseDialog = false;
-					this.courseName = '';
-					this.thumbImageId = null;
-					this.thumbImageUrl = null;
 					alert('새 Course가 생성되었습니다');
+					this.initializeCourseInfo();
+					this.loadCourse();
 				}
 			}).catch(error => {
 				alert('생성 실패:' + error);
 			});
 		}
+	}
+
+	updateCourseThumbnail() {
+		const request: IUpdateCourseThumbnailReq = {
+			courseId: this.selectedCourseId,
+			courseName: this.courseName,
+			thumbnailImageId: this.courseThumbImageId
+		};
+		this.dataService.updateCourseThumbnail(request).toPromise().then(result => {
+			if (!result || !result.status) {
+				alert('실패하였습니다.');
+				return;
+			}
+			this.initializeCourseInfo();
+			this.loadCourse();
+		});
 	}
 }

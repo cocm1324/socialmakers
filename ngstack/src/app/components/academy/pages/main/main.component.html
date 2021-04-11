@@ -12,19 +12,15 @@
     </ng-template>
 </p-carousel>
 <div class="p-grid-medium">
-    <div *ngFor="let item of courseCategory" class="w-100 p-my-3">
-        <div class="item-heading">{{item.description}}</div>
-        <h2>{{item.title}}</h2>
-
-        <div class="p-grid">
-            <div *ngFor="let course of courseByCategory(item.id)" class="p-col-6 p-md-4 p-lg-3">
-                <p-card class="p-cursor-pointer" (click)="goToCourse(course.id)" header="{{course.title}}">
-                    <p-header>
-                        <img [src]="course.thumbnail">
-                    </p-header>
-                    <!--{{course.description}}-->
-                </p-card>
-            </div>
+    <div class="p-grid">
+        <div *ngFor="let course of courses" class="p-col-6 p-md-4 p-lg-3">
+            <p-card class="p-cursor-pointer" (click)="goToCourse(course.courseId)">
+                <p-header>
+                    <img style="height: 9em; object-fit: cover;" [src]="course.thumbImageUrl">
+                </p-header>
+                <h2 style="margin-top: 0;">{{course.courseName}}</h2>
+                <div style="height: 3em;">{{course.description1}}</div>
+            </p-card>
         </div>
     </div>
 </div>

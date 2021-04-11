@@ -11,6 +11,7 @@ import { NoticeComponent } from './pages/notice/notice.component';
 import { AnnounceComponent } from './pages/announce/announce.component';
 import { ImageModule } from '@components/common/image/image.module';
 import { PrimeModule } from '@app/prime.module';
+import { BannerModule } from '@components/common/banner/banner.module';
 
 @NgModule({
     declarations: [
@@ -26,7 +27,8 @@ import { PrimeModule } from '@app/prime.module';
         AcademyRoutingModule,
         PrimeModule,
         PageModule,
-        ImageModule
+        ImageModule,
+        BannerModule
     ]
 })
 export class AcademyModule { }

@@ -1,87 +1,16 @@
-<form [formGroup]="bannerForm">
-<div 
-    class="banner-container p-grid p-nogutter p-relative p-overflow-hidden"
-    (mouseleave)="closeAllPannel()"
->
+<div class="banner-container p-grid p-nogutter p-relative p-overflow-hidden">
     <img 
         *ngIf="isImage()"
         class="banner banner-image" 
-        [src]="bannerImageUrl.value" 
+        [src]="bannerImageUrl" 
         [ngStyle]="{'filter': blurValue, '-webkit-filter': blurValue}"
         onerror="this.src='./assets/img/notfound.jpg';"
     >
     <div 
         *ngIf="!isImage()" 
         class="banner" 
-        [ngStyle]="{'background-color': bannerColor.value}"
+        [ngStyle]="{'background-color': bannerColor}"
     >
     </div>
-    <div class="p-absolute overlay">
-        <div class="p-grid toolbar p-p-1 p-mt-2 p-mr-4">
-            <div *ngIf="isImage()">
-                <span
-                    pTooltip="이미지 가져오기"
-                    tooltipPosition="bottom"
-                    (click)="showImageUploadDialog()"
-                >
-                    <i class="pi pi-external-link"></i>
-                </span>
-                <span
-                    pTooltip="이미지 흐림"
-                    tooltipPosition="bottom"
-                    (click)="toggleImageBlurPannel()"
-                >
-                    <i class="pi pi-sliders-h" [ngClass]="{'disabled': isNewPage}"></i>
-                </span>
-                <div *ngIf="imageBlurPannel" class="p-absolute">
-                    <p-card>
-                        <div class="image-pannel-container">
-                            <p-slider 
-                                formControlName="bannerImageBlur"
-                                [min]="0"
-                                [max]="100"
-                                [animate]="true"
-                            ></p-slider>
-                        </div>
-                    </p-card>
-                </div>
-            </div>
-            <div *ngIf="!isImage()" class="p-relative">
-                <span
-                    pTooltip="색상"
-                    tooltipPosition="bottom"
-                    (click)="toggleColorPickerPannel()"
-                >
-                    <i class="pi pi-sliders-h"></i>
-                </span>
-                <div *ngIf="colorPickerPannel" class="p-absolute inline-color-picker">
-                    <p-colorPicker formControlName="bannerColor" [inline]="true"></p-colorPicker>
-                </div>
-            </div>
-            <div class="toolbar-divider p-m-1"></div>
-            <div>
-                <span 
-                    pTooltip="이미지 배너" 
-                    tooltipPosition="bottom"
-                    (click)="imageBannerSelected()"
-                >
-                    <i class="pi pi-images" [ngClass]="{'highlight': isImage()}" style="font-size: 2em;"></i>
-                </span>
-                <span 
-                    class="p-relative" 
-                    pTooltip="단색 배너" 
-                    tooltipPosition="bottom"
-                    (click)="colorBannerSelected()"
-                >
-                    <i class="pi pi-palette" [ngClass]="{'highlight': !isImage()}" style="font-size: 2em;"></i>
-                </span>
-            </div>
-        </div>
-    </div>
 </div>
-<app-image-upload 
-    [button]="false"
-    [showEvent]="showImageUploadDialogEvent.asObservable()"
-    (onSubmit)="imageUploaded($event)"
-></app-image-upload>
-</form>
+

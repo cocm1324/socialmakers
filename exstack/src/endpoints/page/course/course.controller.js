@@ -12,12 +12,13 @@ const courseController = {
             return query(connection, queryStatement.selectCourse(), null);
         }).then(result => {
             const courses = result.map(row => {
-                const {pageId, pageName, seq, seqBase, imageId, messageDigest, extension} = row;
+                const { pageId, pageName, seq, seqBase, description1, imageId, messageDigest, extension } = row;
                 return {
                     thumbImageUrl: `/api/static/image/${messageDigest}.${extension}`,
                     thumbImageId: imageId,
                     courseName: pageName,
                     courseId: pageId,
+                    description1: description1,
                     seq: seq,
                     seqBase: seqBase
                 };
@@ -88,120 +89,121 @@ const courseController = {
     },
     
     getByPageId: (req, res) => {
-        const {pageId} = req.params;
-    
-        dbConnectionPool.getConnection((connectionErr, connection) => {
-            if (connectionErr) {
-                res.send({
-                    status: false,
-                    error: {
-                        code: 500,
-                        message: 'Fail to Establish Connection with Database'
-                    }
-                });
-                return;
+        const { pageId } = req.params;
+        let connection;
+        let coursePage;
+
+        connect().then(conn => {
+            connection = conn;
+            const sql = `
+                SELECT
+                    b.courseId, a.pageName as courseName, b.seq, b.seqBase, b.bannerColor, b.bannerImageBlur,
+                    c.imageId AS thumbImageId, c.messageDigest AS thumbMessageDigest, c.extension AS thumbExtension,
+                    d.imageId AS bannerImageId, d.messageDigest AS bannerMessageDigest, d.extension AS bannerExtension,
+                    a.pageName, b.description1, b.description2, b.fieldTitle1, b.fieldTitle2, b.fieldTitle3, b.fieldTitle4, b.fieldTitle5, b.fieldTitle6,
+                    b.field1, b.field2, b.field3, b.field4, b.field5, b.field6, b.registerUrl
+                FROM
+                    dbibridge.page a
+                    LEFT JOIN dbibridge.courseInfo b ON a.pageId=b.courseId
+                    LEFT JOIN dbibridge.image c ON b.thumbnailImageId=c.imageId
+                    LEFT JOIN dbibridge.image d ON b.bannerImageId=d.imageId
+                WHERE 
+                    a.pageId=? AND a.pageType=1
+                ;
+            `;
+            const variable = [ pageId ];
+            return query(connection, sql, variable);
+        }).then(result => {
+
+            if (!result || result.length == 0) {
+                throw 'no result with provided key';
             }
-    
-            connection.query(queryStatement.selectCourseInfo(pageId), (err1, rows1) => {
-                if (err1) {
-                    connection.release();
-                    res.send({
-                        status: false,
-                        error: {
-                            code: 500,
-                            message: 'Internal Server Error: \n' + err1
-                        }
-                    });
-                    return;
-                }
-    
+
+            const {
+                courseId, bannerImageId, bannerMessageDigest, bannerExtension, bannerImageBlur, bannerColor,
+                thumbImageId, thumbMessageDigest, thumbExtension, courseName, description1, description2, 
+                fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6,
+                field1, field2, field3, field4, field5, field6, registerUrl
+            } = result[0];
+
+            const bannerImageUrl = !!bannerImageId ? `/api/static/image/${bannerMessageDigest}.${bannerExtension}` : null;
+            const thumbImageUrl = !!bannerImageId ? `/api/static/image/${thumbMessageDigest}.${thumbExtension}` : null;
+
+            coursePage = {
+                courseId, bannerImageId, bannerImageUrl, bannerImageBlur, thumbImageId, thumbImageUrl, 
+                courseName, description1, description2, fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, 
+                fieldTitle5, fieldTitle6, field1, field2, field3, field4, field5, field6, registerUrl
+            }
+
+            if (bannerColor) {
+                delete coursePage.bannerImageId;
+                delete coursePage.bannerImageUrl;
+                delete coursePage.bannerImageBlur;
+                coursePage['bannerColor'] = bannerColor;
+            }
+
+            const sql = `
+                SELECT 
+                    a.pageId, a.contentId, a.seq, a.seqBase, 
+                    a.width, a.type, a.content, a.background, 
+                    b.imageId, b.messageDigest, b.extension
+                FROM 
+                    dbibridge.pageContent a
+                    LEFT JOIN dbibridge.image b ON a.imageId=b.imageId
+                WHERE
+                    a.pageId=?
+                ;
+            `;
+            const variable = [ pageId ];
+            return query(connection, sql, variable);
+        }).then(result => {
+
+            const contents = result.map(element => {
                 const {
-                    courseId, bannerImageId, bannerMessageDigest, bannerExtension, bannerImageBlur, bannerColor,
-                    thumbImageId, thumbMessageDigest, thumbExtension, courseName, description1, description2, 
-                    fieldTitle1, fieldTitle2, fieldTitle3, fieldTitle4, fieldTitle5, fieldTitle6,
-                    field1, field2, field3, field4, field5, field6, registerUrl
-                } = rows1[0];
-    
-                const coursePage = {
-                    courseId: courseId,
-                    bannerImageId: bannerImageId,
-                    bannerImageUrl: `/api/static/image/${bannerMessageDigest}.${bannerExtension}`,
-                    bannerImageBlur: bannerImageBlur,
-                    thumbImageId: thumbImageId,
-                    thumbImageUrl: `/api/static/image/${thumbMessageDigest}.${thumbExtension}`,
-                    courseName: courseName,
-                    description1: description1,
-                    description2: description2,
-                    fieldTitle1: fieldTitle1,
-                    fieldTitle2: fieldTitle2,
-                    fieldTitle3: fieldTitle3,
-                    fieldTitle4: fieldTitle4,
-                    fieldTitle5: fieldTitle5,
-                    fieldTitle6: fieldTitle6,
-                    field1: field1,
-                    field2: field2,
-                    field3: field3,
-                    field4: field4,
-                    field5: field5,
-                    field6: field6,
-                    registerUrl: registerUrl
+                    contentId, seq, seqBase, width, type, background,
+                    messageDigest, extension, imageId, content
+                } = element;
+
+                const rowMap = {
+                    contentId: contentId,
+                    seq: seq,
+                    seqBase: seqBase,
+                    width: width,
+                    type: type,
+                };
+                
+                if (element.background) {
+                    rowMap.background = background;
                 }
-    
-                if (bannerColor) {
-                    delete coursePage.bannerImageId;
-                    delete coursePage.bannerImageUrl;
-                    delete coursePage.bannerImageBlur;
-                    coursePage['bannerColor'] = bannerColor;
+
+                if (rowMap.type === 1) {
+                    const imageUrl = !!imageId ? `/api/static/image/${messageDigest}.${extension}` : null;
+                    rowMap.imageUrl = imageUrl;
+                    rowMap.imageId = imageId;
+                } else {
+                    rowMap.content = content;
                 }
-    
-                connection.query(queryStatement.selectPageContent(pageId), (err2, rows2) => {
-                    connection.release();
-                    if (err2) {
-                        res.send({
-                            status: false,
-                            error: {
-                                code: 500,
-                                message: 'Internal Server Error: \n' + err2
-                            }
-                        });
-                        return;
-                    }
-    
-                    const contents = rows2.map(row2 => {
-                        const {
-                            contentId, seq, seqBase, width, type, background,
-                            messageDigest, extension, imageId, content
-                        } = row2;
-    
-                        const rowMap = {
-                            contentId: contentId,
-                            seq: seq,
-                            seqBase: seqBase,
-                            width: width,
-                            type: type,
-                        };
-                        
-                        if (row2.background) {
-                            rowMap.background = background;
-                        }
-                        
-                        if (rowMap.type === 1) {
-                            rowMap.imageUrl = `/api/static/image/${messageDigest}.${extension}`;
-                            rowMap.imageId = imageId;
-                        } else {
-                            rowMap.content = content;
-                        }
-        
-                        return rowMap;
-                    });
-                    coursePage.contents = contents;
-    
-                    res.status(200).send({
-                        status: true,
-                        data: coursePage
-                    });
-                });
+
+                return rowMap;
             });
+
+            coursePage.contents = contents;
+            
+            res.status(200).send({
+                status: true,
+                data: coursePage
+            });
+
+        }).catch(error => {
+            res.send({
+                status: false,
+                error: {
+                    code: 500,
+                    message: error
+                }
+            });
+        }).finally(() => {
+            connection.release();
         });
     },
     
@@ -235,24 +237,10 @@ const courseController = {
                     dbibridge.page a
                     INNER JOIN dbibridge.courseInfo b ON a.pageId=b.courseId
                 SET
-                    a.pageName=?,
-                    b.bannerImageId=?,
-                    b.bannerImageBlur=?,
-                    b.bannerColor=?,
-                    b.description1=?,
-                    b.description2=?,
-                    b.fieldTitle1=?,
-                    b.fieldTitle2=?,
-                    b.fieldTitle3=?,
-                    b.fieldTitle4=?,
-                    b.fieldTitle5=?,
-                    b.fieldTitle6=?,
-                    b.field1=?,
-                    b.field2=?,
-                    b.field3=?,
-                    b.field4=?,
-                    b.field5=?,
-                    b.field6=?,
+                    a.pageName=?, b.bannerImageId=?, b.bannerImageBlur=?, b.bannerColor=?, 
+                    b.description1=?, b.description2=?, b.fieldTitle1=?, b.fieldTitle2=?, 
+                    b.fieldTitle3=?, b.fieldTitle4=?, b.fieldTitle5=?, b.fieldTitle6=?, 
+                    b.field1=?, b.field2=?, b.field3=?, b.field4=?, b.field5=?, b.field6=?, 
                     b.registerUrl=?
                 WHERE
                     a.pageId=?
@@ -283,12 +271,11 @@ const courseController = {
 
     updateCourseThumbnail: (req, res) => {
         const { pageId } = req.params;
-        const { courseName, thumbImageId } = req.body;
+        const { courseName, thumbnailImageId } = req.body;
         let connection;
 
         connect().then(conn => {
             connection = conn;
-
             const sql = `
                 UPDATE
                     dbibridge.page a
@@ -300,7 +287,7 @@ const courseController = {
                     a.pageId=?
                 ;
             `;
-            const variable = [ courseName, thumbImageId, pageId ];
+            const variable = [ courseName, thumbnailImageId, pageId ];
 
             return query(connection, sql, variable);
         }).then(result => {

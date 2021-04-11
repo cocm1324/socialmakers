@@ -101,6 +101,7 @@ export interface IGetCourseListRes extends ICommonRes {
         courseName: string;
         thumbImageId: number;
         thumbImageUrl: string;
+        description1: string;
         seq: number;
         seqBase: number;
     }>;
@@ -197,6 +198,11 @@ export interface IUpdateCourseInfoReq {
     registerUrl: string;
 }
 
+export interface IUpdateCourseThumbnailReq {
+    courseId: number;
+    courseName: string;
+    thumbnailImageId: number;
+}
 
 export interface IUpdateCourseSeqReq {
     courseId: number;

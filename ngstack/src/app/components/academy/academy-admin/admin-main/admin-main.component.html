@@ -12,6 +12,7 @@
                     <button pButton label="새 Course 만들기" (click)="displayNewCourseDialog=true"></button>
                 </div>
                 <div>
+                    <button [disabled]="selectedCourseId==-1" class="p-mr-2 ui-button-secondary" pButton label="섬네일 수정하기" (click)="openCourseThumbnailEditDialog($event)"></button>
                     <button [disabled]="selectedCourseId==-1" class="p-mr-2 ui-button-secondary" pButton label="내용 수정하기" (click)="goToEditCourse($event)"></button>
                     <button class="ui-button-danger" [disabled]="selectedCourseId==-1" pButton label="삭제하기" (click)="onCourseDelete()"></button>
                 </div>
@@ -69,20 +70,22 @@
 
 <p-dialog [(visible)]="displayNewCourseDialog">
     <p-header>
-        새 Course 만들기
+        <div *ngIf="!isCourseEdit">새 Course 만들기</div>
+        <div *ngIf="isCourseEdit">Course 섬네일 수정하기</div>
     </p-header>
     <div style="width: 400px;">
         <span>Course 이름</span>
         <input [maxlength]="100" pInputText [(ngModel)]="courseName" class="w-100 p-mb-2" placeholder="입력"> 
         <span>섬네일 이미지</span>
-        <img [src]="thumbImageUrl" class="w-100" onerror="this.src='./assets/img/notfound.jpg';">
+        <img [src]="courseThumbImageUrl" class="w-100" onerror="this.src='./assets/img/notfound.jpg';">
     </div>
     <p-footer>
         <div class="w-100 p-d-flex p-justify-between">
             <app-image-upload [label]="'섬네일 이미지 선택'" (onSubmit)="onNewCourseThumbnailSelected($event)"></app-image-upload>
             <div>
-                <button pButton label="취소하기" class="ui-button-secondary" (click)="displayNewCourseDialog=false"></button>
-                <button pButton label="생성하기" [disabled]='!newCourseValid' (click)="createNewCourse()" ></button>
+                <button pButton label="취소하기" class="ui-button-secondary" (click)="initializeCourseInfo()"></button>
+                <button pButton *ngIf="!isCourseEdit" label="생성하기" [disabled]='!newCourseValid' (click)="createNewCourse()" ></button>
+                <button pButton *ngIf="isCourseEdit" label="수정하기" [disabled]='!newCourseValid' (click)="updateCourseThumbnail()" ></button>
             </div>
         </div>
     </p-footer>

@@ -263,7 +263,7 @@ const query = {
     selectCourse: () => {
         return `
             SELECT
-                a.pageId, a.pageName, b.seq, b.seqBase, b.published, c.imageId, c.messageDigest, c.extension
+                a.pageId, a.pageName, b.seq, b.seqBase, b.description1, b.published, c.imageId, c.messageDigest, c.extension
             FROM
                 dbibridge.page a
                 INNER JOIN dbibridge.courseInfo b ON a.pageId=b.courseId
@@ -312,10 +312,10 @@ const query = {
         return `
             INSERT INTO 
                 dbibridge.courseInfo (
-                    courseId, thumbnailImageId, seq, seqBase
+                    courseId, thumbnailImageId, bannerImageId, bannerImageBlur, bannerColor, seq, seqBase
                 )
             VALUES
-                ( ?, ?, ?, ? )
+                ( ?, ?, 1, 20, '#ffffff' ?, ? )
             ;
         `;
     },

@@ -7,7 +7,7 @@ import {
 	ICreateSectionReq, IUpdateSectionReq, IDeleteSectionReq, ICommonRes, IGetCourseRes, 
 	IGetCourseListRes, IUpdateCourseSeqReq, IRunEyedropReq, IRunEyedropRes, IUpdateAboutUsReq, 
 	IUpdateCourseInfoReq, ICreateCourseReq, ICreateCourseRes, IUpdateSectionSeqReq, 
-	IGetImageListRes, IGetNoticeListRes, API_URL, IGetNoticeRes, IUpdateNoticeReq 
+	IGetImageListRes, IGetNoticeListRes, API_URL, IGetNoticeRes, IUpdateNoticeReq, IUpdateCourseThumbnailReq 
 } from '@app/models';
 
 @Injectable({
@@ -136,6 +136,11 @@ export class DataService {
 	updateCourseInfo(request: IUpdateCourseInfoReq): Observable<ICommonRes> {
 		const {courseId} = request;
 		return this.http.put<ICommonRes>(API_URL.PAGE_COURSE + `/${courseId}`, request);
+	}
+
+	updateCourseThumbnail(request: IUpdateCourseThumbnailReq): Observable<ICommonRes> {
+		const { courseId } = request;
+		return this.http.put<ICommonRes>(API_URL.PAGE_COURSE + `/${ courseId }/thumbnail`, request);
 	}
 
 	getNoticeList(pageCount?: number, pageNo?: number, increment?: boolean): Observable<IGetNoticeListRes> {

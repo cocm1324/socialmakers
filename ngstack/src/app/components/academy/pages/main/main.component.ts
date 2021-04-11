@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { DataService } from '@services/data/data.service';
 
 @Component({
 	selector: 'app-main',
@@ -32,73 +33,37 @@ export class MainComponent implements OnInit {
 			description: "창의적이고 실력있는 코딩 메이커가 되기 위한 웹 디자인 패키지"
 		}
 	];
-	courses = [
-		{
-			id: 1,
-			title: "웹디자인 기초과정 (HTML & CSS)",
-			thumbnail: "./assets/img/3.gif",
-			description: "It is a long established fact that a reader will be distracted by the readabl",
-			category: 0,
-			created: "2020-04-16T19:20:30.45+09:00",
-			updated: "2020-04-16T19:20:30.45+09:00"
-		},
-		{
-			id: 2,
-			title: "웹디자인 기본과정 (JavaScript)",
-			thumbnail: "./assets/img/2.gif",
-			description: "It is a long established fact that a reader will be distracted by the readabl",
-			category: 0,
-			created: "2020-04-16T20:20:30.45+09:00",
-			updated: "2020-04-16T20:20:30.45+09:00"
-		},
-		{
-			id: 3,
-			title: "웹디자인 응용과정 (Real Project)",
-			thumbnail: "./assets/img/4.gif",
-			description: "It is a long established fact that a reader will be distracted by the readabl",
-			category: 0,
-			created: "2020-04-16T21:20:30.45+09:00",
-			updated: "2020-04-16T21:20:30.45+09:00"
-		},
-		{
-			id: 4,
-			title: "3D 모델링 (Real Project)",
-			thumbnail: "./assets/img/1.gif",
-			description: "It is a long established fact that a reader will be distracted by the readabl",
-			category: 0,
-			created: "2020-04-16T19:20:30.45+09:00",
-			updated: "2020-04-16T19:20:30.45+09:00"
-		},
-		{
-			id: 5,
-			title: "아두이노 (Real Project)",
-			thumbnail: "./assets/img/5.gif",
-			description: "It is a long established fact that a reader will be distracted by the readabl",
-			category: 0,
-			created: "2020-04-16T20:20:30.45+09:00",
-			updated: "2020-04-16T20:20:30.45+09:00"
-		},
-		{
-			id: 6,
-			title: "영어와 코딩을 함께 공부하는 1:1 수업",
-			thumbnail: "./assets/img/6.gif",
-			description: "It is a long established fact that a reader will be distracted by the readabl",
-			category: 0,
-			created: "2020-04-16T20:20:30.45+09:00",
-			updated: "2020-04-16T20:20:30.45+09:00"
-		}
-	];
+	courses: Array<{
+        courseId: number;
+        courseName: string;
+        thumbImageId: number;
+		thumbImageUrl: string;
+		description1: string;
+        seq: number;
+        seqBase: number;
+    }>;
 
 	constructor(
-		private router: Router
+		private router: Router,
+		private dataService: DataService
 	) { }
 
 	ngOnInit() {
+		this.loadCourse();
 	}
 
-	courseByCategory(id) {
-		return this.courses.filter(elem => elem.category == id);
+	loadCourse() {
+		this.dataService.getCourseList().toPromise().then(result => {
+			const { data, status } = result;
+			if (status) {
+				this.courses = data;
+			}
+		});
 	}
+
+	// courseByCategory(id) {
+	// 	return this.courses.filter(elem => elem.category == id);
+	// }
 
 	goToCourse(id) {
 		this.router.navigate([`academy/courses/${id}`]);

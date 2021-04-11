@@ -1,3 +1,6 @@
 <div *ngFor="let pageDatum of pageData; let i = index">
-    <app-section-viewer [section]="pageDatum"></app-section-viewer>
+    <app-section-viewer 
+        [section]="pageDatum"
+        [editable]="false"
+    ></app-section-viewer>
 </div>

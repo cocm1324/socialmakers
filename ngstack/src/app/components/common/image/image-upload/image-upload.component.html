@@ -34,8 +34,8 @@
             >
             </p-fileUpload>
             <div class="p-d-flex"> 
-                <button type="button" pButton icon="pi pi-check" (click)="confirm()" label="Yes" [disabled]="selectedImage.imageId==-1"></button>
-                <button type="button" pButton icon="pi pi-times" (click)="cancel()" label="No" class="ui-button-secondary"></button>
+                <button type="button" pButton icon="pi pi-times" (click)="cancel()" label="취소하기" class="ui-button-secondary"></button>
+                <button type="button" pButton icon="pi pi-check" (click)="confirm()" label="선택하기" [disabled]="selectedImage.imageId==-1"></button>
             </div>
         </div>
     </p-footer>

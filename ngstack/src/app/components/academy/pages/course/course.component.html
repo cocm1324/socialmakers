@@ -1,4 +1,4 @@
-<div class="w-100">
+<!-- <div class="w-100">
     <div class="p-grid p-nogutter p-relative p-overflow-hidden" style="background-color: black;">
         <img class="image-container" [src]="pageHeader">
         <div class="p-absolute p-d-flex p-justify-center p-align-center w-100 h-100">
@@ -45,5 +45,48 @@
         </div>
     </div>
     <div class="margin-drop"></div>
+    <ple-viewer [pageData]="contents"></ple-viewer>
+</div> -->
+
+<div *ngIf="loaded" class="w-100 p-relative p-d-flex p-justify-center p-align-center">
+    <div class="w-100">
+        <app-banner-viewer [banner]="banner"></app-banner-viewer>
+    </div>
+    <div class="p-absolute">
+        <div class="p-grid-narrow p-nogutter h-100">
+            <div class="p-col-12 p-md-6 p-grid p-nogutter p-dir-col p-px-5 p-py-10 p-sm-no-py">
+                <div class="p-col p-sm-hide">
+                    <div>{{description1}}</div>
+                </div>
+                <div class="p-col">
+                    <h2>{{courseName}}</h2>
+                </div>
+                <div class="p-col p-sm-hide">
+                    <div>{{description2}}</div>
+                </div>
+            </div>
+            <div class="p-col-12 p-md-6 p-px-5 p-py-10 p-sm-no-py">
+                <div class="w-100 h-100 pannel p-p-3">
+                    <div *ngFor="let field of fields" class="p-grid p-nogutter">
+                        <div class="p-col-3">
+                            <div>{{field.fieldTitle}}</div>
+                        </div>
+                        <div class="p-col-9">
+                            <div>{{field.field}}</div>
+                        </div>
+                    </div>
+                    <div class="h-divider"></div>
+                    <div 
+                        class="p-p-2 button p-grid p-nogutter p-justify-center p-align-center"
+                        (click)="goToUrl()"
+                    >
+                        <span class="p-p-default">참가 신청하기</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div *ngIf="loaded" class="w-100">
     <ple-viewer [pageData]="contents"></ple-viewer>
 </div>
